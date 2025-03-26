@@ -19,7 +19,7 @@ class IotDeviceResource extends Resource
 
     protected static ?string $modelLabel = 'IoT Device';
 
-    protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
+    protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
 
     public static function form(Form $form): Form
     {
@@ -50,7 +50,7 @@ class IotDeviceResource extends Resource
                 Tables\Actions\CreateAction::make()
                     ->label('Get Started'),
             ])
-            ->emptyStateIcon('heroicon-o-wrench-screwdriver')
+            ->emptyStateIcon('heroicon-o-cpu-chip')
             ->emptyStateHeading('No IoT Devices Found')
             ->emptyStateDescription('Start by registering your IoT device to monitor and manage it through this platform.');
     }
