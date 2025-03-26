@@ -44,8 +44,10 @@ class AppPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->spa()
             // BRANDING
             ->brandLogo(asset('logo.svg'))
+            ->sidebarCollapsibleOnDesktop()
             ->darkMode(false)
             ->renderHook(PanelsRenderHook::BODY_END, fn () => Blade::render("@vite('resources/js/app.js')"))
             // MIDDLEWARE

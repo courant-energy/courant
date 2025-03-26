@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,6 +29,11 @@ class AppServiceProvider extends ServiceProvider
             'primary' => Color::hex('#111111'),
             'success' => Color::Green,
             'warning' => Color::Amber,
+        ]);
+        
+
+        FilamentIcon::register([
+            'panels::sidebar.expand-button' => 'heroicon-o-bars-3',
         ]);
     }
 }
