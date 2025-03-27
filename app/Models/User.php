@@ -68,4 +68,9 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
     {
         return $this->profile ? Storage::url($this->profile) : null; 
     }
+
+    public function iotDevices()
+    {
+        return $this->hasMany(IotDevice::class);
+    }
 }

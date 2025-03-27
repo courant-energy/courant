@@ -40,16 +40,21 @@ class AppPanelProvider extends PanelProvider
             // DEFAULT CONFIGS
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->spa()
+            ->databaseNotifications()
             // BRANDING
             ->brandLogo(asset('logo.svg'))
             ->sidebarCollapsibleOnDesktop()
             ->darkMode(false)
-            ->renderHook(PanelsRenderHook::BODY_END, fn () => Blade::render("@vite('resources/js/app.js')"))
+            ->navigationGroups([
+                'Device Management',
+                'Data & Insights',
+                'Learning & Support',
+            ])
+            // ->topNavigation()
+            ->renderHook(PanelsRenderHook::BODY_END, fn() => Blade::render("@vite('resources/js/app.js')"))
             // MIDDLEWARE
             ->middleware([
                 EncryptCookies::class,

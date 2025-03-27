@@ -7,10 +7,14 @@ use App\Filament\Resources\IotDeviceResource\RelationManagers;
 use App\Models\IotDevice;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class IotDeviceResource extends Resource
@@ -21,30 +25,97 @@ class IotDeviceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
 
+    protected static ?string $navigationGroup = 'Device Management';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Section::make('IoT Device Information')
+                    ->aside()
+                    ->description('Manage the details of the IoT device.')
+                    ->columns(1)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->helperText('Enter the name of the IoT device'),
+
+                        Forms\Components\TextInput::make('device_uuid')
+                            ->label('UUID')
+                            ->disabled()
+                            ->required()
+                            ->helperText('Enter the UUID of the IoT device'),
+
+                        Forms\Components\TextInput::make('password')
+                            ->label('Password')
+                            ->helperText('Enter the password of the IoT device')
+                            ->password()
+                            ->live(debounce: 500)
+                            ->confirmed()
+                            ->revealable()
+                            ->rules([
+                                'min:12',
+                                'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/',
+                            ])
+                            ->validationMessages([
+                                'min' => 'Password must be at least 12 characters long',
+                                'regex' => 'Password must include at least one uppercase letter, one number, and one special character',
+                            ]),
+                        
+                        Forms\Components\TextInput::make('password_confirmation')
+                            ->label('Confirm Password')
+                            ->required()
+                            ->helperText('Confirm the password for the IoT device')
+                            ->visible(fn (Get $get) => filled($get('password')))
+                            ->password()
+                            ->revealable()
+                            ->same('password'),
+                    ]),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+
             ->columns([
-                //
+                Stack::make([
+                    Tables\Columns\TextColumn::make('name')
+                ])
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Manage'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('bulk-unlink')
+                        ->label('Unlink')
+                        ->requiresConfirmation()
+                        ->color('danger')
+                        ->action(function (Collection $records) {
+                            $records->each(function (IotDevice $record) {
+                                $record->unlink();
+                            });
+
+                            Notification::make()
+                                ->success()
+                                ->title('IoT Devices Unlinked')
+                                ->body('The selected IoT devices have been unlinked from your account.')
+                                ->send();
+                        }),
                 ]),
+            ])
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->contentGrid([
+                'md' => 2,
+                'xl' => 3,
             ])
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make()

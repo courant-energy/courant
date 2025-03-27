@@ -86,10 +86,20 @@ class RegisterIotDevice extends Page implements HasForms
             return;
         }
 
+
         // Update the device
         $device->update([
             'name' => $this->data['name'],
             'is_active' => true,
+            'user_id' => auth()->id(),
         ]);
+        \Log::info('Device registered', ['device_uuid' => $this->data['device_uuid'], 'user_id' => auth()->id()]);
+        Notification::make()
+            ->success()
+            ->title('Registration Successful')
+            ->body('The device has been successfully registered.')
+            ->send();
+
+        $this->redirect(route('filament.app.resources.iot-devices.index'));
     }
 }
