@@ -95,6 +95,13 @@ class ProfileResource extends Resource
                         ->searchable()
                         ->color('gray')
                         ->size('sm'),
+                    Tables\Columns\TextColumn::make('status')
+                        ->badge()
+                        ->getStateUsing(function (Profile $record) {
+                            return $record->is_active ? 'Active' : 'Inactive';
+                        })
+                        ->color(fn($state) => $state === 'Active' ? 'success' : 'gray')
+                        ->label('Status')
                 ]),
             ])
             ->contentGrid([

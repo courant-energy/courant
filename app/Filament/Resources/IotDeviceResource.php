@@ -11,8 +11,10 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -87,6 +89,8 @@ class IotDeviceResource extends Resource
             ->columns([
                 Stack::make([
                     Tables\Columns\TextColumn::make('name')
+                        ->weight(FontWeight::Bold)
+                        ->size(TextColumnSize::Large)
                 ])
             ])
             ->filters([

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProfileResource\Pages;
 
 use App\Filament\Resources\ProfileResource;
+use App\Filament\Resources\ProfileResource\Widgets\SocketTable;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -14,6 +15,15 @@ class EditProfile extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+        ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            SocketTable::make([
+                'record' => $this->record,
+            ])
         ];
     }
 }

@@ -89,6 +89,7 @@ class SocketResource extends Resource
                         ->searchable()
                         ->sortable(),
                     Tables\Columns\TextColumn::make('profile.name')
+                        ->badge()
                         ->label('Profile Name')
                         ->default('No Profile Selected')
                         ->searchable()

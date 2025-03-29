@@ -13,5 +13,15 @@ class Profile extends Model
         'min_power_threshold',
         'user_id'
     ];
+
+    public function sockets()
+    {
+        return $this->hasMany(Socket::class);
+    }
+
+    public function getIsActiveAttribute()
+    {
+        return $this->sockets()->exists();
+    }
   
 }
