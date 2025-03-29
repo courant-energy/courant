@@ -65,12 +65,12 @@ class IotDeviceResource extends Resource
                                 'min' => 'Password must be at least 12 characters long',
                                 'regex' => 'Password must include at least one uppercase letter, one number, and one special character',
                             ]),
-                        
+
                         Forms\Components\TextInput::make('password_confirmation')
                             ->label('Confirm Password')
                             ->required()
                             ->helperText('Confirm the password for the IoT device')
-                            ->visible(fn (Get $get) => filled($get('password')))
+                            ->visible(fn(Get $get) => filled($get('password')))
                             ->password()
                             ->revealable()
                             ->same('password'),
@@ -90,7 +90,21 @@ class IotDeviceResource extends Resource
                 Stack::make([
                     Tables\Columns\TextColumn::make('name')
                         ->weight(FontWeight::Bold)
-                        ->size(TextColumnSize::Large)
+                        ->size(TextColumnSize::Large),
+                    Tables\Columns\TextColumn::make('device_uuid')
+                        ->label('Device UUID')
+                        ->color('gray')
+                        ->prefix('UUID: ')
+                        ->size(TextColumnSize::ExtraSmall)
+                        ->weight(FontWeight::ExtraLight)
+                        ->searchable(),
+                    Tables\Columns\TextColumn::make('socket_count')
+                        ->label('Sockets')
+                        ->color('gray')
+                        ->prefix('Total Sockets: ')
+                        ->size(TextColumnSize::ExtraSmall)
+                        ->weight(FontWeight::ExtraLight)
+                        ->searchable(),
                 ])
             ])
             ->filters([
@@ -124,7 +138,7 @@ class IotDeviceResource extends Resource
             })
             ->contentGrid([
                 'md' => 2,
-                'xl' => 3,
+
             ])
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make()

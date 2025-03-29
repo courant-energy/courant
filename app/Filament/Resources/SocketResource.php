@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -44,7 +45,23 @@ class SocketResource extends Resource
                             ->helperText('This field is read-only and shows the associated IoT device')
                             ->disabled(),
                         Forms\Components\Select::make('profile_id')
-                            ->relationship('profile', 'name')
+                            ->relationship(
+                                'profile',
+                                'name',
+                                function (Builder $query, $record) {
+                                    // Only show profiles belonging to current user
+                                    $query->where('user_id', auth()->id());
+
+                                    // Show profiles not linked to any socket or linked to current socket
+                                    $query->where(function ($subQuery) use ($record) {
+                                        $subQuery->whereDoesntHave('sockets');
+
+                                        if ($record && $record->profile_id) {
+                                            $subQuery->orWhere('id', $record->profile_id);
+                                        }
+                                    });
+                                }
+                            )
                             ->label('Profile')
                             ->suffixAction(
                                 Action::make('createProfile')
@@ -62,6 +79,9 @@ class SocketResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultGroup(Group::make('iotDevice.name')
+                ->label('IoT Device Name')
+                ->collapsible())
             ->heading('My Active Sockets')
             ->description('Manage your sockets and their profiles.')
             ->emptyStateHeading('No Sockets Found')
@@ -90,11 +110,12 @@ class SocketResource extends Resource
                         ->sortable(),
                     Tables\Columns\TextColumn::make('profile.name')
                         ->badge()
+                        ->icon(fn($state) => $state === 'No Profile Selected' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
                         ->label('Profile Name')
                         ->default('No Profile Selected')
                         ->searchable()
                         ->sortable()
-                        ->color(fn($state) => $state === 'No Profile Selected' ? 'gray' : null),
+                        ->color(fn($state) => $state === 'No Profile Selected' ? 'danger' : null),
                 ]),
             ])
             ->filters([

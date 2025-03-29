@@ -24,4 +24,8 @@ class Profile extends Model
         return $this->sockets()->exists();
     }
   
+    public function scopeUnlinked($query)
+    {
+        return $query->whereDoesntHave('sockets');
+    }
 }
