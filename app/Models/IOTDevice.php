@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class IotDevice extends Model
 {
     protected $table = 'iot_devices';
-    protected $fillable = ['name', 'device_uuid', 'user_id', 'is_active', 'password'];
+    protected $fillable = ['name', 'device_uuid', 'user_id', 'is_active', 'password','socket_count'];
 
     protected $casts = [
         'is_active' => 'boolean',

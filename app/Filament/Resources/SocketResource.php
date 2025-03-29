@@ -8,6 +8,7 @@ use App\Models\Socket;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,11 +33,35 @@ class SocketResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->contentGrid([
+                'default' => 1,
+                'lg' => 2,
+            ])
             ->columns([
-                //
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\TextColumn::make('iotDevice.name')
+                        ->label('IoT Device Name')
+                        ->searchable()
+                        ->sortable()
+                        ->weight(FontWeight::Bold),
+                    Tables\Columns\TextColumn::make('name')
+                        ->label('Socket Name')
+                        ->searchable()
+                        ->sortable(),
+                    Tables\Columns\TextColumn::make('profile.name')
+                        ->label('Profile Name')
+                        ->default('No Profile Selected')
+                        ->searchable()
+                        ->sortable()
+                        ->color(fn ($state) => $state === 'No Profile Selected' ? 'gray' : null),
+                ]),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('iot_device')
+                    ->relationship('iotDevice', 'name')
+                    ->label('IoT Device')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -59,7 +84,7 @@ class SocketResource extends Resource
     {
         return [
             'index' => Pages\ListSockets::route('/'),
-            'create' => Pages\CreateSocket::route('/create'),
+            // 'create' => Pages\CreateSocket::route('/create'),
             'edit' => Pages\EditSocket::route('/{record}/edit'),
         ];
     }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\IotDeviceResource\Pages;
 use App\Filament\Resources\IotDeviceResource\RelationManagers;
 use App\Models\IotDevice;
+use App\Services\IotDeviceService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -101,9 +102,9 @@ class IotDeviceResource extends Resource
                         ->label('Unlink')
                         ->requiresConfirmation()
                         ->color('danger')
-                        ->action(function (Collection $records) {
-                            $records->each(function (IotDevice $record) {
-                                $record->unlink();
+                        ->action(function (Collection $records, IotDeviceService $iotDeviceService) {
+                            $records->each(function (IotDevice $record) use ($iotDeviceService) {
+                                $iotDeviceService->unlinkDevice($record->device_uuid);
                             });
 
                             Notification::make()

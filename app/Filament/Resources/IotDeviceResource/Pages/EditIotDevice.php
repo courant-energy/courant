@@ -4,6 +4,7 @@ namespace App\Filament\Resources\IotDeviceResource\Pages;
 
 use App\Filament\Resources\IotDeviceResource;
 use App\Models\IotDevice;
+use App\Services\IotDeviceService;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
@@ -18,8 +19,8 @@ class EditIotDevice extends EditRecord
         return [
             Actions\Action::make('unlink')
                 ->color('danger')
-                ->action(function (IotDevice|Model $record) {
-                    $record->unlink();
+                ->action(function (IotDevice|Model $record, IotDeviceService $iotDeviceService) {
+                    $iotDeviceService->unlinkDevice($record->device_uuid);
                     Notification::make()
                         ->success()
                         ->title('IoT Device Unlinked')

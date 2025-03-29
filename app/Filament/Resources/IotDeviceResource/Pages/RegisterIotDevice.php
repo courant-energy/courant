@@ -4,6 +4,7 @@ namespace App\Filament\Resources\IotDeviceResource\Pages;
 
 use App\Filament\Resources\IotDeviceResource;
 use App\Models\IotDevice;
+use App\Services\IotDeviceService;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -23,6 +24,17 @@ class RegisterIotDevice extends Page implements HasForms
     protected static ?string $title = 'Register an IoT Device';
 
     protected static string $view = 'filament.resources.iot-device-resource.pages.register-iot-device';
+
+    protected IotDeviceService $iotDeviceService;
+
+    public function mount()
+    {
+        $this->data = [
+            'name' => '',
+            'device_uuid' => '',
+            'password' => '',
+        ];
+    }
 
     public function form(Form $form): Form
     {
@@ -47,7 +59,7 @@ class RegisterIotDevice extends Page implements HasForms
             ->statePath('data');
     }
 
-    public function register(): void
+    public function register(IotDeviceService $iotDeviceService): void
     {
         $this->validate(
             [
@@ -87,18 +99,38 @@ class RegisterIotDevice extends Page implements HasForms
         }
 
 
-        // Update the device
-        $device->update([
-            'name' => $this->data['name'],
-            'is_active' => true,
-            'user_id' => auth()->id(),
-        ]);
+        try {
+            // Update the device
+            $iotDeviceService->linkDeviceToUser($device->device_uuid, auth()->id());
+            $device->name = $this->data['name'];
+            $device->save();
+            // Log the registration
+            \Log::info('Device linked', ['device_uuid' => $this->data['device_uuid'], 'user_id' => auth()->id()]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to register device', [
+                'device_uuid' => $this->data['device_uuid'],
+                'user_id' => auth()->id(),
+                'error' => $e->getMessage()
+            ]);
+
+            Notification::make()
+                ->danger()
+                ->title('Registration Failed')
+                ->body('An error occurred while registering the device. Please try again later.')
+                ->send();
+
+            return;
+        }
+        
+        // Notify the user
         \Log::info('Device registered', ['device_uuid' => $this->data['device_uuid'], 'user_id' => auth()->id()]);
         Notification::make()
             ->success()
             ->title('Registration Successful')
             ->body('The device has been successfully registered.')
             ->send();
+    
+        // TODO: Add an email notification to the user
 
         $this->redirect(route('filament.app.resources.iot-devices.index'));
     }
