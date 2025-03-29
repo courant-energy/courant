@@ -75,7 +75,7 @@ class ProfileResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->heading('Appliance Profiles')
+            ->heading('My Appliance Profiles')
             ->description('Create and manage profiles for your smart appliances to define their power usage characteristics. These profiles can be assigned to smart sockets for automated monitoring and alerts.')
             ->emptyStateHeading('No profiles created yet')
             ->emptyStateDescription('Define power profiles for your appliances like refrigerators, washing machines, or computers to help the system identify normal and abnormal power consumption patterns.')

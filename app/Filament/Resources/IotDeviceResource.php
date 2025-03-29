@@ -78,7 +78,11 @@ class IotDeviceResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-
+            ->heading('My Connected IoT Devices')
+            ->description('View and manage the smart devices connected to your account. ')
+            ->emptyStateIcon('heroicon-o-cpu-chip')
+            ->emptyStateHeading('No IoT Devices Found')
+            ->emptyStateDescription('Start by registering your IoT device to monitor and manage it through this platform.')
             ->columns([
                 Stack::make([
                     Tables\Columns\TextColumn::make('name')
@@ -120,10 +124,7 @@ class IotDeviceResource extends Resource
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make()
                     ->label('Get Started'),
-            ])
-            ->emptyStateIcon('heroicon-o-cpu-chip')
-            ->emptyStateHeading('No IoT Devices Found')
-            ->emptyStateDescription('Start by registering your IoT device to monitor and manage it through this platform.');
+            ]);
     }
 
     public static function getRelations(): array
