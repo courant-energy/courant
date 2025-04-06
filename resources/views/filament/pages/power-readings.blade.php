@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-   
+
 
 
     <x-filament::section aside>
@@ -30,23 +30,32 @@
             {{ $device->name }}
         </h1>
         @foreach ($sockets as $socket)
-            <x-filament::section aside wire:key="socket-{{ $socket->id }}">
-                <x-slot name="heading">
-                    {{ $socket->profile->name }}
-                </x-slot>
-                <x-slot name="description">
-                    {{ $socket->name }}
-                </x-slot>
-                @livewire('readings.socket-widget', ['socket' => $socket], key($socket->id))
+            <div wire:key="socket-{{ $socket->id }}" class="space-y-4">
+
+                <x-filament::section aside>
+                    <x-slot name="heading">
+                        {{ $socket->profile->name }}
+                    </x-slot>
+                    <x-slot name="description">
+                        {{ $socket->name }}
+                    </x-slot>
+                    @livewire('readings.socket-widget', ['socket' => $socket], key($socket->id))
 
 
 
 
-            </x-filament::section>
+                </x-filament::section>
+
+
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div></div>
+                    @livewire(App\Filament\Widgets\Readings\EnergyUsageGraph::class, ['socket' => $socket], key($socket->id))
+                </div>
+            </div>
         @endforeach
     @endif
 
-    
+
 
 
 </x-filament-panels::page>

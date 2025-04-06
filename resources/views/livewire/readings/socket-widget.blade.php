@@ -1,4 +1,4 @@
-<div>
+<div wire:poll.5s>
     {{-- stats --}}
     <div class="grid grid-cols-1 gap-4 my-4 md:grid-cols-2">
         <h2 class="text-lg font-semibold md:col-span-2">Status</h2>
@@ -35,37 +35,37 @@
             <p class="text-sm text-gray-500">
                 Current Power
                 <span class="block mt-1 text-xs text-gray-400">
-                    Electrical power consumption measured in watts. Represents the rate at which electricity is being used.
+                    Electrical power consumption measured in watts. Represents the rate at which electricity is being
+                    used.
                 </span>
             </p>
         </div>
         {{-- Power Factor --}}
         <div>
             @php
-            // Power Factor color coding
-            $pfTextColorClass = 'text-gray-900'; // Default color
+                // Power Factor color coding
+                $pfTextColorClass = 'text-gray-900'; // Default color
 
-            if ($socket->currentPowerFactor < 0.8) {
-                $pfTextColorClass = 'text-red-600'; // Bad power factor (<80%)
-            } elseif ($socket->currentPowerFactor >= 0.9) {
-                $pfTextColorClass = 'text-green-600'; // Good power factor (≥90%)
-            } else {
-                $pfTextColorClass = 'text-yellow-500'; // Acceptable power factor (80%-89%)
-            }
+                if ($socket->currentPowerFactor < 0.8) {
+                    $pfTextColorClass = 'text-red-600'; // Bad power factor (<80%)
+                } elseif ($socket->currentPowerFactor >= 0.9) {
+                    $pfTextColorClass = 'text-green-600'; // Good power factor (≥90%)
+                } else {
+                    $pfTextColorClass = 'text-yellow-500'; // Acceptable power factor (80%-89%)
+                }
             @endphp
 
             <h3 class="text-xl font-semibold {{ $pfTextColorClass }}">
-            {{ $socket->currentPowerFactor * 100 }} %
+                {{ $socket->currentPowerFactor * 100 }} %
             </h3>
             <p class="text-sm text-gray-500">
-            Power Factor
-            <span class="block mt-1 text-xs text-gray-400">
-                Ratio of real to apparent power. Higher values (>90%) indicate efficient power usage.
-            </span>
+                Power Factor
+                <span class="block mt-1 text-xs text-gray-400">
+                    Ratio of real to apparent power. Higher values (>90%) indicate efficient power usage.
+                </span>
             </p>
         </div>
     </div>
 
     {{-- line graph --}}
-    @livewire('readings.energy-usage-graph', ['socket' => $socket], key($socket->id))
 </div>

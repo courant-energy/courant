@@ -4,6 +4,7 @@ namespace App\Livewire\Readings;
 
 use Livewire\Component;
 
+
 class SocketWidget extends Component
 {
     public $socket;
@@ -12,6 +13,7 @@ class SocketWidget extends Component
     {
         $this->socket = $socket;
     }
+
 
     public function render()
     {
