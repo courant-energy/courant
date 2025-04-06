@@ -17,4 +17,21 @@ class Socket extends Model
     {
         return $this->belongsTo(Profile::class);
     }
+
+    public function readings()
+    {
+        return $this->hasMany(Reading::class);
+    }
+
+    public function scopeCurrentProfile($query)
+    {
+        return $query->where('profile_id', Profile::current()->id);
+    }
+
+    public function scopeForDates($query, $startDate, $endDate)
+    {
+        return $query->whereHas('readings', function ($q) use ($startDate, $endDate) {
+            $q->whereBetween('reading_time', [$startDate, $endDate]);
+        });
+    }
 }

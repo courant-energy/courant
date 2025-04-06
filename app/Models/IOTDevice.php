@@ -50,4 +50,26 @@ class IotDevice extends Model
         // TODO: Delete all recorded data
 
     }
+
+    public function readings()
+    {
+        return $this->hasManyThrough(
+            Reading::class,
+            Socket::class,
+            'iot_device_id', // Foreign key on Socket table
+            'socket_id',     // Foreign key on Reading table
+            'id',            // Local key on IotDevice table
+            'id'             // Local key on Socket table
+        );
+    }
+
+    public function sockets()
+    {
+        return $this->hasMany(Socket::class, 'iot_device_id');
+    }
+
+    public function scopeWithSockets($query)
+    {
+        return $query->with('sockets');
+    }
 }

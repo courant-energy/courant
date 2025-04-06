@@ -10,6 +10,13 @@ class Reading extends Model
 
     public function iotDevice()
     {
-        return $this->belongsTo(IotDevice::class);
+        return $this->socket->iotDevice();
     }
+
+
+    public function socket()
+    {
+        return $this->belongsTo(Socket::class);
+    }
+
 }

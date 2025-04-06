@@ -53,6 +53,7 @@ class AppPanelProvider extends PanelProvider
                 'Data & Insights',
                 'Learning & Support',
             ])
+            ->theme(asset('css/filament/app/theme.css'))
             // ->topNavigation()
             ->renderHook(PanelsRenderHook::BODY_END, fn() => Blade::render("@vite('resources/js/app.js')"))
             // MIDDLEWARE
@@ -66,7 +67,6 @@ class AppPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                // EnsureEmailIsVerified::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
