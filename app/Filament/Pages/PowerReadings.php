@@ -42,31 +42,18 @@ class PowerReadings extends Page implements HasForms
                             ->pluck('name', 'id');
                     })
                     ->required(),
-
-                \Filament\Forms\Components\Grid::make()
-                    ->columns(2)
-                    ->schema([
-                        \Filament\Forms\Components\DatePicker::make('date_from')
-                            ->label('Start Date')
-                            ->default(now()->subDays(7)->toDateString())
-                            ->required()
-                            ->native(false)
-                            ->maxDate(fn(Get $get) => $get('date_to'))
-                            ->live(),
-                        \Filament\Forms\Components\DatePicker::make('date_to')
-                            ->label('End Date')
-                            ->default(now()->toDateString())
-                            ->required()
-                            ->native(false)
-                            ->minDate(fn(Get $get) => $get('date_from'))
-                            ->live(),
-                    ]),
             ]);
     }
 
     public function mount(): void
     {
-        $this->form->fill();
+        // Set the initial state of the form
+        $this->form->fill([
+            'device_id' => auth()->user()->iotDevices()
+                ->first()->id,
+        ]);
+
+        $this->loadData();
     }
 
     public function loadData()

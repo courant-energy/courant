@@ -19,4 +19,9 @@ class Reading extends Model
         return $this->belongsTo(Socket::class);
     }
 
+    public function scopeForProfile($query, $profileId)
+    {
+        return $query->where('profile_id', $profileId);
+    }
+
 }

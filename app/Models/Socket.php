@@ -25,7 +25,7 @@ class Socket extends Model
 
     public function scopeCurrentProfile($query)
     {
-        return $query->where('profile_id', Profile::current()->id);
+        return $query->where('profile_id', $this->profile_id);
     }
 
     public function scopeForDates($query, $startDate, $endDate)
@@ -34,4 +34,24 @@ class Socket extends Model
             $q->whereBetween('reading_time', [$startDate, $endDate]);
         });
     }
+
+    public function getCurrentPowerAttribute()
+    {
+        return $this->readings()
+            ->forProfile($this->profile_id)
+            ->latest()
+            ->first()
+            ?->power;
+    }
+
+    public function getCurrentPowerFactorAttribute()
+    {
+        return $this->readings()
+            ->forProfile($this->profile_id)
+            ->latest()
+            ->first()
+            ->power_factor ?? null;
+    }
+
+
 }
