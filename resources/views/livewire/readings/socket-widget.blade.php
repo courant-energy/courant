@@ -1,6 +1,6 @@
 <div>
     {{-- stats --}}
-    <div class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
+    <div class="grid grid-cols-1 gap-4 my-4 md:grid-cols-2">
         <h2 class="text-lg font-semibold md:col-span-2">Status</h2>
         <div class="hidden">
             <span class="text-gray-900"></span>
@@ -67,5 +67,5 @@
     </div>
 
     {{-- line graph --}}
-
+    @livewire('readings.energy-usage-graph', ['socket' => $socket], key($socket->id))
 </div>

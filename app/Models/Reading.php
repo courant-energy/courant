@@ -8,6 +8,10 @@ class Reading extends Model
 {
     protected $fillable = ['socket_id', 'voltage', 'current', 'power', 'energy', 'frequency', 'power_factor','profile_id','reading_time'];
 
+    protected $casts = [
+        'reading_time' => 'datetime',
+    ];
+
     public function iotDevice()
     {
         return $this->socket->iotDevice();

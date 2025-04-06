@@ -1,4 +1,6 @@
 <x-filament-panels::page>
+   
+
 
     <x-filament::section aside>
         <x-slot name="heading">
@@ -21,11 +23,7 @@
     </x-filament::section>
 
 
-    {{-- CARD 1: REALTIME CONSUMPTION --}}
-    {{-- Contents:
-        - Consumption Graph
-        - Statistics
-    --}}
+
 
     @if ($hasSelectedDevice)
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -42,12 +40,13 @@
                 @livewire('readings.socket-widget', ['socket' => $socket], key($socket->id))
 
 
-                {{-- stats --}}
 
 
             </x-filament::section>
         @endforeach
     @endif
+
+    
 
 
 </x-filament-panels::page>
