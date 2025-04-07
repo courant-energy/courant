@@ -79,6 +79,11 @@ class SocketResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->whereHas('iotDevice', function (Builder $query) {
+                    $query->where('user_id', auth()->id());
+                });
+            })
             ->defaultGroup(Group::make('iotDevice.name')
                 ->label('IoT Device Name')
                 ->collapsible())

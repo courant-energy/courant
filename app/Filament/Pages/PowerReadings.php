@@ -47,10 +47,19 @@ class PowerReadings extends Page implements HasForms
 
     public function mount(): void
     {
+        if (!auth()->user()->iotDevices()->exists()) {
+            Notification::make()
+                ->title('No devices found')
+                ->body('Please add a device to your account first in the IoT Devices section.')
+                ->danger()
+                ->send();
+            return;
+        }
+
         // Set the initial state of the form
         $this->form->fill([
             'device_id' => auth()->user()->iotDevices()
-                ->first()->id,
+                ->first()?->id,
         ]);
 
         $this->loadData();

@@ -26,10 +26,12 @@ class EnergyUsageGraph extends ChartWidget
         };
 
         $readings = $this->socket->readings()
+            ->forProfile($this->socket->profile_id)
             ->where('reading_time', '>=', $startDate)
             ->where('reading_time', '<=', now())
             ->orderBy('reading_time', 'asc')
             ->get();
+  
 
         if ($this->filter === 'week') {
             $readings = $readings->groupBy(function ($reading) {
