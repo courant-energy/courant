@@ -25,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+
         FilamentColor::register([
             'danger' => Color::Red,
             'gray' => Color::Zinc,
@@ -32,8 +34,9 @@ class AppServiceProvider extends ServiceProvider
             'primary' => Color::hex('#111111'),
             'success' => Color::Green,
             'warning' => Color::Amber,
+            'yellow' => Color::Yellow,
         ]);
-        
+
 
         FilamentIcon::register([
             'panels::sidebar.expand-button' => 'heroicon-o-bars-3',

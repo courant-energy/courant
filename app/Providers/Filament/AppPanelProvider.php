@@ -46,8 +46,10 @@ class AppPanelProvider extends PanelProvider
             ->databaseNotifications()
             // BRANDING
             ->brandLogo(asset('logo.svg'))
+            ->darkModeBrandLogo(asset('logo-dark.svg'))
             ->sidebarCollapsibleOnDesktop()
-            ->darkMode(false)
+            ->favicon(asset('favicon.svg'))
+            ->darkMode()
             ->navigationGroups([
                 'Device Management',
                 'Data & Insights',
