@@ -7,15 +7,21 @@ use App\Models\Reading;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Socket;
 use PhpMqtt\Client\Facades\MQTT;
+use App\Services\AnomalyDetectionService;
 
 class MqttService
 {
     /**
+     * The anomaly detection service instance.
+     */
+    protected $anomalyDetectionService;
+
+    /**
      * Create a new class instance.
      */
-    public function __construct()
+    public function __construct(AnomalyDetectionService $anomalyDetectionService)
     {
-        //
+        $this->anomalyDetectionService = $anomalyDetectionService;
     }
 
     /**
@@ -52,7 +58,66 @@ class MqttService
         $reading->save();
         \Log::info('Data readings stored successfully', ['reading' => $reading]);
 
+        // Check for anomalies in the new reading
+        try {
+            $anomalies = $this->anomalyDetectionService->detectAnomaly($reading);
+            
+            if ($anomalies) {
+                \Log::info('Anomalies detected in reading', [
+                    'reading_id' => $reading->id,
+                    'anomalies' => $anomalies,
+                    'socket_id' => $socket->id,
+                    'device_id' => $device->id
+                ]);
+                
+                // Notify the device owner via MQTT if configured
+                $this->notifyAnomalyViaMqtt($device, $socket, $anomalies);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error detecting anomalies', [
+                'error' => $e->getMessage(),
+                'reading_id' => $reading->id
+            ]);
+        }
+    }
 
+    /**
+     * Notify about anomalies via MQTT
+     */
+    protected function notifyAnomalyViaMqtt(IotDevice $device, Socket $socket, array $anomalies)
+    {
+        $profile = $socket->profile;
+        
+        // Skip if notifications are disabled for this profile
+        if ($profile && isset($profile->notify_on_anomaly) && !$profile->notify_on_anomaly) {
+            return;
+        }
+        
+        // Create notification payload
+        $payload = [
+            'type' => 'anomaly_notification',
+            'device_id' => $device->device_uuid,
+            'socket_id' => $socket->assigned_id,
+            'timestamp' => now()->toIso8601String(),
+            'anomalies' => array_keys($anomalies),
+            'message' => 'Potential device issue detected. Please check your device status.'
+        ];
+        
+        // Publish to device-specific topic
+        $topic = "device/{$device->device_uuid}/notifications";
+        
+        try {
+            MQTT::publish($topic, json_encode($payload));
+            \Log::info('Anomaly notification sent via MQTT', [
+                'topic' => $topic,
+                'device_id' => $device->id
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to publish anomaly notification', [
+                'error' => $e->getMessage(),
+                'topic' => $topic
+            ]);
+        }
     }
 
     /**
