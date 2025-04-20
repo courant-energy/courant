@@ -3,6 +3,9 @@
 namespace App\Filament\Widgets\Readings;
 
 use Filament\Widgets\ChartWidget;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use Illuminate\Support\Collection;
 
 class EnergyUsageGraph extends ChartWidget
 {
@@ -32,10 +35,14 @@ class EnergyUsageGraph extends ChartWidget
             ->where('reading_time', '<=', now())
             ->orderBy('reading_time', 'asc')
             ->get();
-  
+
+        // Generate time intervals based on filter
+        $timeIntervals = $this->generateTimeIntervals($startDate, now(), $this->filter);
+        
         if ($this->filter === 'past_hour') {
             // Raw data for past hour (usually already granular enough)
             // No grouping needed
+            $readings = $this->fillMissingTimePoints($readings, $timeIntervals, 'minute');
         } elseif ($this->filter === 'today') {
             $readings = $readings->groupBy(function ($reading) {
                 // Group by 10-minute intervals
@@ -49,6 +56,7 @@ class EnergyUsageGraph extends ChartWidget
                     'reading_time' => $group->first()->reading_time,
                 ];
             });
+            $readings = $this->fillMissingTimePoints($readings, $timeIntervals, '10minutes');
         } elseif ($this->filter === 'week') {
             $readings = $readings->groupBy(function ($reading) {
                 return $reading->reading_time->format('Y-m-d H'); // Group by hour
@@ -59,6 +67,7 @@ class EnergyUsageGraph extends ChartWidget
                     'reading_time' => $group->first()->reading_time,
                 ];
             });
+            $readings = $this->fillMissingTimePoints($readings, $timeIntervals, 'hour');
         } elseif ($this->filter === 'month') {
             $readings = $readings->groupBy(function ($reading) {
                 return $reading->reading_time->format('Y-m-d'); // Group by day
@@ -69,6 +78,7 @@ class EnergyUsageGraph extends ChartWidget
                     'reading_time' => $group->first()->reading_time,
                 ];
             });
+            $readings = $this->fillMissingTimePoints($readings, $timeIntervals, 'day');
         }
 
         $this->data = $readings->pluck('energy');
@@ -98,6 +108,98 @@ class EnergyUsageGraph extends ChartWidget
             ],
             'labels' => $this->labels,
         ];
+    }
+
+    /**
+     * Generate time intervals for the selected time period
+     */
+    protected function generateTimeIntervals(Carbon $startDate, Carbon $endDate, string $filter): array
+    {
+        $interval = match ($filter) {
+            'past_hour' => '1 minute',
+            'today' => '10 minutes',
+            'week' => '1 hour',
+            'month' => '1 day',
+            default => '1 hour',
+        };
+
+        $period = CarbonPeriod::create($startDate, $interval, $endDate);
+        $timePoints = [];
+
+        foreach ($period as $date) {
+            $format = match ($filter) {
+                'past_hour' => 'Y-m-d H:i',
+                'today' => 'Y-m-d H:i',
+                'week' => 'Y-m-d H',
+                'month' => 'Y-m-d',
+                default => 'Y-m-d H:i',
+            };
+            
+            if ($filter === 'today') {
+                $date = $date->setMinute(floor($date->minute / 10) * 10);
+            }
+            
+            $timePoints[] = $date->format($format);
+        }
+
+        return array_unique($timePoints);
+    }
+
+    /**
+     * Fill in missing time points with zero or previous value
+     */
+    protected function fillMissingTimePoints(Collection $readings, array $timeIntervals, string $interval): Collection
+    {
+        $filledReadings = collect();
+        $lastEnergy = 0;
+        $lastPowerFactor = 0;
+        
+        foreach ($timeIntervals as $timePoint) {
+            // Find if we have a reading for this time point
+            $found = false;
+            
+            foreach ($readings as $key => $reading) {
+                $format = match ($interval) {
+                    'minute' => 'Y-m-d H:i',
+                    '10minutes' => 'Y-m-d H:i',
+                    'hour' => 'Y-m-d H',
+                    'day' => 'Y-m-d',
+                    default => 'Y-m-d H:i',
+                };
+                
+                $readingTime = is_array($reading) 
+                    ? $reading['reading_time']->format($format)
+                    : $reading->reading_time->format($format);
+                
+                if ($readingTime === $timePoint) {
+                    $filledReadings->push($reading);
+                    $found = true;
+                    
+                    // Update last known values
+                    if (is_array($reading)) {
+                        $lastEnergy = $reading['energy'];
+                        $lastPowerFactor = $reading['power_factor'];
+                    } else {
+                        $lastEnergy = $reading->energy;
+                        $lastPowerFactor = $reading->power_factor;
+                    }
+                    
+                    break;
+                }
+            }
+            
+            // If no reading found for this time point, add a placeholder
+            if (!$found) {
+                $carbonTime = Carbon::createFromFormat($format, $timePoint);
+                $filledReadings->push([
+                    'energy' => $lastEnergy,
+                    'power_factor' => $lastPowerFactor,
+                    'reading_time' => $carbonTime,
+                ]);
+            }
+        }
+        
+        return $filledReadings;
     }
 
     protected function getFilters(): ?array
