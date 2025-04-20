@@ -90,6 +90,8 @@ class MqttSub extends Command
                                 $reading['power_factor'] = $reading['powerFactor'];
                                 unset($reading['powerFactor']);
                             }
+
+                            $reading['device_id'] = $deviceId; // Add device ID to each reading
                             
                             // Store each reading
                             $mqttService->storeDataReadings($reading);

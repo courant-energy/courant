@@ -65,6 +65,7 @@ class IotDeviceService
                 $socket = new $this->socket();
                 $socket->name = "Socket $i";
                 $socket->iot_device_id = $device->id;
+                $socket->assigned_id = $i; // Assign a unique ID to each socket
 
                 $socket->save();
             }

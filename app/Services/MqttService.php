@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\IotDevice;
 use App\Models\Reading;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Socket;
@@ -34,7 +35,6 @@ class MqttService
 
         // put to Reading model
         $reading = new Reading();
-        $reading->socket_id = $data['socket_id'];
         $reading->voltage = $data['voltage'];
         $reading->current = $data['current'];
         $reading->power = $data['power'];
@@ -42,8 +42,12 @@ class MqttService
         $reading->frequency = $data['frequency'];
         $reading->power_factor = $data['power_factor'];
         // get profile_id from socket model attrib profile_id
-        $socket = Socket::findOrFail($data['socket_id']);
+        $device = IotDevice::where('device_uuid', $data['device_id'])->firstOrFail();
+        $socket = $device->sockets()
+            ->where('assigned_id', $data['socket_id'])
+            ->firstOrFail();
         $reading->profile_id = $socket->profile_id;
+        $reading->socket_id = $socket->id;
         $reading->reading_time = now();
         $reading->save();
         \Log::info('Data readings stored successfully', ['reading' => $reading]);

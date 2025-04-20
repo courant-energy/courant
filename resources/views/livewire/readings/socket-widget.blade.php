@@ -32,7 +32,7 @@
             @endphp
 
             <h3 class="text-xl font-semibold {{ $textColorClass }}">
-                {{ $socket->currentPower ??  '0' }} W
+                {{ number_format($socket->currentPower ?? 0, 2) }} W
             </h3>
             <p class="text-sm text-gray-500">
                 Current Power

@@ -10,7 +10,7 @@ class EnergyUsageGraph extends ChartWidget
     public $socket;
     protected $data;
     protected $labels;
-    public ?string $filter = 'today';
+    public ?string $filter = 'past_hour';
     protected static ?string $pollingInterval = '5s';
     // colspanfull
     protected int|string|array $columnSpan = 2;
@@ -19,6 +19,7 @@ class EnergyUsageGraph extends ChartWidget
     protected function getData(): array
     {
         $startDate = match ($this->filter) {
+            'past_hour' => now()->subHour(),
             'week' => now()->subWeek(),
             'month' => now()->subMonth(),
             'today' => now()->subDay(),
@@ -32,8 +33,23 @@ class EnergyUsageGraph extends ChartWidget
             ->orderBy('reading_time', 'asc')
             ->get();
   
-
-        if ($this->filter === 'week') {
+        if ($this->filter === 'past_hour') {
+            // Raw data for past hour (usually already granular enough)
+            // No grouping needed
+        } elseif ($this->filter === 'today') {
+            $readings = $readings->groupBy(function ($reading) {
+                // Group by 10-minute intervals
+                return $reading->reading_time
+                    ->setMinute(floor($reading->reading_time->minute / 10) * 10)
+                    ->format('Y-m-d H:i');
+            })->map(function ($group) {
+                return [
+                    'energy' => $group->avg('energy'),
+                    'power_factor' => $group->avg('power_factor'),
+                    'reading_time' => $group->first()->reading_time,
+                ];
+            });
+        } elseif ($this->filter === 'week') {
             $readings = $readings->groupBy(function ($reading) {
                 return $reading->reading_time->format('Y-m-d H'); // Group by hour
             })->map(function ($group) {
@@ -87,11 +103,13 @@ class EnergyUsageGraph extends ChartWidget
     protected function getFilters(): ?array
     {
         return [
+            'past_hour' => 'Past Hour',
             'today' => 'Today',
             'week' => 'Last week',
             'month' => 'Last month',
         ];
     }
+
 
     protected function getType(): string
     {
@@ -100,7 +118,7 @@ class EnergyUsageGraph extends ChartWidget
 
     public function getDescription(): ?string
     {
-        return 'This graph helps MSMEs monitor energy usage and power factor. Efficient energy usage reduces costs, while maintaining a good power factor improves electrical efficiency and avoids penalties.';
+        return 'This graph helps MSMEs monitor energy usage and power factor. Efficient energy usage reduces costs, while maintaining a good power factor improves electrical efficiency and avoids penalties. (Update every 5 seconds)';
     }
 
     public function getHeading(): ?string
