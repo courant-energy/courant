@@ -11,26 +11,28 @@
         {{-- Power --}}
         <div>
             @php
-                $deviation = 0.05; // 5% deviation allowed
-                $lowerGreen = $socket->profile->expected_power * (1 - $deviation);
-                $upperGreen = $socket->profile->expected_power * (1 + $deviation);
-
                 $textColorClass = 'text-gray-900'; // Default color
+                
+                if ($socket->profile) {
+                    $deviation = 0.05; // 5% deviation allowed
+                    $lowerGreen = $socket->profile->expected_power * (1 - $deviation);
+                    $upperGreen = $socket->profile->expected_power * (1 + $deviation);
 
-                if (
-                    $socket->currentPower > $socket->profile->max_power_threshold ||
-                    $socket->currentPower < $socket->profile->min_power_threshold
-                ) {
-                    $textColorClass = 'text-red-600';
-                } elseif ($socket->currentPower >= $lowerGreen && $socket->currentPower <= $upperGreen) {
-                    $textColorClass = 'text-green-600';
-                } else {
-                    $textColorClass = 'text-yellow-500';
+                    if (
+                        $socket->currentPower > $socket->profile->max_power_threshold ||
+                        $socket->currentPower < $socket->profile->min_power_threshold
+                    ) {
+                        $textColorClass = 'text-red-600';
+                    } elseif ($socket->currentPower >= $lowerGreen && $socket->currentPower <= $upperGreen) {
+                        $textColorClass = 'text-green-600';
+                    } else {
+                        $textColorClass = 'text-yellow-500';
+                    }
                 }
             @endphp
 
             <h3 class="text-xl font-semibold {{ $textColorClass }}">
-                {{ $socket->currentPower }} W
+                {{ $socket->currentPower ??  '0' }} W
             </h3>
             <p class="text-sm text-gray-500">
                 Current Power

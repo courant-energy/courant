@@ -34,18 +34,18 @@
 
                 <x-filament::section aside>
                     <x-slot name="heading">
-                        {{ $socket->profile->name }}
+                        {{ $socket->profile?->name ?? 'No Profile Assigned' }}
                     </x-slot>
                     <x-slot name="description">
                         {{ $socket->name }}
+                        @if(!$socket->profile)
+                            <span class="block text-xs text-amber-500 mt-1">
+                                No profile assigned. Power thresholds and expected values unavailable.
+                            </span>
+                        @endif
                     </x-slot>
                     @livewire('readings.socket-widget', ['socket' => $socket], key($socket->id))
-
-
-
-
                 </x-filament::section>
-
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <div></div>
