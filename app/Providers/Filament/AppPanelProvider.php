@@ -31,6 +31,7 @@ class AppPanelProvider extends PanelProvider
             ->default()
             ->id('app')
             ->path('app')
+            // ->plugin(\TomatoPHP\FilamentPWA\FilamentPWAPlugin::make())
             // AUTHENTICATION
             ->login()
             ->registration(Registration::class)

@@ -13,7 +13,8 @@
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.0",
-        "php-mqtt/laravel-client": "^1.6"
+        "php-mqtt/laravel-client": "^1.6",
+        "tomatophp/filament-pwa": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
