@@ -158,14 +158,15 @@ class EnergyUsageGraph extends ChartWidget
             // Find if we have a reading for this time point
             $found = false;
             
-            foreach ($readings as $key => $reading) {
-                $format = match ($interval) {
-                    'minute' => 'Y-m-d H:i',
-                    '10minutes' => 'Y-m-d H:i',
-                    'hour' => 'Y-m-d H',
-                    'day' => 'Y-m-d',
-                    default => 'Y-m-d H:i',
-                };
+            $format = match ($interval) {
+                'minute' => 'Y-m-d H:i',
+                '10minutes' => 'Y-m-d H:i',
+                'hour' => 'Y-m-d H',
+                'day' => 'Y-m-d',
+                default => 'Y-m-d H:i',
+            };
+            
+            foreach ($readings as $reading) {
                 
                 $readingTime = is_array($reading) 
                     ? $reading['reading_time']->format($format)
