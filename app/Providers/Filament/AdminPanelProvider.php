@@ -10,12 +10,14 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -35,6 +37,12 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->widgets([])
+            ->brandLogo(asset('logo.svg'))
+            ->darkModeBrandLogo(asset('logo-dark.svg'))
+            ->sidebarCollapsibleOnDesktop()
+            ->favicon(asset('favicon.svg'))
+            ->darkMode()
+            ->renderHook(PanelsRenderHook::BODY_END, fn() => Blade::render("@vite('resources/js/app.js')"))
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
