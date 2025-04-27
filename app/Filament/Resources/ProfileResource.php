@@ -69,6 +69,76 @@ class ProfileResource extends Resource
                                 ->live(),
                         ])->columns(3),
                     ])->aside(),
+                    
+                Forms\Components\Section::make('Advanced Monitoring Settings')
+                    ->description('Configure anomaly detection and notification preferences')
+                    ->collapsible()
+                    ->aside()
+                    ->schema([
+                        Forms\Components\Toggle::make('notify_on_anomaly')
+                            ->label('Enable Anomaly Notifications')
+                            ->helperText('Receive alerts when readings fall outside thresholds')
+                            ->default(true),
+                            
+                        Forms\Components\Select::make('alert_sensitivity')
+                            ->label('Alert Sensitivity')
+                            ->options([
+                                'low' => 'Low (less alerts)',
+                                'medium' => 'Medium (balanced)',
+                                'high' => 'High (more alerts)',
+                            ])
+                            ->default('medium')
+                            ->helperText('Adjust how sensitive the system is to minor threshold violations')
+                            ->required(),
+                            
+                        Forms\Components\CheckboxList::make('notification_channels')
+                            ->label('Notification Channels')
+                            ->options([
+                                'app' => 'In-App Notifications',
+                                'email' => 'Email Alerts', 
+                                'sms' => 'SMS Alerts',
+                            ])
+                            ->default(['app'])
+                            ->helperText('Choose how you want to be notified about anomalies'),
+                            
+                        Forms\Components\Group::make([
+                            Forms\Components\TextInput::make('voltage_threshold_high')
+                                ->label('High Voltage Threshold')
+                                ->numeric()
+                                ->minValue(220)
+                                ->maxValue(270)
+                                ->default(250)
+                                ->suffix('V')
+                                ->helperText('Maximum acceptable voltage'),
+                                
+                            Forms\Components\TextInput::make('voltage_threshold_low')
+                                ->label('Low Voltage Threshold')
+                                ->numeric()
+                                ->minValue(180)
+                                ->maxValue(220)
+                                ->default(210)
+                                ->suffix('V')
+                                ->helperText('Minimum acceptable voltage'),
+                        ])->columns(2),
+                        
+                        Forms\Components\Group::make([
+                            Forms\Components\TextInput::make('current_threshold_high')
+                                ->label('High Current Threshold')
+                                ->numeric()
+                                ->minValue(0)
+                                ->suffix('A')
+                                ->helperText('Maximum acceptable current'),
+                                
+                            Forms\Components\TextInput::make('power_factor_threshold')
+                                ->label('Power Factor Threshold')
+                                ->numeric()
+                                ->minValue(0)
+                                ->maxValue(1)
+                                ->default(0.85)
+                                ->step(0.01)
+                                ->helperText('Minimum acceptable power factor (0-1)'),
+                        ])->columns(2),
+                    ]),
             ]);
     }
 

@@ -21,6 +21,8 @@ class PowerReadings extends Page implements HasForms
 
     protected static ?string $navigationGroup = 'Data & Insights';
 
+    protected static ?string $title = 'Power Monitoring';
+
     protected static string $view = 'filament.pages.power-readings';
 
     public ?array $data = [];
