@@ -28,4 +28,11 @@ class Reading extends Model
         return $query->where('profile_id', $profileId);
     }
 
+    protected static function booted()
+    {
+        static::created(function ($reading) {
+            
+        });
+    }
+
 }

@@ -15,13 +15,12 @@ class SocketTable extends BaseWidget
 
     public Profile $record;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = "full";
 
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Sockets Using This Profile')
-            ->description('List of sockets currently associated with this profile')
+            ->heading('Socket Using This Profile')
             ->emptyStateHeading('No sockets found')
             ->emptyStateDescription('No sockets are currently using this profile.')
             ->emptyStateIcon('heroicon-o-light-bulb')
@@ -39,24 +38,24 @@ class SocketTable extends BaseWidget
                 }
             )
             ->paginated(false)
-            ->contentGrid([
-                'default' => 2
-            ])
+            // ->contentGrid([
+            //     'default' => 2
+            // ])
             ->columns([
                 Tables\Columns\Layout\Stack::make([
                     Tables\Columns\TextColumn::make('iotDevice.name')
                         ->label('IoT Device Name')
-                        ->weight(FontWeight::Bold)
-                        ->searchable(),
+                        ->weight(FontWeight::Bold),
+                        // ->searchable(),
                     Tables\Columns\TextColumn::make('iotDevice.device_uuid')
                         ->label('Device UUID')
                         ->color('gray')
                         ->size(TextColumnSize::ExtraSmall)
-                        ->weight(FontWeight::ExtraLight)
-                        ->searchable(),
+                        ->weight(FontWeight::ExtraLight),
+                        // ->searchable(),
                     Tables\Columns\TextColumn::make('name')
                         ->label('Socket Name')
-                        ->searchable(),
+                        // ->searchable(),
                 ])
             ]);
     }
