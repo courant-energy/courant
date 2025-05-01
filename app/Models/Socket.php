@@ -13,7 +13,7 @@ class Socket extends Model
 
     public function iotDevice()
     {
-        return $this->belongsTo(IOTDevice::class);
+        return $this->belongsTo(IotDevice::class);
     }
 
     public function profile()
