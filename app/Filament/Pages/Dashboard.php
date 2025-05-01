@@ -2,7 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\EnergyCostCalculator;
 use Filament\Pages\Page;
+use Filament\Widgets\AccountWidget;
 
 class Dashboard extends Page
 {
@@ -11,4 +13,12 @@ class Dashboard extends Page
     // protected static ?string $navigationGroup = 'Main Navigation';
 
     protected static string $view = 'filament.pages.dashboard';
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            AccountWidget::class,
+            EnergyCostCalculator::class,
+        ];
+    }
 }
