@@ -146,28 +146,25 @@ class EnergyUsageGraph extends ChartWidget
     }
 
     /**
-     * Fill in missing time points with zero or previous value
+     * Fill in missing time points with zeros
      */
     protected function fillMissingTimePoints(Collection $readings, array $timeIntervals, string $interval): Collection
     {
         $filledReadings = collect();
-        $lastEnergy = 0;
-        $lastPowerFactor = 0;
+        
+        $format = match ($interval) {
+            'minute' => 'Y-m-d H:i',
+            '10minutes' => 'Y-m-d H:i',
+            'hour' => 'Y-m-d H',
+            'day' => 'Y-m-d',
+            default => 'Y-m-d H:i',
+        };
         
         foreach ($timeIntervals as $timePoint) {
             // Find if we have a reading for this time point
             $found = false;
             
-            $format = match ($interval) {
-                'minute' => 'Y-m-d H:i',
-                '10minutes' => 'Y-m-d H:i',
-                'hour' => 'Y-m-d H',
-                'day' => 'Y-m-d',
-                default => 'Y-m-d H:i',
-            };
-            
             foreach ($readings as $reading) {
-                
                 $readingTime = is_array($reading) 
                     ? $reading['reading_time']->format($format)
                     : $reading->reading_time->format($format);
@@ -175,26 +172,17 @@ class EnergyUsageGraph extends ChartWidget
                 if ($readingTime === $timePoint) {
                     $filledReadings->push($reading);
                     $found = true;
-                    
-                    // Update last known values
-                    if (is_array($reading)) {
-                        $lastEnergy = $reading['energy'];
-                        $lastPowerFactor = $reading['power_factor'];
-                    } else {
-                        $lastEnergy = $reading->energy;
-                        $lastPowerFactor = $reading->power_factor;
-                    }
-                    
                     break;
                 }
             }
             
-            // If no reading found for this time point, add a placeholder
+            // If no reading found for this time point, add a zero placeholder
             if (!$found) {
                 $carbonTime = Carbon::createFromFormat($format, $timePoint);
+                
                 $filledReadings->push([
-                    'energy' => $lastEnergy,
-                    'power_factor' => $lastPowerFactor,
+                    'energy' => 0,
+                    'power_factor' => 0,
                     'reading_time' => $carbonTime,
                 ]);
             }
