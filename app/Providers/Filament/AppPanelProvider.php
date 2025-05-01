@@ -60,6 +60,7 @@ class AppPanelProvider extends PanelProvider
             ->theme(asset('css/filament/app/theme.css'))
             // ->topNavigation()
             ->renderHook(PanelsRenderHook::BODY_END, fn() => Blade::render("@vite('resources/js/app.js')"))
+            ->renderHook(PanelsRenderHook::HEAD_END, fn() => Blade::render("@filamentPWA')"))
             // MIDDLEWARE
             ->middleware([
                 EncryptCookies::class,
