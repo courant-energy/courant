@@ -41,4 +41,14 @@ class Learning extends Model
             }
         });
     }
+
+    public function getDescriptionAttribute()
+    {
+        return Str::limit(strip_tags($this->content), 150);
+    }
+
+    public function getImageUrlAttribute()
+    {
+        return $this->cover_image ? asset($this->cover_image) : null;
+    }
 }
