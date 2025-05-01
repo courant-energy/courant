@@ -15,10 +15,7 @@ class Profile extends Model
         'notify_on_anomaly',        // Boolean flag for notifications
         'alert_sensitivity',         // enum: 'low', 'medium', 'high'
         'notification_channels',     // JSON field for channels (app, email, sms)
-        'voltage_threshold_high',    // High voltage threshold
-        'voltage_threshold_low',     // Low voltage threshold
-        'current_threshold_high',    // High current threshold
-        'power_factor_threshold'     // Power factor threshold (typically 0.85 minimum)
+       
     ];
 
     protected $casts = [
