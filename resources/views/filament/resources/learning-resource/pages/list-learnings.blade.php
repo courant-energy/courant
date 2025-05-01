@@ -1,8 +1,37 @@
-@vite('resources/css/filament/app/theme.css')
+{{-- @vite('resources/css/filament/app/theme.css') --}}
 <x-filament-panels::page>
 
-    <div class="grid md:grid-cols-2 gap-4">
+    <div class="mb-6">
+        <div class="flex items-center gap-2">
+            <div class="relative flex-1">
+                <x-filament::input.wrapper>
+                    <x-filament::input wire:model="search" placeholder="Search learning resources..." type="text" />
+                </x-filament::input.wrapper>
+                @if ($search)
+                    <button wire:click="clearSearch"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                        title="Clear search">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                @endif
+            </div>
+            <x-filament::button wire:click="performSearch" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clip-rule="evenodd" />
+                </svg>
+                Search
+            </x-filament::button>
+        </div>
+    </div>
 
+    <div class="grid md:grid-cols-2 gap-4">
 
         @forelse ($records as $record)
             <div class="bg-white shadow rounded-lg p-4 col-span-1">
@@ -45,20 +74,24 @@
                 <x-filament::button tag="a" href="{{ $this->showRoute($record->slug) }}">
                     Learn More </x-filament::button>
             </div>
-        @empty
-            <div class="col-span-full text-center text-gray-500 min-h-[200px]">
-                <div class="">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-20 mx-auto mb-2 rounded-full p-4 bg-gray-100 text-gray-400">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m6 4.125 2.25 2.25m0 0 2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
-                    </svg>
+            @empty
+                <div class="col-span-full text-center text-gray-500 min-h-[200px]">
+                    <div class="">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="h-20 w-20 mx-auto mb-2 rounded-full p-4 bg-gray-100 text-gray-400">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m6 4.125 2.25 2.25m0 0 2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+                        </svg>
+                    </div>
+
+                    @if ($search)
+                        No learning resources found matching "{{ $search }}".
+                    @else
+                        No learning resources found.
+                    @endif
                 </div>
+            @endforelse
 
-                No learning resources found.
-            </div>
-        @endforelse
+        </div>
 
-    </div>
-
-</x-filament-panels::page>
+    </x-filament-panels::page>
