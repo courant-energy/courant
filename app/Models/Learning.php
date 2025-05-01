@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+
+class Learning extends Model
+{
+    protected $fillable = ['name', 'slug', 'content', 'type', 'status', 'cover_image'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($learningResource) {
+            if (empty($learningResource->slug)) {
+                $slug = Str::slug($learningResource->name);
+                $originalSlug = $slug;
+                $count = 1;
+
+                while (static::whereSlug($slug)->exists()) {
+                    $slug = $originalSlug . '-' . $count++;
+                }
+                $learningResource->slug = $slug;
+            }
+        });
+
+        static::updating(function ($learningResource) {
+            // Optionally, regenerate slug on update if name changes and slug is not manually set
+            if ($learningResource->isDirty('name') && !$learningResource->isDirty('slug')) {
+                 $slug = Str::slug($learningResource->name);
+                 $originalSlug = $slug;
+                 $count = 1;
+
+                 // Ensure uniqueness, excluding the current model instance
+                 while (static::whereSlug($slug)->where('id', '!=', $learningResource->id)->exists()) {
+                     $slug = $originalSlug . '-' . $count++;
+                 }
+                 $learningResource->slug = $slug;
+            }
+        });
+    }
+}

@@ -72,6 +72,10 @@ class SocketResource extends Resource
                                     })
                             )
                             ->helperText('Select the profile for this socket'),
+                        Forms\Components\Toggle::make('state')
+                            ->label('Power State')
+                            ->helperText('Remotely control the power state of the socket')
+                            ->required()
                     ]),
             ]);
     }
@@ -121,6 +125,21 @@ class SocketResource extends Resource
                         ->searchable()
                         ->sortable()
                         ->color(fn($state) => $state === 'No Profile Selected' ? 'danger' : null),
+                    Tables\Columns\TextColumn::make('state')
+                        ->label('Power State')
+                        ->badge()
+                        ->icon(fn($state) => $state ? 'heroicon-o-light-bulb' : 'heroicon-o-light-bulb-off')
+                        ->color(
+                            function ($state) {
+                                return match ($state) {
+                                    'On' => 'success',
+                                    'Off' => 'danger',
+                                };
+                            }
+                        )
+                        ->getStateUsing(function (Socket $record) {
+                            return $record->state ? 'On' : 'Off';
+                        }),
                 ]),
             ])
             ->filters([

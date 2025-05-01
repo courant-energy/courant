@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Socket extends Model
 {
-    protected $fillable = ['name', 'iot_device_id', 'profile_id', 'assigned_id'];
+    protected $fillable = ['name', 'iot_device_id', 'profile_id', 'assigned_id', 'state'];
+    protected $casts = [
+        'state' => 'boolean',
+    ];
 
     public function iotDevice()
     {
