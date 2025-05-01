@@ -67,11 +67,48 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
 
     public function  getFilamentAvatarUrl(): ?string
     {
-        return $this->profile ? Storage::url($this->profile) : null; 
+        return $this->profile ? Storage::url($this->profile) : null;
     }
 
     public function iotDevices()
     {
         return $this->hasMany(IotDevice::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (User $user) {
+            try {
+                // Delete related IotDevices
+                $user->iotDevices()->each(function ($device) {
+                    try {
+                        // Use forceDelete() if IotDevice uses SoftDeletes and you want permanent deletion
+                        $device->delete();
+                    } catch (\Exception $e) {
+                        // Log or handle the error for individual device deletion
+                        \Log::error("Error deleting IotDevice ID {$device->id} for User ID {$user->id}: " . $e->getMessage());
+                        // Optionally rethrow or handle differently depending on requirements
+                    }
+                });
+            } catch (\Exception $e) {
+                // Log or handle the error for fetching/iterating devices
+                \Log::error("Error processing IotDevices for User ID {$user->id} during deletion: " . $e->getMessage());
+                // Depending on the desired behavior, you might want to stop the user deletion
+                // throw $e; // Re-throw to potentially stop the user deletion process
+            }
+
+            // Delete the user's profile picture from storage if it exists
+            if ($user->profile) {
+                try {
+                    if (Storage::disk('public')->exists($user->profile)) {
+                        Storage::disk('public')->delete($user->profile);
+                    }
+                } catch (\Exception $e) {
+                    // Log or handle the error for profile picture deletion
+                    \Log::error("Error deleting profile picture {$user->profile} for User ID {$user->id}: " . $e->getMessage());
+                    // Decide if this error should prevent user deletion. Usually, it shouldn't.
+                }
+            }
+        });
     }
 }
