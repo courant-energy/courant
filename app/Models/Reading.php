@@ -28,9 +28,26 @@ class Reading extends Model
         return $query->where('profile_id', $profileId);
     }
 
+    public function getComputedPowerAttribute()
+    {
+        return $this->voltage * $this->current;
+    }
+
+    public function getComputedEnergyAttribute()
+    {
+        return $this->power * $this->reading_time->diffInHours();
+    }
+
     protected static function booted()
     {
         static::created(function ($reading) {
+            // get the device
+            $device = $reading->socket->iotDevice;
+            // update the last seen time
+            $device->update([
+                'last_seen_at' => now(),
+                'status' => 'online',
+            ]);
             
         });
     }

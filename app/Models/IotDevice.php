@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class IotDevice extends Model
 {
     protected $table = 'iot_devices';
-    protected $fillable = ['name', 'device_uuid', 'user_id', 'is_active', 'password','socket_count'];
+    protected $fillable = ['name', 'device_uuid', 'user_id', 'is_active', 'password','socket_count', 'last_seen_at', 'status'];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'last_seen_at' => 'datetime',
     ];
 
     protected $hidden = [
