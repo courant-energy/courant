@@ -1,9 +1,10 @@
 <?php
 
-use App\Console\Commands\RunPredictionAnalysis;
+use App\Console\Commands\CheckDeviceStatus;
 use Illuminate\Foundation\Console\ClosureCommand;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
@@ -11,6 +12,11 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command(RunPredictionAnalysis::class)
-    ->dailyAt('02:00')
-    ->appendOutputTo(storage_path('logs/prediction-analysis.log'));
+Schedule::command(CheckDeviceStatus::class)
+    ->everyMinute()
+    ->onFailure(function () {
+        // Handle failure, e.g., send a notification or log the error
+        Log::error('CheckDeviceStatus command failed.');
+    });
+
+    
