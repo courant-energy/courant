@@ -24,6 +24,13 @@ class Help extends Page implements HasForms
 
     protected static string $view = 'filament.pages.help';
 
+    protected function getFooterWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\SubmittedQueryTable::class,
+        ];
+    }
+
     public function form(Form $form): Form
     {
         return $form
