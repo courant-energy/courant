@@ -38,6 +38,11 @@ class Profile extends Model
         return $this->hasMany(Socket::class);
     }
 
+    public function readings()
+    {
+        return $this->hasMany(Reading::class);
+    }
+
     public function getIsActiveAttribute()
     {
         return $this->sockets()->exists();
