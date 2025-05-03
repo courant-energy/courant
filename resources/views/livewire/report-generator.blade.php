@@ -31,7 +31,7 @@
             <!-- Cost per kWh (only for cost analysis) -->
             <div x-show="$wire.reportType === 'cost_analysis'">
                 <label for="costPerKwh" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cost per
-                    kWh ($)</label>
+                    kWh (PHP)</label>
                 <input type="number" id="costPerKwh" wire:model.live="costPerKwh" step="0.01" min="0.01"
                     max="1"
                     class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
@@ -145,7 +145,7 @@
                 <div x-show="$wire.reportType === 'cost_analysis'" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                     <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Total Energy Cost</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
-                        ${{ isset($reportData['summary']['total_cost']) ? number_format($reportData['summary']['total_cost'], 2) : 0 }}
+                        PHP {{ isset($reportData['summary']['total_cost']) ? number_format($reportData['summary']['total_cost'], 2) : 0 }}
                     </p>
                 </div>
                 <div x-show="$wire.reportType === 'cost_analysis'" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
@@ -157,7 +157,7 @@
                 <div x-show="$wire.reportType === 'cost_analysis'" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                     <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Average Daily Cost</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
-                        ${{ isset($reportData['summary']['average_daily_cost']) ? number_format($reportData['summary']['average_daily_cost'], 2) : 0 }}
+                        PHP {{ isset($reportData['summary']['average_daily_cost']) ? number_format($reportData['summary']['average_daily_cost'], 2) : 0 }}
                     </p>
                 </div>
 

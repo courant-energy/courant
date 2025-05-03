@@ -12,7 +12,7 @@
         <div class="summary-grid">
             <div class="summary-item">
                 <div class="summary-label">Total Energy Cost</div>
-                <div class="summary-value">${{ number_format($reportData['summary']['total_cost'], 2) }}</div>
+                <div class="summary-value">PHP {{ number_format($reportData['summary']['total_cost'], 2) }}</div>
             </div>
             
             <div class="summary-item">
@@ -22,7 +22,7 @@
             
             <div class="summary-item">
                 <div class="summary-label">Average Daily Cost</div>
-                <div class="summary-value">${{ number_format($reportData['summary']['average_daily_cost'], 2) }}</div>
+                <div class="summary-value">PHP {{ number_format($reportData['summary']['average_daily_cost'], 2) }}</div>
             </div>
         </div>
     </div>
@@ -31,14 +31,14 @@
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Cost ($)</th>
+                <th>Cost (PHP)</th>
             </tr>
         </thead>
         <tbody>
             @foreach($reportData['labels'] as $index => $label)
                 <tr>
                     <td>{{ $label }}</td>
-                    <td>${{ number_format($reportData['datasets'][0]['data'][$index], 2) }}</td>
+                    <td>PHP {{ number_format($reportData['datasets'][0]['data'][$index], 2) }}</td>
                 </tr>
             @endforeach
         </tbody>

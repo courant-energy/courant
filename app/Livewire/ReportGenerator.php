@@ -16,7 +16,7 @@ class ReportGenerator extends Component
     public string $startDate;
     public string $endDate;
     public ?int $selectedProfileId = null;
-    public float $costPerKwh = 0.12;
+    public float $costPerKwh = 11;
     public array $reportData = [];
     public bool $isLoading = false;
     public string $chartType = 'bar';

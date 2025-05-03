@@ -197,7 +197,7 @@ class ReportService
             'labels' => $formattedData['labels'],
             'datasets' => [
                 [
-                    'label' => 'Energy Cost ($)',
+                    'label' => 'Energy Cost (PHP)',
                     'data' => $formattedData['values'],
                 ]
             ],
@@ -464,7 +464,7 @@ class ReportService
                 break;
                 
             case 'cost_analysis':
-                fputcsv($output, ['Date', 'Cost ($)']);
+                fputcsv($output, ['Date', 'Cost (PHP)']);
                 $labels = $data['labels'];
                 $values = $data['datasets'][0]['data'];
                 
