@@ -105,6 +105,20 @@ class IotDeviceResource extends Resource
                         ->size(TextColumnSize::ExtraSmall)
                         ->weight(FontWeight::ExtraLight)
                         ->searchable(),
+                    Tables\Columns\TextColumn::make('last_seen_at')
+                        ->label('Status')
+                        ->getStateUsing(function (IotDevice $record) {
+                            if (is_null($record->last_seen_at)) {
+                                return 'Offline';
+                            }
+                            return $record->last_seen_at->diffInMinutes() < 15 ? 'Online' : 'Offline';
+                        })
+                        ->badge()
+                        ->color(fn (string $state): string => match ($state) {
+                            'Online' => 'success',
+                            'Offline' => 'danger',
+                            default => 'gray',
+                        }),
                 ])
             ])
             ->filters([
