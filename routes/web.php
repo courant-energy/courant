@@ -12,4 +12,8 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
+Route::get('login', function () {
+    return redirect()->route('filament.app.auth.login');
+})->name('login');
+
 // require __DIR__.'/auth.php';
