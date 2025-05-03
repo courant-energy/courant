@@ -34,7 +34,7 @@ class Question extends Model
         $this->update(['status' => 'resolved']);
 
         Notification::make()
-            ->title('Ticket'. $this->ticket_id.' marked as resolved.')
+            ->title('Ticket ['. $this->ticket_id.'] marked as resolved.')
             ->success()
             ->sendToDatabase(
                 $this->user,
