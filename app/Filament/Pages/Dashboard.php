@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\AlertsTableWidget;
+use App\Filament\Widgets\DeviceStatsWidget;
 use App\Filament\Widgets\EnergyCostCalculator;
 use Filament\Pages\Page;
 use Filament\Widgets\AccountWidget;
@@ -17,8 +19,12 @@ class Dashboard extends Page
     protected function getHeaderWidgets(): array
     {
         return [
+            DeviceStatsWidget::class,
+            AlertsTableWidget::class,
             AccountWidget::class,
             EnergyCostCalculator::class,
         ];
     }
+    
+   
 }
