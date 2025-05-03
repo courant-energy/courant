@@ -14,8 +14,8 @@ class InsightsGenerator extends Component
     public $error = null;
     public $generation_in_progress = false;
     public $cooldown_minutes_remaining = 0;
-    public $max_attempts = 3; // Maximum attempts allowed within the time window
-    public $decay_minutes = 60; // Time window in minutes
+    public $max_attempts = 5; // Maximum attempts allowed within the time window
+    public $decay_minutes = 20; // Time window in minutes
 
     protected $listeners = ['refreshInsights'];
 

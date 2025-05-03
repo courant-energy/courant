@@ -11,7 +11,7 @@
         <div class="border-t border-gray-200 dark:border-gray-700 pt-8">
             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">AI-Powered Insights</h2>
             <p class="text-gray-500 dark:text-gray-400 mb-6">
-                Generate actionable insights from your data using Gemini AI. The system analyzes your readings, profiles, and alerts from the past 30 days to identify energy wastage, anomalies, and potential equipment failures.
+                Discover helpful insights from your data with AI. We'll analyze your readings, profiles, and alerts from the past month to pinpoint energy waste, detect anomalies, and warn you about possible equipment issues.
             </p>
             @livewire('insights-generator')
         </div>
