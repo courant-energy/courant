@@ -19,9 +19,9 @@ class Dashboard extends Page
     protected function getHeaderWidgets(): array
     {
         return [
+            AccountWidget::class,
             DeviceStatsWidget::class,
             AlertsTableWidget::class,
-            AccountWidget::class,
             EnergyCostCalculator::class,
         ];
     }
