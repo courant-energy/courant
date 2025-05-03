@@ -17,7 +17,8 @@ class Alert extends Model
         'severity',
         'resolved',
         'resolved_at',
-        'resolution_notes'
+        'resolution_notes',
+        'reading_id',
     ];
 
     protected $casts = [
@@ -41,50 +42,12 @@ class Alert extends Model
         return $this->belongsTo(Profile::class);
     }
     
-    /**
-     * Get the Reading(s) associated with this alert via an accessor.
-     *
-     * This retrieves Reading models based on IDs stored within the JSON 'data' column.
-     * It mimics a relationship but uses an accessor due to the non-standard
-     * way the related IDs are stored. Accessed via `$alert->readings`.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getReadingsAttribute()
+    public function reading()
     {
-        $readingIds = [];
-        $data = $this->data ?? []; // Use null coalescing for safety
-
-        // Check for a single ID under 'reading_id' key
-        if (isset($data['reading_id'])) {
-            $readingIds[] = $data['reading_id'];
-        }
-        // Check for multiple IDs under 'reading_ids' key (ensure it's an array)
-        elseif (isset($data['reading_ids']) && is_array($data['reading_ids'])) {
-            $readingIds = $data['reading_ids'];
-        }
-
-        // Filter out any invalid entries (e.g., null, non-numeric, zero)
-        $validIds = array_filter($readingIds, function ($id) {
-            return is_numeric($id) && $id > 0;
-        });
-
-        // Cast valid IDs to integers for the query
-        $validIds = array_map('intval', $validIds);
-
-        if (!empty($validIds)) {
-            // Assuming Reading model exists and is properly namespaced (e.g., App\Models\Reading)
-            // Use whereIn to fetch all matching readings
-            // Ensure the Reading model is imported at the top of the file: use App\Models\Reading;
-            return Reading::whereIn('id', $validIds)->get();
-        }
-
-        // Return an empty Eloquent collection if no valid IDs are found
-        // Ensure Eloquent Collection is imported: use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-        return new \Illuminate\Database\Eloquent\Collection();
-        // Alternative: return Reading::whereIn('id', [])->get();
+        return $this->belongsTo(Reading::class);
     }
 
+   
     /**
      * Scope for unresolved alerts
      */

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Services\AnomalyService;
 
 class Reading extends Model
 {
@@ -48,10 +49,24 @@ class Reading extends Model
                 'last_seen_at' => now(),
                 'status' => 'online',
             ]);
-            
+
+            // Trigger anomaly detection
+            if ($reading->profile_id) {
+                try {
+                    $anomalyService = app(AnomalyService::class);
+                    $anomalyService->processReadingForAnomalyDetection($reading);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to trigger anomaly detection', [
+                        'reading_id' => $reading->id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
         });
     }
 
-    
-
+    public function alert()
+    {
+        return $this->hasOne(Alert::class);
+    }
 }
