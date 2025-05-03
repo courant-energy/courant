@@ -343,7 +343,7 @@
 
             // Configure chart based on report and chart type
             const chartConfig = {
-                type: @js($chartType),
+                type: $wire.chartType,
                 data: chartData,
                 options: {
                     responsive: true,
@@ -389,7 +389,7 @@
             };
 
             // Remove scales for pie chart
-            if (@js($chartType) === 'pie') {
+            if ($wire.chartType === 'pie') {
                 delete chartConfig.options.scales;
             }
 

@@ -16,13 +16,23 @@ class AnomalyService
      * Check if the reading is an anomaly.
      *
      * @param  \App\Models\Reading  $reading
+     * @param  \App\Models\User  $user
      * @return bool
      */
-    public function isAnomaly($reading)
+    public function isAnomaly($reading, $user)
     {
         // Check based on your user defined criteria
+        if ($reading->power > $reading->profile->max_power_threshold) {
+            return true;
+        }
 
+        if ($reading->power < $reading->profile->min_power_threshold) {
+            return true;
+        }
+        
         // Check based on the ML service
+        
+
 
     }
 
@@ -38,10 +48,6 @@ class AnomalyService
         // Check based on your user defined criteria
 
         // Check based on the ML service
-        
+
     }
-
-
-
-
 }

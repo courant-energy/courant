@@ -33,7 +33,7 @@
             @foreach($reportData['labels'] as $index => $label)
                 <tr>
                     <td>{{ $label }}</td>
-                    <td>{{ number_format($reportData['datasets'][0]['data'][$index], 2) }}</td>
+                    <td>{{ number_format($reportData['datasets'][0]['data'][$index], 3) }}</td>
                 </tr>
             @endforeach
         </tbody>

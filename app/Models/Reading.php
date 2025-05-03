@@ -52,4 +52,6 @@ class Reading extends Model
         });
     }
 
+    
+
 }

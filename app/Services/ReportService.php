@@ -13,6 +13,21 @@ use Illuminate\Support\Facades\DB;
 class ReportService
 {
     /**
+     * @var EnergyCalculationService
+     */
+    protected $energyCalculationService;
+    
+    /**
+     * Create a new service instance.
+     *
+     * @param EnergyCalculationService $energyCalculationService
+     */
+    public function __construct(EnergyCalculationService $energyCalculationService)
+    {
+        $this->energyCalculationService = $energyCalculationService;
+    }
+
+    /**
      * Generate energy consumption report data
      *
      * @param string $timeRange daily|weekly|monthly
@@ -23,20 +38,71 @@ class ReportService
      */
     public function generateEnergyConsumptionReport(string $timeRange, Carbon $startDate, Carbon $endDate, ?int $profileId = null): array
     {
-        $query = Reading::query()
-            ->select(
-                DB::raw('SUM(energy) as total_energy'),
-                DB::raw('DATE(reading_time) as date')
-            )
-            ->whereBetween('reading_time', [$startDate, $endDate])
-            ->groupBy(DB::raw('DATE(reading_time)'));
-
+        $profiles = [];
         if ($profileId) {
-            // Filter by profile_id
-            $query->where('profile_id', $profileId);
+            $profiles = Profile::where('id', $profileId)->get();
+        } else {
+            $profiles = Profile::whereHas('sockets')->get();
         }
 
-        $rawData = $query->get();
+        // Structure to hold energy data by date
+        $energyByDate = [];
+        foreach ($profiles as $profile) {
+            // Use the EnergyCalculationService to calculate energy consumption
+            $totalEnergy = $this->energyCalculationService->calculateEnergyConsumption(
+                $profile,
+                $startDate->format('Y-m-d H:i:s'),
+                $endDate->format('Y-m-d H:i:s')
+            );
+
+            // For daily reporting, we need to split the energy by day
+            if ($timeRange === 'daily') {
+                $period = CarbonPeriod::create($startDate, '1 day', $endDate);
+                foreach ($period as $date) {
+                    $dayStart = $date->copy()->startOfDay();
+                    $dayEnd = $date->copy()->endOfDay();
+                    $formattedDate = $dayStart->format('Y-m-d');
+                    
+                    // Calculate energy for this specific day
+                    $dayEnergy = $this->energyCalculationService->calculateEnergyConsumption(
+                        $profile,
+                        $dayStart->format('Y-m-d H:i:s'),
+                        $dayEnd->format('Y-m-d H:i:s')
+                    );
+                    
+                    if (!isset($energyByDate[$formattedDate])) {
+                        $energyByDate[$formattedDate] = 0;
+                    }
+                    $energyByDate[$formattedDate] += $dayEnergy;
+                }
+            }
+        }
+
+        // Convert our energy data into a collection that matches the expected format
+        $rawData = collect();
+        foreach ($energyByDate as $date => $energy) {
+            $rawData->push((object)[
+                'date' => $date,
+                'total_energy' => $energy
+            ]);
+        }
+
+        // If not daily or no data yet (for weekly/monthly), use the total for the period
+        if (empty($energyByDate)) {
+            $totalEnergyAllProfiles = $profiles->sum(function ($profile) use ($startDate, $endDate) {
+                return $this->energyCalculationService->calculateEnergyConsumption(
+                    $profile,
+                    $startDate->format('Y-m-d H:i:s'),
+                    $endDate->format('Y-m-d H:i:s')
+                );
+            });
+            
+            // For weekly or monthly, add a single entry representing the total period
+            $rawData->push((object)[
+                'date' => $startDate->format('Y-m-d'),
+                'total_energy' => $totalEnergyAllProfiles
+            ]);
+        }
         
         // Format data based on time range
         $formattedData = $this->formatTimeSeriesData($rawData, $timeRange, $startDate, $endDate);
@@ -51,7 +117,7 @@ class ReportService
             ],
             'summary' => [
                 'total_energy' => $rawData->sum('total_energy'),
-                'average_daily' => $rawData->avg('total_energy') ?? 0,
+                'average_daily' => $rawData->count() > 0 ? $rawData->sum('total_energy') / $rawData->count() : 0,
             ]
         ];
     }
@@ -68,29 +134,64 @@ class ReportService
      */
     public function generateCostAnalysisReport(string $timeRange, Carbon $startDate, Carbon $endDate, float $costPerKwh = 0.12, ?int $profileId = null): array
     {
-        $query = Reading::query()
-            ->select(
-                DB::raw('SUM(energy) as total_energy'),
-                DB::raw('DATE(reading_time) as date')
-            )
-            ->whereBetween('reading_time', [$startDate, $endDate])
-            ->groupBy(DB::raw('DATE(reading_time)'));
-
+        $profiles = [];
         if ($profileId) {
-            // Filter by profile_id
-            $query->where('profile_id', $profileId);
+            $profiles = Profile::where('id', $profileId)->get();
+        } else {
+            $profiles = Profile::whereHas('sockets')->get();
         }
 
-        $rawData = $query->get();
-        
-        // Calculate costs
-        $costsData = $rawData->map(function ($item) use ($costPerKwh) {
-            $item->cost = $item->total_energy * $costPerKwh;
-            return $item;
-        });
+        // Structure to hold energy data by date
+        $energyByDate = [];
+        foreach ($profiles as $profile) {
+            // For daily reporting, we need to split the energy by day
+            if ($timeRange === 'daily') {
+                $period = CarbonPeriod::create($startDate, '1 day', $endDate);
+                foreach ($period as $date) {
+                    $dayStart = $date->copy()->startOfDay();
+                    $dayEnd = $date->copy()->endOfDay();
+                    $formattedDate = $dayStart->format('Y-m-d');
+                    
+                    // Calculate energy for this specific day using the service
+                    $dayEnergy = $this->energyCalculationService->calculateEnergyConsumption(
+                        $profile,
+                        $dayStart->format('Y-m-d H:i:s'),
+                        $dayEnd->format('Y-m-d H:i:s')
+                    );
+                    
+                    if (!isset($energyByDate[$formattedDate])) {
+                        $energyByDate[$formattedDate] = 0;
+                    }
+                    $energyByDate[$formattedDate] += $dayEnergy;
+                }
+            } else {
+                // For weekly/monthly, calculate the total for the entire period
+                $totalEnergy = $this->energyCalculationService->calculateEnergyConsumption(
+                    $profile,
+                    $startDate->format('Y-m-d H:i:s'),
+                    $endDate->format('Y-m-d H:i:s')
+                );
+                
+                $formattedDate = $startDate->format('Y-m-d');
+                if (!isset($energyByDate[$formattedDate])) {
+                    $energyByDate[$formattedDate] = 0;
+                }
+                $energyByDate[$formattedDate] += $totalEnergy;
+            }
+        }
+
+        // Create cost data from energy data
+        $rawData = collect();
+        foreach ($energyByDate as $date => $energy) {
+            $rawData->push((object)[
+                'date' => $date,
+                'total_energy' => $energy,
+                'cost' => $energy * $costPerKwh
+            ]);
+        }
         
         // Format data based on time range
-        $formattedData = $this->formatTimeSeriesData($costsData, $timeRange, $startDate, $endDate, 'cost');
+        $formattedData = $this->formatTimeSeriesData($rawData, $timeRange, $startDate, $endDate, 'cost');
         
         return [
             'labels' => $formattedData['labels'],
@@ -101,9 +202,9 @@ class ReportService
                 ]
             ],
             'summary' => [
-                'total_cost' => $costsData->sum('cost'),
+                'total_cost' => $rawData->sum('cost'),
                 'total_energy' => $rawData->sum('total_energy'),
-                'average_daily_cost' => $costsData->avg('cost') ?? 0,
+                'average_daily_cost' => $rawData->count() > 0 ? $rawData->sum('cost') / $rawData->count() : 0,
             ]
         ];
     }
@@ -253,14 +354,14 @@ class ReportService
     /**
      * Format time series data based on time range
      *
-     * @param Collection $data
+     * @param Illuminate\Support\Collection $data
      * @param string $timeRange
      * @param Carbon $startDate
      * @param Carbon $endDate
      * @param string $valueField
      * @return array
      */
-    protected function formatTimeSeriesData(Collection $data, string $timeRange, Carbon $startDate, Carbon $endDate, string $valueField = 'total_energy'): array
+    protected function formatTimeSeriesData( $data, string $timeRange, Carbon $startDate, Carbon $endDate, string $valueField = 'total_energy'): array
     {
         $labels = [];
         $values = [];
@@ -273,7 +374,7 @@ class ReportService
                     $labels[] = $date->format('M d');
                     
                     $record = $data->firstWhere('date', $formattedDate);
-                    $values[] = $record ? round($record->{$valueField}, 2) : 0;
+                    $values[] = $record ? round($record->{$valueField}, 3) : 0;
                 }
                 break;
                 
@@ -291,7 +392,7 @@ class ReportService
                         return $date->between($weekStart, $weekEnd);
                     });
                     
-                    $values[] = $weekData->sum($valueField) ? round($weekData->sum($valueField), 2) : 0;
+                    $values[] = $weekData->sum($valueField) ? round($weekData->sum($valueField), 3) : 0;
                 }
                 break;
                 
@@ -309,7 +410,7 @@ class ReportService
                         return $date->between($monthStart, $monthEnd);
                     });
                     
-                    $values[] = $monthData->sum($valueField) ? round($monthData->sum($valueField), 2) : 0;
+                    $values[] = $monthData->sum($valueField) ? round($monthData->sum($valueField), 3) : 0;
                 }
                 break;
         }
