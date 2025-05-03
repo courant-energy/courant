@@ -36,7 +36,10 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
-            ->widgets([])
+            ->widgets([
+                \App\Filament\Admin\Widgets\AdminStatsWidget::class,
+                \App\Filament\Admin\Widgets\LatestQuestionsWidget::class,
+            ])
             ->plugin(\TomatoPHP\FilamentPWA\FilamentPWAPlugin::make())
             ->brandLogo(asset('logo.svg'))
             ->darkModeBrandLogo(asset('logo-dark.svg'))
