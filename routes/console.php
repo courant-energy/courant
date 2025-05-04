@@ -7,16 +7,19 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    /** @var ClosureCommand $this */
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
 
 Schedule::command(CheckDeviceStatus::class)
     ->everyMinute()
     ->onFailure(function () {
         // Handle failure, e.g., send a notification or log the error
         Log::error('CheckDeviceStatus command failed.');
+    });
+
+Schedule::command('queue:work --stop-when-empty')
+    ->everyMinute()
+    ->onFailure(function () {
+        // Handle failure, e.g., send a notification or log the error
+        Log::error('Queue work command failed.');
     });
 
     
