@@ -29,9 +29,6 @@ class Profile extends Model
         'notify_on_anomaly' => true,
         'alert_sensitivity' => 'medium',
         'notification_channels' => '["app"]',
-        'voltage_threshold_high' => 250,
-        'voltage_threshold_low' => 210,
-        'power_factor_threshold' => 0.85
     ];
 
     public function sockets()
