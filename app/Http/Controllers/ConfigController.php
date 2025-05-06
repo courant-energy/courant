@@ -44,10 +44,17 @@ class ConfigController extends Controller
 
         // Format the response
         $socketConfigs = $sockets->map(function ($socket) {
+            // If socket has no profile, set default values: max_power 3000 and is_on true
+            if (!$socket->profile) {
+                return [
+                    'assigned_id' => $socket->assigned_id,
+                    'maximum_power' => 3000,
+                    'is_on' => true,
+                ];
+            }
+            
             // Get maximum power from the associated profile or default to 0
-            $maxPower = $socket->profile ? 
-                $socket->profile->max_power_threshold ?? 0 : 
-                0;
+            $maxPower = $socket->profile->max_power_threshold ?? 0;
 
             return [
                 'assigned_id' => $socket->assigned_id,
