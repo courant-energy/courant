@@ -19,6 +19,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 
 class IotDeviceResource extends Resource
 {
@@ -57,13 +58,13 @@ class IotDeviceResource extends Resource
                             ->live(debounce: 500)
                             ->confirmed()
                             ->revealable()
+                            ->dehydrateStateUsing(fn($state) => $state)
+                            ->dehydrated(fn($state) => filled($state))
                             ->rules([
                                 'min:12',
-                                'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/',
                             ])
                             ->validationMessages([
                                 'min' => 'Password must be at least 12 characters long',
-                                'regex' => 'Password must include at least one uppercase letter, one number, and one special character',
                             ]),
 
                         Forms\Components\TextInput::make('password_confirmation')
@@ -114,7 +115,7 @@ class IotDeviceResource extends Resource
                             return $record->last_seen_at->diffInMinutes() < 15 ? 'Online' : 'Offline';
                         })
                         ->badge()
-                        ->color(fn (string $state): string => match ($state) {
+                        ->color(fn(string $state): string => match ($state) {
                             'Online' => 'success',
                             'Offline' => 'danger',
                             default => 'gray',

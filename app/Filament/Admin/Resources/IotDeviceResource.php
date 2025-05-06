@@ -37,7 +37,9 @@ class IotDeviceResource extends Resource
                     ->label('Password')
                     ->helperText('Enter the password of the IoT device')
                     ->password()
-                    ->live(debounce: 500)
+                    ->dehydrateStateUsing(fn($state) => $state)
+                    ->dehydrated(fn($state) => filled($state))
+                    ->live()
                     ->confirmed()
                     ->revealable(),
 
