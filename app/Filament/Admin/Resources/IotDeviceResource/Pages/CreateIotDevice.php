@@ -15,6 +15,7 @@ class CreateIotDevice extends CreateRecord
     {
         // Generate a unique UUID for the device
         $data['name'] = $data['device_uuid'];
+        $data['is_active'] = false;
         return $data;
     }
     
