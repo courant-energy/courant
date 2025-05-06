@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConfigController;
 use App\Models\User;
 use App\Services\GeminiService;
 use Illuminate\Http\Request;
@@ -9,8 +10,5 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/data',function (Request $request) {
-    $service = new GeminiService();
-    $data = $service->exportAllData(user:User::find(1));
-    return response()->json(json_decode($data));
-});
+Route::get('/config', [ConfigController::class, 'getConfig']);
+

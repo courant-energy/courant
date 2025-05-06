@@ -4,24 +4,19 @@ namespace App\Services;
 
 use App\Models\IotDevice;
 use App\Models\Reading;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Socket;
 use PhpMqtt\Client\Facades\MQTT;
-use App\Services\AnomalyDetectionService;
 
 class MqttService
 {
     /**
-     * The anomaly detection service instance.
-     */
-    protected $anomalyDetectionService;
-
-    /**
      * Create a new class instance.
      */
-    public function __construct(AnomalyDetectionService $anomalyDetectionService)
+    public function __construct()
     {
-        $this->anomalyDetectionService = $anomalyDetectionService;
+        // Constructor no longer needs AnomalyDetectionService
     }
 
     /**
@@ -29,119 +24,78 @@ class MqttService
      */
     public function storeDataReadings($data)
     {
-        // Ensure power_factor exists using powerFactor if needed
-        if (!isset($data['power_factor']) && isset($data['powerFactor'])) {
-            $data['power_factor'] = $data['powerFactor'];
-        }
-        
+        \Log::debug('Storing data readings', ['data' => $data]);
         // Validate data
-        $this->validate($data);
+        $this->validateReadingData($data);
 
-        \Log::info('Storing data readings', ['data' => $data]);
-
-        // put to Reading model
-        $reading = new Reading();
-        $reading->voltage = $data['voltage'];
-        $reading->current = $data['current'];
-        $reading->power = $data['power'];
-        $reading->energy = $data['energy'];
-        $reading->frequency = $data['frequency'];
-        $reading->power_factor = $data['power_factor'];
-        // get profile_id from socket model attrib profile_id
-        $device = IotDevice::where('device_uuid', $data['device_id'])->firstOrFail();
-        $socket = $device->sockets()
-            ->where('assigned_id', $data['socket_id'])
-            ->firstOrFail();
-        $reading->profile_id = $socket->profile_id;
-        $reading->socket_id = $socket->id;
-        $reading->reading_time = now();
-        $reading->save();
-        \Log::info('Data readings stored successfully', ['reading' => $reading]);
-
-        // Check for anomalies in the new reading
         try {
-            $anomalies = $this->anomalyDetectionService->detectAnomaly($reading);
+            // Get device by uuid
+            $device = IotDevice::where('device_uuid', $data['device_id'])->first();
             
-            if ($anomalies) {
-                \Log::info('Anomalies detected in reading', [
-                    'reading_id' => $reading->id,
-                    'anomalies' => $anomalies,
-                    'socket_id' => $socket->id,
-                    'device_id' => $device->id
-                ]);
-                
-                // Notify the device owner via MQTT if configured
-                $this->notifyAnomalyViaMqtt($device, $socket, $anomalies);
+            if (!$device) {
+                \Log::warning('Device not found', ['device_uuid' => $data['device_id']]);
+                return;
             }
+            
+            // Find the socket based on socket_id
+            $socket = $device->sockets()
+                ->where('assigned_id', $data['socket_id'])
+                ->first();
+                
+            if (!$socket) {
+                \Log::warning('Socket not found', ['device_uuid' => $data['device_id'], 'socket_id' => $data['socket_id']]);
+                return;
+            }
+
+            // Create and save reading
+            $reading = new Reading([
+                'voltage' => $data['voltage'],
+                'current' => $data['current'],
+                'power' => $data['power'],
+                'energy' => $data['energy'],
+                'frequency' => $data['frequency'],
+                'power_factor' => $data['power_factor'],
+                'profile_id' => $socket->profile_id,
+                'socket_id' => $socket->id,
+                'reading_time' => now()
+            ]);
+            
+            $reading->save();
+            \Log::debug('Reading stored', [
+                'device' => $data['device_id'], 
+                'socket' => $data['socket_id'],
+                'power' => $data['power']
+            ]);
         } catch (\Exception $e) {
-            \Log::error('Error detecting anomalies', [
+            \Log::error('Failed to store reading', [
                 'error' => $e->getMessage(),
-                'reading_id' => $reading->id
+                'data' => $data
             ]);
         }
     }
 
     /**
-     * Notify about anomalies via MQTT
+     * Validate reading data
      */
-    protected function notifyAnomalyViaMqtt(IotDevice $device, Socket $socket, array $anomalies)
+    public function validateReadingData($data)
     {
-        $profile = $socket->profile;
-        
-        // Skip if notifications are disabled for this profile
-        if ($profile && isset($profile->notify_on_anomaly) && !$profile->notify_on_anomaly) {
-            return;
-        }
-        
-        // Create notification payload
-        $payload = [
-            'type' => 'anomaly_notification',
-            'device_id' => $device->device_uuid,
-            'socket_id' => $socket->assigned_id,
-            'timestamp' => now()->toIso8601String(),
-            'anomalies' => array_keys($anomalies),
-            'message' => 'Potential device issue detected. Please check your device status.'
-        ];
-        
-        // Publish to device-specific topic
-        $topic = "device/{$device->device_uuid}/notifications";
-        
-        try {
-            MQTT::publish($topic, json_encode($payload));
-            \Log::info('Anomaly notification sent via MQTT', [
-                'topic' => $topic,
-                'device_id' => $device->id
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Failed to publish anomaly notification', [
-                'error' => $e->getMessage(),
-                'topic' => $topic
-            ]);
-        }
-    }
-
-    /**
-     * Validate the data
-     */
-    public function validate($data)
-    {
-        \Log::info('Validating data', ['data' => $data]);
+        \Log::debug('Validating reading data', ['data' => $data]);
 
         $rules = [
+            'device_id' => 'required|string',
             'socket_id' => 'required|integer',
             'voltage' => 'required|numeric',
             'current' => 'required|numeric',
             'power' => 'required|numeric',
             'energy' => 'required|numeric',
             'frequency' => 'required|numeric',
-            'power_factor' => 'required_without:powerFactor|numeric',
-            'powerFactor' => 'required_without:power_factor|numeric',
+            'power_factor' => 'required|numeric',
         ];
 
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
-            \Log::error('Validation failed', ['errors' => $validator->errors()]);
+            \Log::error('Validation failed for reading data', ['errors' => $validator->errors()]);
             throw new \Exception('Validation failed: ' . $validator->errors()->first());
         }
     }
@@ -160,6 +114,11 @@ class MqttService
     {
         try {
             \Log::info('Handling alert', ['topic' => $topic, 'data' => $data]);
+            
+            // Process and store the alert if we have necessary data
+            if (is_array($data) && isset($data['device_id']) && isset($data['alert_type'])) {
+                $this->processAndStoreAlert($data);
+            }
             
             // Prepare response message
             $responseMessage = is_array($data) ? json_encode([
@@ -187,9 +146,6 @@ class MqttService
             
             \Log::info('Alert response published', ['topic' => $topic, 'qos' => $qos]);
             
-            // Additional alert processing can be done here
-            // Examples: Send email notifications, push notifications, etc.
-            
             return true;
         } catch (\Exception $e) {
             \Log::error('Failed to handle alert', [
@@ -198,6 +154,150 @@ class MqttService
                 'trace' => $e->getTraceAsString()
             ]);
             return false;
+        }
+    }
+    
+    /**
+     * Process and store an alert in the database
+     *
+     * @param array $alertData The alert data
+     * @return \App\Models\Alert|null The created alert or null if failed
+     */
+    protected function processAndStoreAlert(array $alertData)
+    {
+        try {
+            // Find the device
+            $device = IotDevice::where('device_uuid', $alertData['device_id'])->first();
+            if (!$device) {
+                \Log::warning('Device not found for alert', ['device_uuid' => $alertData['device_id']]);
+                return null;
+            }
+            
+            // Get socket ID
+            $socketId = $alertData['socket_id'] ?? $alertData['socket'] ?? null;
+            if (!$socketId) {
+                \Log::warning('Socket ID not found in alert data', ['alert' => $alertData]);
+                return null;
+            }
+            
+            // Find the socket
+            $socket = $device->sockets()->where('assigned_id', $socketId)->first();
+            if (!$socket) {
+                \Log::warning('Socket not found', ['device_id' => $device->id, 'socket_id' => $socketId]);
+                return null;
+            }
+            
+            // Get the profile (if available)
+            $profileId = $socket->profile_id;
+            
+            // Determine severity
+            $severity = $alertData['severity'] ?? 'warning';
+            
+            // Create the alert message if not provided
+            $message = $alertData['message'] ?? $this->createAlertMessage($alertData);
+            
+            // Create alert data structure
+            $alert = new \App\Models\Alert([
+                'iot_device_id' => $device->id,
+                'socket_id' => $socket->id,
+                'profile_id' => $profileId,
+                'type' => 'device_' . $alertData['alert_type'],
+                'message' => $message,
+                'severity' => $severity,
+                'data' => $this->formatAlertData($alertData),
+                'resolved' => false,
+            ]);
+            
+            $alert->save();
+            
+            \Log::info('Alert stored in database', [
+                'alert_id' => $alert->id,
+                'type' => $alert->type,
+                'device' => $device->name
+            ]);
+            
+            return $alert;
+        } catch (\Exception $e) {
+            \Log::error('Failed to process and store alert', [
+                'error' => $e->getMessage(),
+                'data' => $alertData
+            ]);
+            return null;
+        }
+    }
+    
+    /**
+     * Format alert data for storage
+     *
+     * @param array $alertData The raw alert data
+     * @return array Formatted data for storage
+     */
+    protected function formatAlertData(array $alertData): array
+    {
+        $formattedData = [
+            'alert_type' => $alertData['alert_type'],
+            'timestamp' => $alertData['timestamp'] ?? time(),
+            'detected_at' => now()->toIso8601String(),
+        ];
+        
+        // Add additional data based on alert type
+        switch ($alertData['alert_type']) {
+            case 'power_exceeded':
+                $formattedData['current_power'] = $alertData['current_power'] ?? null;
+                $formattedData['max_power'] = $alertData['max_power'] ?? null;
+                break;
+                
+            case 'overcurrent':
+                $formattedData['current'] = $alertData['current'] ?? null;
+                $formattedData['max_current'] = $alertData['max_current'] ?? null;
+                break;
+                
+            case 'overvoltage':
+                $formattedData['voltage'] = $alertData['voltage'] ?? null;
+                $formattedData['max_voltage'] = $alertData['max_voltage'] ?? null;
+                break;
+                
+            case 'undervoltage':
+                $formattedData['voltage'] = $alertData['voltage'] ?? null;
+                $formattedData['min_voltage'] = $alertData['min_voltage'] ?? null;
+                break;
+                
+            case 'low_power_factor':
+                $formattedData['power_factor'] = $alertData['power_factor'] ?? null;
+                $formattedData['min_power_factor'] = $alertData['min_power_factor'] ?? null;
+                break;
+        }
+        
+        return $formattedData;
+    }
+    
+    /**
+     * Create a human-readable alert message
+     */
+    protected function createAlertMessage(array $alertData): string
+    {
+        $socketId = $alertData['socket_id'] ?? $alertData['socket'] ?? 'unknown';
+        
+        switch ($alertData['alert_type']) {
+            case 'power_exceeded':
+                $currentPower = $alertData['current_power'] ?? 'unknown';
+                $maxPower = $alertData['max_power'] ?? 'unknown';
+                return "Power exceeded on socket {$socketId}: {$currentPower}W (max: {$maxPower}W)";
+                
+            case 'overcurrent':
+                $current = $alertData['current'] ?? 'unknown';
+                return "Overcurrent detected on socket {$socketId}: {$current}A";
+                
+            case 'overvoltage':
+                $voltage = $alertData['voltage'] ?? 'unknown';
+                return "Overvoltage detected on socket {$socketId}: {$voltage}V";
+                
+            case 'low_power_factor':
+                $powerFactor = $alertData['power_factor'] ?? 'unknown';
+                return "Low power factor on socket {$socketId}: {$powerFactor}";
+                
+            default:
+                return "Alert on socket {$socketId}: {$alertData['alert_type']}";
         }
     }
 

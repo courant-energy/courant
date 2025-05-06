@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Filament\Notifications\Notification;
 
 class Alert extends Model
 {
@@ -149,5 +150,33 @@ class Alert extends Model
             default:
                 return ucwords(str_replace('_', ' ', $baseType));
         }
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($alert) {
+            // find the device and socket then turn off the socket
+            $device = $alert->iotDevice;
+            $socket = $device->sockets()->where('assigned_id', $alert->socket_id)->first();
+            if ($socket) {
+                $socket->update(['state' => false]);
+            }
+            // Send a detailed notification to the user about the alert
+            $severity = ucfirst($alert->severity);
+            $type = $alert->getReadableTypeAttribute();
+            $deviceName = $device->name ?? $device->device_uuid;
+            $socketName = $socket ? "Socket #{$socket->assigned_id}" : 'Unknown Socket';
+
+            Notification::make()
+                ->title("{$severity} Alert: {$type}")
+                ->body("A {$alert->severity} alert has been detected for device '{$deviceName}' on {$socketName}. " .
+                      "The socket has been automatically turned off for safety. Please check the device status.")
+                ->icon('heroicon-o-exclamation-triangle')
+                ->danger()
+                ->sendToDatabase(User::find($device->user_id));
+
+        });
     }
 }
