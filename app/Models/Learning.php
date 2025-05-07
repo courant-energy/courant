@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -27,6 +28,8 @@ class Learning extends Model
             }
         });
 
+        
+
         static::updating(function ($learningResource) {
             // Optionally, regenerate slug on update if name changes and slug is not manually set
             if ($learningResource->isDirty('name') && !$learningResource->isDirty('slug')) {
@@ -41,6 +44,16 @@ class Learning extends Model
                  $learningResource->slug = $slug;
             }
         });
+
+        static::updated(function ($learningResource) {
+            if($learningResource->status == 'published') {
+                Notification::make()
+                    ->title($learningResource->name . ' has been published')    
+                    ->body('Check out the new learning resource that has been published to save more energy and cost.')
+                    ->success()
+                    ->sendToDatabase(User::all());
+            }
+        });
     }
 
     public function getDescriptionAttribute()
@@ -52,4 +65,6 @@ class Learning extends Model
     {
         return $this->cover_image ? Storage::url($this->cover_image) : null;
     }
+
+    
 }
