@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Learning extends Model
@@ -49,6 +50,6 @@ class Learning extends Model
 
     public function getImageUrlAttribute()
     {
-        return $this->cover_image ? asset($this->cover_image) : null;
+        return $this->cover_image ? Storage::url($this->cover_image) : null;
     }
 }
