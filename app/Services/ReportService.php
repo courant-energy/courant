@@ -338,7 +338,7 @@ class ReportService
                     'severity' => $alert->severity,
                     'message' => $alert->message,
                     'profile' => $profile ? $profile->name : 'Unknown',
-                    'reading_value' => $reading->power ?? 0,
+                    'reading_value' => $reading->power ?? "N/A",
                     'timestamp' => $alert->created_at->format('Y-m-d H:i:s'),
                 ];
             }),
