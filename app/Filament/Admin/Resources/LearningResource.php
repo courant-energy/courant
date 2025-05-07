@@ -71,7 +71,6 @@ class LearningResource extends Resource
                     ->schema([
                         Forms\Components\FileUpload::make('cover_image')
                             ->image()
-                            ->directory('learning-resources/covers')
                             ->label('Cover Image')
                             ->columnSpanFull(),
                             
@@ -79,8 +78,6 @@ class LearningResource extends Resource
                             ->required()
                             ->columnSpanFull()
                             ->placeholder('Write your content here...')
-                            ->fileAttachmentsDisk('public')
-                            ->fileAttachmentsDirectory('learning-resources/attachments')
                             ->label('Article Content'),
                     ]),
             ]);
