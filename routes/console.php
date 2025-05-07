@@ -22,4 +22,11 @@ Schedule::command('queue:work --stop-when-empty')
         Log::error('Queue work command failed.');
     });
 
-    
+Schedule::command('queue:work --queue=anomaly_detection --sleep=3 --tries=3 --stop-when-empty')
+    ->everyMinute()
+    ->withoutOverlapping()
+    ->onFailure(function () {
+        // Handle failure
+        Log::error('Anomaly detection queue worker failed.');
+    });
+
