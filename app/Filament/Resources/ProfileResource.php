@@ -44,11 +44,7 @@ class ProfileResource extends Resource
                                 ->placeholder('e.g., 100')
                                 ->suffix('W')
                                 ->helperText('Normal operating power in watts')
-                                ->live()
-                                ->afterStateUpdated(
-                                    fn($state, Set $set) =>
-                                    $set('min_power_threshold', min((int)($state * 0.9), $state - 10))
-                                ),
+                                ->live(),
                             Forms\Components\TextInput::make('max_power_threshold')
                                 ->required()
                                 ->integer()
@@ -63,13 +59,14 @@ class ProfileResource extends Resource
                                 ->integer()
                                 ->maxValue(fn(Get $get) => (int) $get('expected_power'))
                                 ->minValue(0)
+                                ->default(0)
                                 ->placeholder('e.g., 80')
                                 ->suffix('W')
                                 ->helperText('Minimum acceptable power threshold in watts')
                                 ->live(),
                         ])->columns(3),
                     ])->aside(),
-                    
+
                 Forms\Components\Section::make('Advanced Monitoring Settings')
                     ->description('Configure anomaly detection and notification preferences')
                     ->collapsible()
@@ -79,7 +76,7 @@ class ProfileResource extends Resource
                             ->label('Enable Anomaly Notifications')
                             ->helperText('Receive alerts when readings fall outside thresholds')
                             ->default(true),
-                            
+
                         Forms\Components\Select::make('alert_sensitivity')
                             ->label('Alert Sensitivity')
                             ->options([
@@ -90,17 +87,17 @@ class ProfileResource extends Resource
                             ->default('medium')
                             ->helperText('Adjust how sensitive the system is to minor threshold violations')
                             ->required(),
-                            
+
                         Forms\Components\CheckboxList::make('notification_channels')
                             ->label('Notification Channels')
                             ->options([
                                 'app' => 'In-App Notifications',
-                                'email' => 'Email Alerts', 
+                                'email' => 'Email Alerts',
                                 // 'sms' => 'SMS Alerts',
                             ])
                             ->default(['app'])
                             ->helperText('Choose how you want to be notified about anomalies'),
-                     
+
                     ]),
             ]);
     }
