@@ -327,7 +327,7 @@ class ReportService
                 
                 // Get reading data safely
                 $reading = null;
-                $readings = $alert->readings; // Using the custom accessor
+                $readings = $alert->readings ?? collect(); // Handle null case
                 if ($readings->isNotEmpty()) {
                     $reading = $readings->first();
                 }
