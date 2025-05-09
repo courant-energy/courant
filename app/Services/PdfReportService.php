@@ -50,6 +50,7 @@ class PdfReportService
         $pdf = PDF::loadView($viewName, [
             'reportData' => $reportData,
             'title' => $title,
+            'companyName' => Auth()->user()->company_name,
             'profileName' => $profileName,
             'reportPeriod' => $reportPeriod,
             'generatedAt' => now()->format('M d, Y H:i'),

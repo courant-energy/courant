@@ -20,10 +20,20 @@ class Registration extends BaseRegister
                     $this->getFirstNameFormComponent(),
                     $this->getLastNameFormComponent(),
                 ])->columns(2),
+                $this->getCompanyNameFormComponent(),
                 $this->getEmailFormComponent(),
                 $this->getPasswordFormComponent(),
                 $this->getPasswordConfirmationFormComponent(),
             ]);
+    }
+
+    protected function getCompanyNameFormComponent(): Component
+    {
+        return TextInput::make('company_name')
+            ->label('Company Name')
+            ->required()
+            ->maxLength(255)
+            ->autofocus();
     }
 
     protected function getFirstNameFormComponent(): Component

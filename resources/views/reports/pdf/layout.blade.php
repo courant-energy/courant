@@ -103,6 +103,7 @@
         <img src="{{ public_path('logo.svg') }}" alt="Logo" class="logo">
         <h1>{{ $title }}</h1>
         <div class="meta">
+            <p>Company: {{ $companyName }}</p>
             <p>Period: {{ $reportPeriod }}</p>
             <p>Device: {{ $profileName }}</p>
             <p>Generated: {{ $generatedAt }}</p>
