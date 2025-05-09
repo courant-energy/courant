@@ -34,6 +34,9 @@ class AlertsTableWidget extends BaseWidget implements HasTable
             ->paginated(false)
             ->query(
                 Alert::query()
+                    ->whereHas('iotDevice', function (Builder $query) {
+                        $query->where('user_id', auth()->id());
+                    })
                     ->latest()
                     ->take(5)
             )

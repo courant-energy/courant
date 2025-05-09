@@ -81,7 +81,9 @@ class DeviceStatsWidget extends BaseWidget implements HasForms
             }
         } else {
             // Calculate for all profiles
-            $profiles = Profile::whereHas('sockets')->get();
+            $profiles = Profile::whereHas('sockets')
+            ->where('user_id', '=', auth()->id())
+            ->get();
             foreach ($profiles as $profile) {
                 $todayEnergy += $this->energyCalculationService->calculateEnergyConsumption(
                     $profile,
