@@ -19,9 +19,10 @@ class PdfReportService
      * @param Carbon $startDate
      * @param Carbon $endDate
      * @param int|null $profileId
+     * @param string|null $companyName
      * @return \Barryvdh\DomPDF\PDF
      */
-    public function generatePdf(array $reportData, string $reportType, string $timeRange, Carbon $startDate, Carbon $endDate, ?int $profileId = null): \Barryvdh\DomPDF\PDF
+    public function generatePdf(array $reportData, string $reportType, string $timeRange, Carbon $startDate, Carbon $endDate, ?int $profileId = null, ?string $companyName = null): \Barryvdh\DomPDF\PDF
     {
         $title = $this->getReportTitle($reportType, $timeRange);
         $profileName = 'All Profiles';
@@ -50,7 +51,7 @@ class PdfReportService
         $pdf = PDF::loadView($viewName, [
             'reportData' => $reportData,
             'title' => $title,
-            'companyName' => Auth()->user()->company_name,
+            'companyName' => $companyName,
             'profileName' => $profileName,
             'reportPeriod' => $reportPeriod,
             'generatedAt' => now()->format('M d, Y H:i'),

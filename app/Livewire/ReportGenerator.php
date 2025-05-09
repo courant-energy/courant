@@ -111,28 +111,26 @@ class ReportGenerator extends Component
 
     public function downloadPdf()
     {
-        $pdfReportService = app(PdfReportService::class);
+        $user = auth()->user();
         
-        $startDate = Carbon::parse($this->startDate);
-        $endDate = Carbon::parse($this->endDate)->endOfDay();
-        
-        $pdf = $pdfReportService->generatePdf(
+        // Dispatch job to generate PDF in the background
+        \App\Jobs\GeneratePdfReport::dispatch(
             $this->reportData,
             $this->reportType,
             $this->timeRange,
-            $startDate,
-            $endDate,
-            $this->selectedProfileId
+            Carbon::parse($this->startDate),
+            Carbon::parse($this->endDate)->endOfDay(),
+            $this->selectedProfileId,
+            $user->id,
+            $user->company_name
         );
         
-        $timestamp = now()->format('Y-m-d_H-i');
-        $filename = "report_{$this->reportType}_{$timestamp}.pdf";
-        
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
-        }, $filename, [
-            'Content-Type' => 'application/pdf',
-        ]);
+        // Show immediate feedback to the user
+        \Filament\Notifications\Notification::make()
+            ->title('PDF Generation Started')
+            ->body('Your report is being generated. You will be notified when it is ready.')
+            ->info()
+            ->send();
     }
     
     public function getProfiles()
