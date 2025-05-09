@@ -130,6 +130,10 @@ class EnergyUsageGraph extends ChartWidget
                     'backgroundColor' => '#4CAF50',
                     'borderColor' => '#4CAF50',
                     'fill' => false,
+                    'pointRadius' => 0,
+                    'lineTension' => 0.4,
+                    'borderWidth' => 4,
+                    'pointHoverRadius' => 5,
                 ],
                 [
                     'label' => 'Power Factor',
@@ -138,6 +142,10 @@ class EnergyUsageGraph extends ChartWidget
                     'borderColor' => '#2196F3',
                     'fill' => false,
                     'yAxisID' => 'y1',
+                    'pointRadius' => 0,
+                    'lineTension' => 0.4,
+                    'borderWidth' => 4,
+                    'pointHoverRadius' => 5,
                 ],
             ],
             'labels' => $labels,
@@ -287,6 +295,7 @@ class EnergyUsageGraph extends ChartWidget
             'aspectRatio' => 1.2,
             'maintainAspectRatio' => true,
             'responsive' => true,
+
             'scales' => [
 
                 'y' => [
