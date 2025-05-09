@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
+use App\Notifications\AnomalyAlert;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class Alert extends Model
 {
     protected $fillable = [
-        'iot_device_id', 
-        'socket_id', 
+        'iot_device_id',
+        'socket_id',
         'profile_id',
-        'type', 
-        'message', 
+        'type',
+        'message',
         'data',
         'severity',
         'resolved',
@@ -42,13 +44,13 @@ class Alert extends Model
     {
         return $this->belongsTo(Profile::class);
     }
-    
+
     public function reading()
     {
         return $this->belongsTo(Reading::class);
     }
 
-   
+
     /**
      * Scope for unresolved alerts
      */
@@ -56,7 +58,7 @@ class Alert extends Model
     {
         return $query->where('resolved', false);
     }
-    
+
     /**
      * Scope for resolved alerts
      */
@@ -64,7 +66,7 @@ class Alert extends Model
     {
         return $query->where('resolved', true);
     }
-    
+
     /**
      * Scope for filtering anomaly alerts (real-time issues)
      */
@@ -72,7 +74,7 @@ class Alert extends Model
     {
         return $query->where('type', 'like', 'anomaly_%');
     }
-    
+
     /**
      * Scope for filtering prediction alerts (future potential issues)
      */
@@ -80,7 +82,7 @@ class Alert extends Model
     {
         return $query->where('type', 'like', 'prediction_%');
     }
-    
+
     /**
      * Scope for filtering by severity
      */
@@ -88,7 +90,7 @@ class Alert extends Model
     {
         return $query->where('severity', $severity);
     }
-    
+
     /**
      * Mark this alert as resolved
      */
@@ -99,10 +101,10 @@ class Alert extends Model
             'resolved_at' => Carbon::now(),
             'resolution_notes' => $notes
         ]);
-        
+
         return $this;
     }
-    
+
     /**
      * Check if this alert is a prediction rather than a real-time anomaly
      */
@@ -110,7 +112,7 @@ class Alert extends Model
     {
         return strpos($this->type, 'prediction_') === 0;
     }
-    
+
     /**
      * Check if this alert is a real-time anomaly
      */
@@ -118,14 +120,14 @@ class Alert extends Model
     {
         return strpos($this->type, 'anomaly_') === 0;
     }
-    
+
     /**
      * Get a human-readable alert type
      */
     public function getReadableTypeAttribute()
     {
         $baseType = str_replace(['anomaly_', 'prediction_'], '', $this->type);
-        
+
         switch ($baseType) {
             case 'power_high':
                 return 'High Power';
@@ -169,14 +171,21 @@ class Alert extends Model
             $deviceName = $device->name ?? $device->device_uuid;
             $socketName = $socket ? "Socket #{$socket->assigned_id}" : 'Unknown Socket';
 
-            Notification::make()
-                ->title("{$severity} Alert: {$type}")
-                ->body("A {$alert->severity} alert has been detected for device '{$deviceName}' on {$socketName}. " .
-                      "The socket has been automatically turned off for safety. Please check the device status.")
-                ->icon('heroicon-o-exclamation-triangle')
-                ->danger()
-                ->sendToDatabase(User::find($device->user_id));
+            if ($socket->profile->notification_channels->contains('app')) {
 
+                Notification::make()
+                    ->title("{$severity} Alert: {$type}")
+                    ->body("A {$alert->severity} alert has been detected for device '{$deviceName}' on {$socketName}. " .
+                        "The socket has been automatically turned off for safety. Please check the device status.")
+                    ->icon('heroicon-o-exclamation-triangle')
+                    ->danger()
+                    ->sendToDatabase(User::find($device->user_id));
+            }
+            if ($socket->profile->notification_channels->contains('email')) {
+                $user = User::find($device->user_id);
+                $user->notify(new AnomalyAlert($severity, $type, $deviceName, $socketName, $alert->message));
+              
+            }
         });
     }
 }
