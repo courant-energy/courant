@@ -21,7 +21,8 @@ class EnergyUsageGraph extends ChartWidget
     protected int|string|array $columnSpan = 2;
     protected EnergyCalculationService $energyCalculationService;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->energyCalculationService = app(EnergyCalculationService::class);
     }
 
@@ -73,51 +74,50 @@ class EnergyUsageGraph extends ChartWidget
         // Calculate energy consumption for each interval
         foreach ($timeIntervals as $index => $timePoint) {
             if ($index < count($timeIntervals) - 1) {
-            try {
-                $intervalStart = Carbon::createFromFormat($this->getTimeFormat(), $timePoint);
-                $intervalEnd = Carbon::createFromFormat($this->getTimeFormat(), $timeIntervals[$index + 1]);
+                try {
+                    $intervalStart = Carbon::createFromFormat($this->getTimeFormat(), $timePoint);
+                    $intervalEnd = Carbon::createFromFormat($this->getTimeFormat(), $timeIntervals[$index + 1]);
 
-                // Use EnergyCalculationService to calculate energy consumption for the interval
-                $intervalEnergy = $this->energyCalculationService->calculateEnergyConsumption(
-                    $profile,
-                    $intervalStart,
-                    $intervalEnd
-                );
+                    // Use EnergyCalculationService to calculate energy consumption for the interval
+                    $intervalEnergy = $this->energyCalculationService->calculateEnergyConsumption(
+                        $profile,
+                        $intervalStart,
+                        $intervalEnd
+                    );
 
-                // Add interval energy to cumulative energy
-                $cumulativeEnergy += $intervalEnergy;
-                $energyData[] = $cumulativeEnergy; // Store the cumulative energy
+                    // Add interval energy to cumulative energy
+                    $cumulativeEnergy += $intervalEnergy;
+                    $energyData[] = $cumulativeEnergy; // Store the cumulative energy
 
-                // Get average power factor for the interval
-                $avgPowerFactor = $this->getAveragePowerFactorForInterval($profile, $intervalStart, $intervalEnd);
+                    // Get average power factor for the interval
+                    $avgPowerFactor = $this->getAveragePowerFactorForInterval($profile, $intervalStart, $intervalEnd);
 
-                $powerFactorData[] = $avgPowerFactor;
+                    $powerFactorData[] = $avgPowerFactor * 100; // Convert to percentage
 
-                // Format label based on the time filter
-                $labelFormat = match ($this->filter) {
-                    'month' => 'M-d',
-                    'week' => 'M-d H:00', // Adjust label format for clarity if needed
-                    default => 'M-d H:i',
-                };
-                $label = $intervalStart->format($labelFormat);
-                $labels[] = $label;
-
-            } catch (\Exception $e) {
-                // Log the error with context
-                Log::error('EnergyUsageGraph: Error processing interval.', [
-                'index' => $index,
-                'timePoint' => $timePoint,
-                'nextTimePoint' => $timeIntervals[$index + 1] ?? 'N/A',
-                'format' => $this->getTimeFormat(),
-                'exception_message' => $e->getMessage(),
-                'exception_trace' => $e->getTraceAsString(), // Consider logging trace only in debug/local env
-                ]);
-                // Optionally add placeholder data to avoid breaking the chart
-                // $energyData[] = 0;
-                // $powerFactorData[] = 0;
-                // $labels[] = 'Error';
-                // Depending on requirements, you might want to re-throw or handle differently
-            }
+                    // Format label based on the time filter
+                    $labelFormat = match ($this->filter) {
+                        'month' => 'M-d',
+                        'week' => 'M-d H:00', // Adjust label format for clarity if needed
+                        default => 'M-d H:i',
+                    };
+                    $label = $intervalStart->format($labelFormat);
+                    $labels[] = $label;
+                } catch (\Exception $e) {
+                    // Log the error with context
+                    Log::error('EnergyUsageGraph: Error processing interval.', [
+                        'index' => $index,
+                        'timePoint' => $timePoint,
+                        'nextTimePoint' => $timeIntervals[$index + 1] ?? 'N/A',
+                        'format' => $this->getTimeFormat(),
+                        'exception_message' => $e->getMessage(),
+                        'exception_trace' => $e->getTraceAsString(), // Consider logging trace only in debug/local env
+                    ]);
+                    // Optionally add placeholder data to avoid breaking the chart
+                    // $energyData[] = 0;
+                    // $powerFactorData[] = 0;
+                    // $labels[] = 'Error';
+                    // Depending on requirements, you might want to re-throw or handle differently
+                }
             } else {
             }
         }
@@ -284,13 +284,22 @@ class EnergyUsageGraph extends ChartWidget
     protected function getOptions(): array
     {
         return [
+            'aspectRatio' => 1.2,
+            'maintainAspectRatio' => true,
+            'responsive' => true,
             'scales' => [
+
                 'y' => [
-                    'beginAtZero' => true,
+                    'beginAtZero' => false,
                     'title' => [
                         'display' => true,
                         'text' => 'Energy (kWh)'
                     ]
+                ],
+                'x' => [
+                    'ticks' => [
+                        'maxTicksLimit' => 10,
+                    ],
                 ],
                 'y1' => [
                     'beginAtZero' => true,
@@ -300,7 +309,7 @@ class EnergyUsageGraph extends ChartWidget
                         'text' => 'Power Factor'
                     ],
                     'grid' => [
-                        'drawOnChartArea' => false,
+                        'drawOnChartArea' => true,
                     ],
                 ],
             ],

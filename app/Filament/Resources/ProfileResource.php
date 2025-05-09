@@ -79,6 +79,13 @@ class ProfileResource extends Resource
 
                         Forms\Components\Select::make('alert_sensitivity')
                             ->label('Alert Sensitivity')
+                            ->hintIcon('heroicon-o-information-circle')
+                            ->hintIconTooltip(
+                                '
+                                Low: Best for appliances with large power draws (like power tools).
+                                Medium: Good for general appliance monitoring (like AC units).
+                                High: Ideal for sensitive monitoring of most devices (including refrigerators).'
+                            )
                             ->options([
                                 'low' => 'Low (less alerts)',
                                 'medium' => 'Medium (balanced)',
