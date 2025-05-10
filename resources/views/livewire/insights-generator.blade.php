@@ -25,7 +25,7 @@
 
     @if ($cooldown_minutes_remaining > 0 && empty($insights))
         <div class="flex items-center mb-4 text-center">
-            <div class="text-amber-700 flex gap-2">
+            <div class="text-amber-700 dark:text-amber-400 flex gap-2">
                 <x-filament::icon icon="heroicon-o-exclamation-triangle" class="h-5 w-5 text-amber-400" />
                 <p class="text-sm">
                     You've reached the maximum number of insight generations. Please wait
@@ -38,15 +38,15 @@
     @if ($isLoading)
         <div class="flex flex-col items-center justify-center py-8">
             <div class="animate-pulse flex flex-col items-center space-y-4">
-                <div class="rounded-full bg-blue-100 h-16 w-16 flex items-center justify-center">
-                    <x-filament::loading-indicator class="h-8 w-8 text-blue-600" />
+                <div class="rounded-full bg-blue-100 dark:bg-blue-900 h-16 w-16 flex items-center justify-center">
+                    <x-filament::loading-indicator class="h-8 w-8 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div class="text-center">
-                    <p class="text-lg font-medium text-gray-700">Analyzing your data</p>
-                    <p class="text-sm text-gray-500 mt-1">This might take a few moments...</p>
+                    <p class="text-lg font-medium text-gray-700 dark:text-gray-300">Analyzing your data</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">This might take a few moments...</p>
                 </div>
                 <div class="w-full max-w-md">
-                    <div class="h-2 bg-blue-200 rounded"></div>
+                    <div class="h-2 bg-blue-200 dark:bg-blue-800 rounded"></div>
                 </div>
             </div>
         </div>
@@ -83,11 +83,11 @@
 
                     <x-filament::section.heading size="sm" tag="h3">Insight
                         #{{ $insight['insight_id'] }}</x-filament::section.heading>
-                    <p class="text-gray-700 mb-3">{{ $insight['description'] }}</p>
+                    <p class="text-gray-700 dark:text-gray-300 mb-3">{{ $insight['description'] }}</p>
 
                     @if (isset($insight['supporting_data']) && count($insight['supporting_data']) > 0)
                         <div class="mb-3">
-                            <h4 class="text-sm font-medium text-gray-700 mb-1">Affected Devices:</h4>
+                            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Affected Devices:</h4>
                             <div class="flex flex-wrap gap-2">
                                 @foreach ($insight['supporting_data'] as $data)
                                     <x-filament::badge color="info">
@@ -101,8 +101,8 @@
 
                     @if (isset($insight['potential_causes']) && count($insight['potential_causes']) > 0)
                         <div class="mb-3">
-                            <h4 class="text-sm font-medium text-gray-700 mb-1">Potential Causes:</h4>
-                            <ul class="list-disc list-inside text-sm text-gray-700 pl-2">
+                            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Potential Causes:</h4>
+                            <ul class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 pl-2">
                                 @foreach ($insight['potential_causes'] as $cause)
                                     <li>{{ $cause }}</li>
                                 @endforeach
@@ -112,8 +112,8 @@
 
                     @if (isset($insight['recommendations']) && count($insight['recommendations']) > 0)
                         <div>
-                            <h4 class="text-sm font-medium text-gray-700 mb-1">Recommendations:</h4>
-                            <ul class="list-disc list-inside text-sm text-gray-700 pl-2">
+                            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Recommendations:</h4>
+                            <ul class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 pl-2">
                                 @foreach ($insight['recommendations'] as $recommendation)
                                     <li>{{ $recommendation }}</li>
                                 @endforeach
@@ -125,14 +125,14 @@
         </div>
     @else
         <x-filament::section class="text-center py-6">
-            <x-filament::icon icon="heroicon-o-information-circle" class="mx-auto h-12 w-12 text-gray-400" />
+            <x-filament::icon icon="heroicon-o-information-circle" class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
             <x-filament::section.heading size="sm" tag="h3" class="mt-2">No insights generated
                 yet</x-filament::section.heading>
-            <p class="mt-1 text-sm text-gray-500">
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Click the 'Generate Insights' button to analyze your data from the past 30 days.
                 @if ($remainingAttempts < $max_attempts)
                     <br>
-                    <span class="text-amber-600 font-medium">
+                    <span class="text-amber-600 dark:text-amber-500 font-medium">
                         Note: You have {{ $remainingAttempts }} attempts remaining in this 20-minute window.
                     </span>
                 @endif
