@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Log;
 
 class Alert extends Model
 {
@@ -160,9 +161,12 @@ class Alert extends Model
 
         static::created(function ($alert) {
             // find the device and socket then turn off the socket
+            Log::info('Alert created: ', $alert->toArray());
+            Log::info('Boot method called for Alert model');
             $device = $alert->iotDevice;
-            $socket = $device->sockets()->where('assigned_id', $alert->socket_id)->first();
+            $socket = $device->sockets()->where('id', $alert->socket_id)->first();
             if ($socket) {
+                Log::info('Socket found: ', $socket->toArray());
                 $socket->update(['state' => false]);
             }
             // Send a detailed notification to the user about the alert
