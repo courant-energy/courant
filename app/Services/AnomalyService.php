@@ -378,6 +378,11 @@ class AnomalyService
      */
     protected function sendFilamentNotification($title, $body, Alert $alert, Reading $reading, Profile $profile, array $response)
     {
+        \Log::info('Trying to send Filament notification', [
+            'alert_id' => $alert->id,
+            'profile_id' => $profile->id,
+            'reading_id' => $reading->id
+        ]);
         try {
             // Get users to notify (profile owner)
             $user = $profile->user;
@@ -393,17 +398,13 @@ class AnomalyService
                 ->danger() // Use the danger (red) style for anomaly alerts
                 ->actions([
                     \Filament\Notifications\Actions\Action::make('view')
-                        ->label('View Details')
-                        ->url(route('filament.admin.resources.alerts.view', ['record' => $alert->id])),
-                    \Filament\Notifications\Actions\Action::make('resolve')
-                        ->label('Mark as Resolved')
-                        ->url(route('filament.admin.resources.alerts.edit', ['record' => $alert->id])),
+                        ->label('View Sockets')
+                        ->url(route('filament.app.resources.sockets.index', $alert->id))
                 ])
                 ->icon('heroicon-o-exclamation-triangle')
-                ->persistent();
+                ->sendToDatabase($user);
 
-            // Send the notification to the user
-            $notification->sendToDatabase($user);
+            
         } catch (\Exception $e) {
             Log::error('Failed to send Filament notification', [
                 'error' => $e->getMessage(),
