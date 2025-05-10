@@ -39,21 +39,29 @@ class AnomalyService
      */
     public function processReadingForAnomalyDetection(Reading $reading)
     {
+        \Log::info('Processing reading for anomaly detection', [
+            'reading_id' => $reading->id,
+            'profile_id' => $reading->profile_id
+        ]);
         // Get the profile associated with the reading
         $profile = $reading->profile_id ? Profile::find($reading->profile_id) : null;
-        
+
         if (!$profile) {
             Log::warning('No profile found for reading', ['reading_id' => $reading->id]);
             return;
         }
-        
+
         // Dispatch job to queue for LSTM prediction
         dispatch(function () use ($reading, $profile) {
             $this->processWithLstm($reading, $profile);
         })->onQueue('anomaly_detection');
-        
+
         // Dispatch job to queue for Isolation Forest
         dispatch(function () use ($reading, $profile) {
+            \Log::info('Processing reading with Isolation Forest', [
+                'reading_id' => $reading->id,
+                'profile_id' => $profile->id
+            ]);
             $this->processWithIsolationForest($reading, $profile);
         })->onQueue('anomaly_detection');
     }
@@ -79,10 +87,14 @@ class AnomalyService
                     'power_factor' => $reading->power_factor,
                 ]
             ];
+            \Log::info('Sending LSTM prediction request', [
+                'data' => $data,
+                'reading_id' => $reading->id
+            ]);
 
             // Make request to ML server
             $response = Http::timeout(30)->post($this->mlServerUrl . '/predict_lstm', $data);
-            
+
             if (!$response->successful()) {
                 Log::error('Failed to get LSTM prediction', [
                     'status' => $response->status(),
@@ -91,12 +103,11 @@ class AnomalyService
                 ]);
                 return;
             }
-            
+
             $result = $response->json();
-            
+
             // Process the LSTM response and create alerts if needed
             $this->processLstmResponse($result, $reading, $profile);
-        
         } catch (\Exception $e) {
             Log::error('Error processing LSTM prediction', [
                 'error' => $e->getMessage(),
@@ -104,7 +115,7 @@ class AnomalyService
             ]);
         }
     }
-    
+
     /**
      * Process a reading with Isolation Forest model for anomaly detection
      *
@@ -114,21 +125,25 @@ class AnomalyService
      */
     protected function processWithIsolationForest(Reading $reading, Profile $profile)
     {
+        \Log::info('Processing reading with Isolation Forest', [
+            'reading_id' => $reading,
+            'profile_id' => $profile->id
+        ]);
         try {
             $data = [
                 'profile_id' => $profile->id,
-                'reading_data' => [
-                    'voltage' => $reading->voltage,
-                    'current' => $reading->current,
-                    'power' => $reading->power,
-                    'frequency' => $reading->frequency,
-                    'power_factor' => $reading->power_factor,
-                ]
+
+                'voltage' => $reading->voltage,
+                'current' => $reading->current,
+                'power' => $reading->power,
+                'frequency' => $reading->frequency,
+                'power_factor' => $reading->power_factor,
+
             ];
 
             // Make request to ML server
             $response = Http::timeout(30)->post($this->mlServerUrl . '/predict', $data);
-            
+
             if (!$response->successful()) {
                 Log::error('Failed to get Isolation Forest prediction', [
                     'status' => $response->status(),
@@ -137,12 +152,15 @@ class AnomalyService
                 ]);
                 return;
             }
-            
+            \Log::info('Received Isolation Forest prediction response', [
+                'response' => $response->json(),
+                'reading_id' => $reading->id
+            ]);
+
             $result = $response->json();
-            
+
             // Process the Isolation Forest response and create alerts if needed
             $this->processIsolationForestResponse($result, $reading, $profile);
-        
         } catch (\Exception $e) {
             Log::error('Error processing Isolation Forest prediction', [
                 'error' => $e->getMessage(),
@@ -163,16 +181,16 @@ class AnomalyService
     {
         // Check if an anomaly is detected (anything other than "within_prediction")
         if ($response['overall_status'] !== 'within_prediction') {
-            
+
             // Identify the significant deviations for a better alert message
             $significantDeviations = $response['interpretation']['significant_deviations_summary'] ?? [];
-            
+
             // Create a user-friendly alert message
             $alertMessage = $this->createLstmAlertMessage($response, $significantDeviations);
-            
+
             // Determine severity based on the overall_status
             $severity = $this->determineSeverityFromLstmStatus($response['overall_status']);
-            
+
             // Create the alert in the database
             $alert = $this->createAlert(
                 'anomaly_lstm_' . $this->getAnomalyTypeFromLstm($response),
@@ -181,7 +199,7 @@ class AnomalyService
                 $reading,
                 $profile
             );
-            
+
             // Send Filament notification if profile has notifications enabled
             if ($profile->notify_on_anomaly) {
                 $this->sendFilamentNotification(
@@ -208,13 +226,13 @@ class AnomalyService
     {
         // Check if an anomaly is detected
         if ($response['result'] === 'anomaly') {
-            
+
             // Create a user-friendly alert message
             $alertMessage = $this->createIsolationForestAlertMessage($response);
-            
+
             // Determine severity based on the anomaly score
             $severity = $this->determineSeverityFromAnomalyScore($response['score']);
-            
+
             // Create the alert in the database
             $alert = $this->createAlert(
                 'anomaly_isolation_forest',
@@ -223,7 +241,7 @@ class AnomalyService
                 $reading,
                 $profile
             );
-            
+
             // Send Filament notification if profile has notifications enabled
             if ($profile->notify_on_anomaly) {
                 $this->sendFilamentNotification(
@@ -248,12 +266,12 @@ class AnomalyService
     protected function createLstmAlertMessage($response, $significantDeviations)
     {
         $message = "Potential anomaly detected in sensor readings. ";
-        
+
         if (!empty($significantDeviations)) {
             foreach ($significantDeviations as $field => $deviation) {
                 $fieldName = $this->getReadableName($field);
                 $status = str_replace('_', ' ', $deviation['status']);
-                
+
                 $message .= "{$fieldName} reading of {$deviation['actual']} is {$status} ";
                 $message .= "the predicted value of " . round($deviation['predicted'], 2) . ". ";
             }
@@ -261,13 +279,13 @@ class AnomalyService
             // If no significant deviations but still an anomaly, create a generic message
             $message .= "Multiple parameters are outside their expected ranges. ";
         }
-        
+
         // Add an interpretation based on the status_meaning
         $statusMeaning = $response['interpretation']['status_meaning'][$response['overall_status']] ?? '';
         if ($statusMeaning) {
             $message .= "Analysis: $statusMeaning";
         }
-        
+
         return $message;
     }
 
@@ -280,27 +298,27 @@ class AnomalyService
     protected function createIsolationForestAlertMessage($response)
     {
         $message = "Anomaly detected: " . ($response['explanation']['message'] ?? 'Unusual patterns in sensor readings. ');
-        
+
         // Add feature values that might have contributed to the anomaly
         if (isset($response['explanation']['feature_values'])) {
             $message .= "Unusual readings include: ";
-            
+
             foreach ($response['explanation']['feature_values'] as $field => $value) {
                 $fieldName = $this->getReadableName($field);
                 $message .= "{$fieldName}: {$value}, ";
             }
-            
+
             // Remove the trailing comma and space
             $message = rtrim($message, ", ");
             $message .= ".";
         }
-        
+
         // Add anomaly score information
         if (isset($response['explanation']['anomaly_score'])) {
             $score = round($response['explanation']['anomaly_score'], 2);
             $message .= " (Anomaly score: {$score})";
         }
-        
+
         return $message;
     }
 
@@ -319,7 +337,7 @@ class AnomalyService
         // Get the socket and IoT device
         $socket = $reading->socket;
         $iotDevice = $socket ? $socket->iotDevice : null;
-        
+
         // Prepare alert data
         $alertData = [
             'type' => $type,
@@ -338,11 +356,11 @@ class AnomalyService
             ],
             'resolved' => false,
         ];
-        
+
         if ($iotDevice) {
             $alertData['iot_device_id'] = $iotDevice->id;
         }
-        
+
         // Create the alert
         return Alert::create($alertData);
     }
@@ -363,11 +381,11 @@ class AnomalyService
         try {
             // Get users to notify (profile owner)
             $user = $profile->user;
-            
+
             if (!$user) {
                 return;
             }
-            
+
             // Create a Filament notification
             $notification = FilamentNotification::make()
                 ->title($title)
@@ -383,10 +401,9 @@ class AnomalyService
                 ])
                 ->icon('heroicon-o-exclamation-triangle')
                 ->persistent();
-                
+
             // Send the notification to the user
             $notification->sendToDatabase($user);
-            
         } catch (\Exception $e) {
             Log::error('Failed to send Filament notification', [
                 'error' => $e->getMessage(),
@@ -410,7 +427,7 @@ class AnomalyService
             'frequency' => 'Frequency',
             'power_factor' => 'Power Factor'
         ];
-        
+
         return $readableNames[$field] ?? ucfirst($field);
     }
 
@@ -427,11 +444,11 @@ class AnomalyService
             case 'significantly_below':
             case 'multiple_significant_deviations':
                 return 'high';
-            
+
             case 'above_prediction':
             case 'below_prediction':
                 return 'medium';
-                
+
             default:
                 return 'low';
         }
@@ -466,43 +483,43 @@ class AnomalyService
     {
         // Default type
         $type = 'general';
-        
+
         // Check if there are significant deviations
         $deviations = $response['interpretation']['significant_deviations_summary'] ?? [];
-        
+
         if (empty($deviations)) {
             return $type;
         }
-        
+
         // Check which parameter has the most significant deviation
         foreach ($deviations as $field => $deviation) {
             $status = $deviation['status'] ?? '';
-            
+
             if ($field === 'power' && strpos($status, 'above') !== false) {
                 return 'power_high';
             }
-            
+
             if ($field === 'power' && strpos($status, 'below') !== false) {
                 return 'power_low';
             }
-            
+
             if ($field === 'voltage' && strpos($status, 'above') !== false) {
                 return 'voltage_high';
             }
-            
+
             if ($field === 'voltage' && strpos($status, 'below') !== false) {
                 return 'voltage_low';
             }
-            
+
             if ($field === 'current' && strpos($status, 'above') !== false) {
                 return 'current_high';
             }
-            
+
             if ($field === 'power_factor' && strpos($status, 'below') !== false) {
                 return 'power_factor_low';
             }
         }
-        
+
         return $type;
     }
 }
