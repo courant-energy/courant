@@ -31,6 +31,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
         'company_name',
         'email',
         'password',
+        'is_onboarded',
     ];
 
     /**
@@ -53,6 +54,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_onboarded' => 'boolean',
         ];
     }
 
@@ -75,6 +77,16 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
     {
         return $this->hasMany(IotDevice::class);
     }
+
+    public function getHasUnconfiguredSocketAttribute(): bool
+    {
+        return $this->iotDevices()->whereHas('sockets', function ($query) {
+            $query->where('profile_id', null)
+                ->orWhere('profile_id', '');
+        })->exists();
+    }
+
+
 
     protected static function booted(): void
     {

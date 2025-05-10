@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Filament\Widgets\AlertsTableWidget;
 use App\Filament\Widgets\DeviceStatsWidget;
 use App\Filament\Widgets\EnergyCostCalculator;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Widgets\AccountWidget;
 
@@ -16,7 +17,19 @@ class Dashboard extends Page
 
     protected static string $view = 'filament.pages.dashboard';
 
-    protected function getHeaderWidgets(): array
+    public $defaultAction = 'onboarding';
+
+    public function onboardingAction(): Action
+    {
+        return Action::make('onboarding')
+            ->modalHeading('On boarding')
+            ->modalContent(view('onboarding'))
+            ->modalSubmitActionLabel('Okay, got it!')
+            ->modalCancelAction(false)
+            ->visible(fn(): bool => ! auth()->user()->is_onboarded);
+    }
+
+    protected function getFooterWidgets(): array
     {
         return [
             AccountWidget::class,
@@ -25,6 +38,4 @@ class Dashboard extends Page
             EnergyCostCalculator::class,
         ];
     }
-    
-   
 }
