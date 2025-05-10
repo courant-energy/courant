@@ -175,7 +175,7 @@ class Alert extends Model
             $deviceName = $device->name ?? $device->device_uuid;
             $socketName = $socket ? "Socket #{$socket->assigned_id}" : 'Unknown Socket';
 
-            if ($socket->profile->notification_channels->contains('app')) {
+            if (in_array('app', $socket->profile->notification_channels)) {
 
                 Notification::make()
                     ->title("{$severity} Alert: {$type}")
@@ -185,7 +185,7 @@ class Alert extends Model
                     ->danger()
                     ->sendToDatabase(User::find($device->user_id));
             }
-            if ($socket->profile->notification_channels->contains('email')) {
+            if (in_array('email', $socket->profile->notification_channels)) {
                 $user = User::find($device->user_id);
                 $user->notify(new AnomalyAlert($severity, $type, $deviceName, $socketName, $alert->message));
               
