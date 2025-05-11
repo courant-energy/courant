@@ -63,6 +63,7 @@ class SubmittedQueryTable extends BaseWidget
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->slideOver()
                     ->infolist([
                         \Filament\Infolists\Components\TextEntry::make('subject'),
                         \Filament\Infolists\Components\TextEntry::make('body')
