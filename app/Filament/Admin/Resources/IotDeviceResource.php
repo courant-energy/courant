@@ -22,6 +22,8 @@ class IotDeviceResource extends Resource
 
     protected static ?string $modelLabel = 'IoT Device';
 
+    protected static ?string $navigationGroup = 'Device Management';
+
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
 
     public static function form(Form $form): Form

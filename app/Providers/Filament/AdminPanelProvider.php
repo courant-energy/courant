@@ -60,6 +60,12 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
                 AdminOnly::class,
             ])
+            ->navigationGroups([
+                'Device Management',
+                'Help & Learn',
+                'User Management',
+                'Settings',
+            ])
             ->authMiddleware([
                 Authenticate::class,
             ]);

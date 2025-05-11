@@ -25,6 +25,7 @@ class QuestionResource extends Resource
 
     protected static ?string $modelLabel = 'User Query';
 
+    protected static ?string $navigationGroup = 'Help & Learn';
 
     protected static ?string $navigationIcon = 'heroicon-o-question-mark-circle';
 

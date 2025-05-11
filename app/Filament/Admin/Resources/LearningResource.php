@@ -20,6 +20,8 @@ class LearningResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
+    protected static ?string $navigationGroup = 'Help & Learn';
+
     public static function form(Form $form): Form
     {
         return $form
