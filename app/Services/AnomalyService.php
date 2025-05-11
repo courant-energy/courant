@@ -177,11 +177,21 @@ class AnomalyService
      */
     protected function processLstmResponse($response, Reading $reading, Profile $profile)
     {
+        \Log::info('Calling processLstmResponse');
         // Check if an anomaly is detected (anything other than "within_prediction")
         if ($response['overall_status'] !== 'within_prediction') {
 
+            \Log::info('interpretation', [
+                'interpretation' => $response['interpretation'],
+                'overall_status' => $response['overall_status']
+            ]);
+
             // Identify the significant deviations for a better alert message
             $significantDeviations = $response['interpretation']['significant_deviations_summary'] ?? [];
+
+            \Log::info('Significant deviations', [
+                'significant_deviations' => $significantDeviations
+            ]);
 
             // Create a user-friendly alert message
             $alertMessage = $this->createLstmAlertMessage($response, $significantDeviations);
@@ -263,6 +273,7 @@ class AnomalyService
      */
     protected function createLstmAlertMessage($response, $significantDeviations)
     {
+        \Log::info('Creating LSTM alert message');
         $message = "Potential anomaly detected in sensor readings. ";
 
         if (!empty($significantDeviations)) {
@@ -478,6 +489,7 @@ class AnomalyService
      */
     protected function getAnomalyTypeFromLstm($response)
     {
+        \Log::info('Getting anomaly type from LSTM response');
         // Default type
         $type = 'general';
 
