@@ -136,6 +136,7 @@ class ReportGenerator extends Component
     public function getProfiles()
     {
         return Profile::whereHas('sockets')
+            ->where('user_id', auth()->user()->id)
             ->orderBy('name')
             ->get()
             ->map(function ($profile) {
