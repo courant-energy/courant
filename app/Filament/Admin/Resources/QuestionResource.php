@@ -167,6 +167,7 @@ class QuestionResource extends Resource
                     ->label('Subject')
                     ->sortable()
                     ->limit(50)
+                    ->toggleable()
                     ->searchable(),
                 TextColumn::make('status')
                     ->label('Status')
@@ -185,6 +186,12 @@ class QuestionResource extends Resource
                             'rejected' => 'heroicon-o-x-circle',
                         };
                     }),
+                TextColumn::make('created_at')
+                    ->label('Submitted At')
+                    ->dateTime('F j, Y, g:i a')
+                    ->sortable()
+                    ->toggleable()
+                    
 
             ])
             ->filters([
