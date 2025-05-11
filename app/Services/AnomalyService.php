@@ -78,14 +78,12 @@ class AnomalyService
         try {
             $data = [
                 'profile_id' => $profile->id,
-                'sensitivity_level' => $profile->alert_sensitivity ?? 'medium',
-                'reading_data' => [
-                    'voltage' => $reading->voltage,
-                    'current' => $reading->current,
-                    'power' => $reading->power,
-                    'frequency' => $reading->frequency,
-                    'power_factor' => $reading->power_factor,
-                ]
+                'voltage' => $reading->voltage,
+                'current' => $reading->current,
+                'power' => $reading->power,
+                'frequency' => $reading->frequency,
+                'power_factor' => $reading->power_factor,
+
             ];
             \Log::info('Sending LSTM prediction request', [
                 'data' => $data,
@@ -403,8 +401,6 @@ class AnomalyService
                 ])
                 ->icon('heroicon-o-exclamation-triangle')
                 ->sendToDatabase($user);
-
-            
         } catch (\Exception $e) {
             Log::error('Failed to send Filament notification', [
                 'error' => $e->getMessage(),
