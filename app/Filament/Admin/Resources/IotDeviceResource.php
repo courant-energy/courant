@@ -32,6 +32,7 @@ class IotDeviceResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('device_uuid')
                     ->label('UUID')
+                    ->unique(ignoreRecord: true)
                     ->required()
                     ->helperText('Enter the UUID of the IoT device'),
 
