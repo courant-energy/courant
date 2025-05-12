@@ -117,6 +117,10 @@ class SocketResource extends Resource
                         ->label('Socket Name')
                         ->searchable()
                         ->sortable(),
+                    Tables\Columns\TextColumn::make('id')
+                        ->badge()
+                        ->tooltip('This is the unique identifier for the socket')
+                        ->prefix('Socket ID: '),
                     Tables\Columns\TextColumn::make('profile.name')
                         ->badge()
                         ->icon(fn($state) => $state === 'No Profile Selected' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
