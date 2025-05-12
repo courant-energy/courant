@@ -478,6 +478,7 @@ class GeminiService
                 "The response MUST be valid JSON.\n\n" .
                 "The JSON should contain ONLY the labels and data types as specified in the example structure.\n\n" .
                 "Do not include any descriptive text or explanations within the JSON data itself.\n\n" .
+                "Use the aliases and names instead of the data ids.\n\n" .
                 "The insight_type should be one of the following: 'Energy Wastage', 'Anomaly Detection', 'Predictive Maintenance', or 'Alert System Effectiveness'.";
 
             // Define response schema
