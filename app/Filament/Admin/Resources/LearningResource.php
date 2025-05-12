@@ -22,6 +22,8 @@ class LearningResource extends Resource
 
     protected static ?string $navigationGroup = 'Help & Learn';
 
+    protected static ?string $modelLabel = 'Learning Resource';
+
     public static function form(Form $form): Form
     {
         return $form
