@@ -5,6 +5,9 @@ namespace App\Filament\Widgets;
 use App\Models\Alert;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\IconColumn;
@@ -16,6 +19,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Infolists;
 
 class AlertsTableWidget extends BaseWidget implements HasTable
 {
@@ -31,14 +35,14 @@ class AlertsTableWidget extends BaseWidget implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->paginated(false)
+            // ->paginated(false)
             ->query(
                 Alert::query()
                     ->whereHas('iotDevice', function (Builder $query) {
                         $query->where('user_id', auth()->id());
                     })
                     ->latest()
-                    ->take(5)
+                // ->take(5)
             )
             ->heading('Recent Alerts')
             ->description('Recent alerts from devices and profiles.')
@@ -91,6 +95,47 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                         ]),
                 ]),
 
+            ])
+            ->actions([
+                ActionGroup::make([
+                    Action::make('falseAlert')
+                        ->label('False Alert')
+                        ->action(function (Alert $record) {
+                            // delete reading if reading_id is not null
+                            if ($record->reading_id) {
+                                $record->reading()->delete();
+                            }
+                            $record->delete();
+                        })
+                        ->color('danger')
+                        ->icon('heroicon-o-flag')
+                        ->requiresConfirmation()
+                        ->modalDescription('Do you think this alert is a false alert? We will delete the alert and the reading if it exists.'),
+                    ViewAction::make()
+                        ->infolist([
+                            Infolists\Components\TextEntry::make('profile.name')
+                                ->label('Profile'),
+                            Infolists\Components\TextEntry::make('iotDevice.name')
+                                ->label('Device'),
+                            Infolists\Components\TextEntry::make('readable_type')
+                                ->label('Type'),
+                            Infolists\Components\TextEntry::make('created_at')
+                                ->label('Time')
+                                ->dateTime(),
+                            Infolists\Components\TextEntry::make('severity')
+                                ->label('Severity')
+                                ->badge()
+                                ->colors([
+                                    'secondary' => 'info',
+                                    'warning' => 'warning',
+                                    'danger' => 'critical',
+                                ]),
+                            Infolists\Components\TextEntry::make('message')
+                                ->label('Message')
+
+                        ])
+
+                ])
             ]);
     }
 
