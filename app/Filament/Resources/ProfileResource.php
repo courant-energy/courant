@@ -76,6 +76,10 @@ class ProfileResource extends Resource
                             ->label('Enable Anomaly Notifications')
                             ->helperText('Receive alerts when readings fall outside thresholds')
                             ->default(true),
+                        Forms\Components\Toggle::make('anomaly_detection_enabled')
+                            ->label('Enable Anomaly Detection')
+                            ->helperText('Use machine learning to detect anomalies')
+                            ->default(true),
 
                         Forms\Components\Select::make('alert_sensitivity')
                             ->label('Alert Sensitivity')

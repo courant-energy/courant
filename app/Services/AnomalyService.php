@@ -51,6 +51,11 @@ class AnomalyService
             return;
         }
 
+        if($profile->anomaly_detection_enabled == false) {
+            Log::info('Anomaly detection is disabled for this profile', ['profile_id' => $profile->id]);
+            return;
+        }
+
         // Dispatch job to queue for LSTM prediction
         dispatch(function () use ($reading, $profile) {
             $this->processWithLstm($reading, $profile);
@@ -58,10 +63,6 @@ class AnomalyService
 
         // Dispatch job to queue for Isolation Forest
         dispatch(function () use ($reading, $profile) {
-            \Log::info('Processing reading with Isolation Forest', [
-                'reading_id' => $reading->id,
-                'profile_id' => $profile->id
-            ]);
             $this->processWithIsolationForest($reading, $profile);
         })->onQueue('anomaly_detection');
     }

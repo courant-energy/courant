@@ -159,6 +159,24 @@ class Alert extends Model
     {
         parent::boot();
 
+        static::creating(function ($alert) {
+            // if a similar alert is created within 5 minutes, don't create it
+            $existingAlert = static::where('iot_device_id', $alert->iot_device_id)
+                ->where('socket_id', $alert->socket_id)
+                ->where('type', $alert->type)
+                ->where('created_at', '>=', now()->subMinutes(1))
+                ->first();
+            if ($existingAlert) {
+                Log::info('Similar alert already exists, not creating a new one', [
+                    'existing_alert' => $existingAlert->toArray(),
+                    'new_alert' => $alert->toArray()
+                ]);
+                return false; // Prevent the new alert from being created
+            }
+
+        });
+
+
         static::created(function ($alert) {
             // find the device and socket then turn off the socket
             Log::info('Alert created: ', $alert->toArray());
