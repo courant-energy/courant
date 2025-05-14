@@ -15,6 +15,7 @@ use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Filament\Tables;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -95,6 +96,16 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                         ]),
                 ]),
 
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('severity')
+                    ->options([
+                        'critical' => 'Critical',
+                        'high' => 'High',
+                        'medium' => 'Medium',
+                        'low' => 'Low',
+                    ])
+                    
             ])
             ->actions([
                 ActionGroup::make([
