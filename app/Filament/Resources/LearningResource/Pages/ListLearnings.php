@@ -29,7 +29,7 @@ class ListLearnings extends Page
 
     public function loadResources()
     {
-        $query = LearningResource::getModel()::where('status', 'published');
+        $query = LearningResource::getModel()::where('status', 'published')->orderBy('created_at', 'desc');
         
         if ($this->search) {
             $query->where(function($q) {
