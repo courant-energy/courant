@@ -45,6 +45,9 @@ class UserResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
+                        Forms\Components\TextInput::make('company_name')
+                            ->maxLength(255)
+                            ->placeholder('Company Name'),
                     ]),
                 Forms\Components\Section::make('Password')
                     ->schema([
