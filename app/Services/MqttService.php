@@ -196,6 +196,21 @@ class MqttService
             // Create the alert message if not provided
             $message = $alertData['message'] ?? $this->createAlertMessage($alertData);
             
+            // get the reading if exists based on the socket_id and if it is equal to the current_power in data
+            $reading = null;
+            try {
+                $reading = Reading::where('socket_id', $socket->id)
+                    ->where('power', $alertData['current_power'] ?? null)
+                    ->first();
+            } catch (\Exception $e) {
+                \Log::error('Failed to fetch reading for alert', [
+                    'error' => $e->getMessage(),
+                   
+                ]);
+            }
+
+
+
             // Create alert data structure
             $alert = new \App\Models\Alert([
                 'iot_device_id' => $device->id,
@@ -206,6 +221,7 @@ class MqttService
                 'severity' => $severity,
                 'data' => $this->formatAlertData($alertData),
                 'resolved' => false,
+                'reading_id' => $reading ? $reading->id : null,
             ]);
             
             $alert->save();
