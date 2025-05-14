@@ -173,7 +173,6 @@ class Alert extends Model
                 ]);
                 return false; // Prevent the new alert from being created
             }
-
         });
 
 
@@ -185,7 +184,11 @@ class Alert extends Model
             $socket = $device->sockets()->where('id', $alert->socket_id)->first();
             if ($socket) {
                 Log::info('Socket found: ', $socket->toArray());
-                $socket->update(['state' => false]);
+                // Turn off the socket on critical alerts
+                if ($alert->severity === 'critical') {
+                    Log::info('Turning off socket due to critical alert');
+                    $socket->update(['state' => false]);
+                }
             }
             // Send a detailed notification to the user about the alert
             $severity = ucfirst($alert->severity);
@@ -193,7 +196,7 @@ class Alert extends Model
             $deviceName = $device->name ?? $device->device_uuid;
             $socketName = $socket ? "Socket #{$socket->assigned_id}" : 'Unknown Socket';
 
-            if(!$socket->profile->notify_on_anomaly){
+            if (!$socket->profile->notify_on_anomaly) {
                 Log::info('Notifications are disabled for this profile');
                 return;
             }
@@ -211,7 +214,6 @@ class Alert extends Model
             if (in_array('email', $socket->profile->notification_channels)) {
                 $user = User::find($device->user_id);
                 $user->notify(new AnomalyAlert($severity, $type, $deviceName, $socketName, $alert->message));
-              
             }
         });
     }
