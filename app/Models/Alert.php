@@ -175,6 +175,11 @@ class Alert extends Model
             $deviceName = $device->name ?? $device->device_uuid;
             $socketName = $socket ? "Socket #{$socket->assigned_id}" : 'Unknown Socket';
 
+            if(!$socket->profile->notify_on_anomaly){
+                Log::info('Notifications are disabled for this profile');
+                return;
+            }
+
             if (in_array('app', $socket->profile->notification_channels)) {
 
                 Notification::make()
