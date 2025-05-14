@@ -26,29 +26,37 @@ class Learning extends Model
                 }
                 $learningResource->slug = $slug;
             }
+
+            if ($learningResource->status == 'published') {
+                Notification::make()
+                    ->title($learningResource->name . ' has been published')
+                    ->body('Check out the new learning resource that has been published to save more energy and cost.')
+                    ->success()
+                    ->sendToDatabase(User::all());
+            }
         });
 
-        
+
 
         static::updating(function ($learningResource) {
             // Optionally, regenerate slug on update if name changes and slug is not manually set
             if ($learningResource->isDirty('name') && !$learningResource->isDirty('slug')) {
-                 $slug = Str::slug($learningResource->name);
-                 $originalSlug = $slug;
-                 $count = 1;
+                $slug = Str::slug($learningResource->name);
+                $originalSlug = $slug;
+                $count = 1;
 
-                 // Ensure uniqueness, excluding the current model instance
-                 while (static::whereSlug($slug)->where('id', '!=', $learningResource->id)->exists()) {
-                     $slug = $originalSlug . '-' . $count++;
-                 }
-                 $learningResource->slug = $slug;
+                // Ensure uniqueness, excluding the current model instance
+                while (static::whereSlug($slug)->where('id', '!=', $learningResource->id)->exists()) {
+                    $slug = $originalSlug . '-' . $count++;
+                }
+                $learningResource->slug = $slug;
             }
         });
 
         static::updated(function ($learningResource) {
-            if($learningResource->status == 'published') {
+            if ($learningResource->status == 'published') {
                 Notification::make()
-                    ->title($learningResource->name . ' has been published')    
+                    ->title($learningResource->name . ' has been published')
                     ->body('Check out the new learning resource that has been published to save more energy and cost.')
                     ->success()
                     ->sendToDatabase(User::all());
@@ -65,6 +73,4 @@ class Learning extends Model
     {
         return $this->cover_image ? Storage::url($this->cover_image) : null;
     }
-
-    
 }
