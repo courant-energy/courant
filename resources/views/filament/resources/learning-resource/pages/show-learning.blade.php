@@ -16,7 +16,7 @@
         
         <!-- Cover image if available -->
         @if($record->cover_image)
-        <div class="w-full aspect-video bg-gray-100 dark:bg-gray-800 overflow-hidden">
+        <div class="w-full aspect-square bg-gray-100 dark:bg-gray-800 overflow-hidden">
             <img src="{{ $record->image_url }}" alt="{{ $record->name }}" class="w-full h-full object-cover">
         </div>
         @endif

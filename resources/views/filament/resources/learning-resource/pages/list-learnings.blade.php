@@ -38,9 +38,9 @@
                 <div class="mb-4">
                     @if($record->image_url)
                         <img src="{{ $record->image_url }}" alt="{{ $record->name }}"
-                            class="w-full h-32 object-cover rounded-lg">
+                            class="w-full aspect-square object-cover rounded-lg">
                     @else
-                        <div class="w-full h-32 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                        <div class="w-full aspect-square bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
                             
                         </div>
                     @endif
