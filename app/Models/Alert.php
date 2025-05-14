@@ -220,6 +220,9 @@ class Alert extends Model
                     case 'medium':
                         $notification->info();
                         break;
+                    case 'low':
+                        $notification->info();
+                        break;
                 }
 
 

@@ -109,6 +109,15 @@ class AlertsTableWidget extends BaseWidget implements HasTable
             ])
             ->actions([
                 ActionGroup::make([
+                    Action::make('dismiss')
+                        ->label('Dismiss')
+                        ->action(function (Alert $record) {
+                            $record->delete();
+                        })
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalDescription('Dismissing an alert will remove it from our system and will affect the AI insights.')
+                        ->icon('heroicon-o-x-mark'),
                     Action::make('falseAlert')
                         ->label('False Alert')
                         ->action(function (Alert $record) {
@@ -121,7 +130,7 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                         ->color('danger')
                         ->icon('heroicon-o-flag')
                         ->requiresConfirmation()
-                        ->modalDescription('Do you think this alert is a false alert? We will delete the alert and the reading if it exists.'),
+                        ->modalDescription('Do you think this alert is a false alert? We will delete the alert and the reading if it exists. This will affect the AI insights.'),
                     ViewAction::make()
                         ->infolist([
                             Infolists\Components\TextEntry::make('profile.name')
