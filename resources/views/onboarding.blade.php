@@ -1,28 +1,29 @@
 <div x-data="{ activeTab: 'welcome' }">
-    <x-filament::tabs label="Onboarding">
-        <x-filament::tabs.item label="Welcome" alpine-active="activeTab === 'welcome'" x-on:click="activeTab = 'welcome'">
+    <x-filament::tabs label="Onboarding" class="flex flex-wrap">
+        <x-filament::tabs.item label="Welcome" alpine-active="activeTab === 'welcome'" x-on:click="activeTab = 'welcome'" 
+            class="mb-2 mr-2">
             Welcome
         </x-filament::tabs.item>
 
         <x-filament::tabs.item label="1. Link IoT Device" alpine-active="activeTab === 'link-device'"
-            x-on:click="activeTab = 'link-device'">
+            x-on:click="activeTab = 'link-device'" class="mb-2 mr-2">
             Link IoT Device
         </x-filament::tabs.item>
 
         <x-filament::tabs.item label="2. Configure Sockets" alpine-active="activeTab === 'configure-sockets'"
-            x-on:click="activeTab = 'configure-sockets'">
+            x-on:click="activeTab = 'configure-sockets'" class="mb-2 mr-2">
             Configure Sockets
         </x-filament::tabs.item>
 
         <x-filament::tabs.item label="Explore" alpine-active="activeTab === 'explore'"
-            x-on:click="activeTab = 'explore'">
+            x-on:click="activeTab = 'explore'" class="mb-2 mr-2">
             Explore
         </x-filament::tabs.item>
 
-        <x-filament::tabs.item label="Need Help?" alpine-active="activeTab === 'help'" x-on:click="activeTab = 'help'">
+        <x-filament::tabs.item label="Need Help?" alpine-active="activeTab === 'help'" 
+            x-on:click="activeTab = 'help'" class="mb-2">
             Need Help?
         </x-filament::tabs.item>
-
     </x-filament::tabs>
     <div x-show="activeTab === 'welcome'" class="px-4 py-4">
         <h1 class="text-2xl font-bold mb-4 dark:text-white">Welcome to COURANT!</h1>
