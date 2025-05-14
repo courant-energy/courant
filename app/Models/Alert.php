@@ -202,13 +202,27 @@ class Alert extends Model
             }
 
             if (in_array('app', $socket->profile->notification_channels)) {
-
-                Notification::make()
+                $notification = Notification::make()
                     ->title("{$severity} Alert: {$type}")
                     ->body("A {$alert->severity} alert has been detected for device '{$deviceName}' on {$socketName}. " .
                         "The socket has been automatically turned off for safety. Please check the device status.")
                     ->icon('heroicon-o-exclamation-triangle')
-                    ->danger()
+                    ->danger();
+
+                switch ($alert->severity) {
+                    case 'critical':
+                        $notification->danger();
+                        break;
+                    case 'high':
+                        $notification->warning();
+                        break;
+                    case 'medium':
+                        $notification->info();
+                        break;
+                }
+
+
+                $notification
                     ->sendToDatabase(User::find($device->user_id));
             }
             if (in_array('email', $socket->profile->notification_channels)) {
