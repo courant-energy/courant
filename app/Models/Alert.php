@@ -204,8 +204,9 @@ class Alert extends Model
             if (in_array('app', $socket->profile->notification_channels)) {
                 $notification = Notification::make()
                     ->title("{$severity} Alert: {$type}")
-                    ->body("A {$alert->severity} alert has been detected for device '{$deviceName}' on {$socketName}. " .
-                        "The socket has been automatically turned off for safety. Please check the device status.")
+                    ->body($alert->severity === 'critical' 
+                        ? "A critical alert has been detected for device '{$deviceName}' on {$socketName}. The socket has been automatically turned off for safety. Please check the device status."
+                        : "A {$alert->severity} level alert has been detected for device '{$deviceName}' on {$socketName}. Please monitor the device's performance.")
                     ->icon('heroicon-o-exclamation-triangle')
                     ->danger();
 

@@ -48,7 +48,9 @@ class AnomalyAlert extends Notification
             ->line('Socket: ' . $this->socketName)
             ->line('Severity: ' . $this->severity)
             ->line('Alert Info: ' . $this->message)
-            ->line('The socket has been turned off to prevent damage.')
+            ->when($this->severity === 'critical', function ($message) {
+                return $message->line('The socket has been turned off to prevent damage.');
+            })
             ->line('Please check the device and take necessary actions.')
             ->line('You can view the details in your dashboard.')
             ->action('View Dashboard', url('/app/dashboard'))
