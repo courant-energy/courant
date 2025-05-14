@@ -31,7 +31,10 @@ class GeminiService
     public function exportReadingData(string $format = 'json', array $filters = [])
     {
         try {
-            $query = Reading::query();
+            $query = Reading::query()
+                ->whereHas('socket.iotDevice', function ($query) {
+                    $query->where('user_id', auth()->id());
+                });
 
             // Apply filters if provided
             if (isset($filters['socket_id'])) {
@@ -212,7 +215,8 @@ class GeminiService
     public function exportIotDeviceData(string $format = 'json', array $filters = [])
     {
         try {
-            $query = IotDevice::query();
+            $query = IotDevice::query()
+                ->where('user_id', auth()->id());
 
             // Apply filters if provided
             if (isset($filters['user_id'])) {
@@ -256,7 +260,8 @@ class GeminiService
     public function exportProfileData(string $format = 'json', array $filters = [])
     {
         try {
-            $query = Profile::query();
+            $query = Profile::query()
+                ->where('user_id', auth()->id());
 
             // Apply filters if provided
             if (isset($filters['user_id'])) {
