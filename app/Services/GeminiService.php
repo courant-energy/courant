@@ -32,26 +32,26 @@ class GeminiService
     {
         try {
             $query = Reading::query();
-            
+
             // Apply filters if provided
             if (isset($filters['socket_id'])) {
                 $query->where('socket_id', $filters['socket_id']);
             }
-            
+
             // Support filtering by multiple socket IDs
             if (isset($filters['socket_ids']) && is_array($filters['socket_ids']) && !empty($filters['socket_ids'])) {
                 $query->whereIn('socket_id', $filters['socket_ids']);
             }
-            
+
             if (isset($filters['profile_id'])) {
                 $query->where('profile_id', $filters['profile_id']);
             }
-            
+
             // Support filtering by multiple profile IDs
             if (isset($filters['profile_ids']) && is_array($filters['profile_ids']) && !empty($filters['profile_ids'])) {
                 $query->whereIn('profile_id', $filters['profile_ids']);
             }
-            
+
             if (isset($filters['start_date']) && isset($filters['end_date'])) {
                 $query->whereBetween('reading_time', [$filters['start_date'], $filters['end_date']]);
             }
@@ -80,7 +80,7 @@ class GeminiService
             foreach ($groupedReadings as $key => $group) {
                 // Split the key to get socket_id, profile_id, and hour
                 list($socket_id, $profile_id, $hour) = explode('_', $key, 3);
-                
+
                 // Calculate averages for numeric values
                 $hourlyReading = [
                     'socket_id' => $socket_id,
@@ -96,7 +96,7 @@ class GeminiService
                     // Also include the count of readings that were averaged
                     'readings_count' => $group->count(),
                 ];
-                
+
                 $hourlyReadings->push($hourlyReading);
             }
 
@@ -107,8 +107,8 @@ class GeminiService
             return $this->formatData($sortedReadings, $format);
         } catch (\Exception $e) {
             Log::error('Error exporting reading data: ' . $e->getMessage());
-            return $format === 'json' 
-                ? json_encode(['error' => 'Failed to export reading data: ' . $e->getMessage()]) 
+            return $format === 'json'
+                ? json_encode(['error' => 'Failed to export reading data: ' . $e->getMessage()])
                 : 'Error: Failed to export reading data: ' . $e->getMessage();
         }
     }
@@ -123,31 +123,34 @@ class GeminiService
     public function exportAlertData(string $format = 'json', array $filters = [])
     {
         try {
-            $query = Alert::query();
-            
+            $query = Alert::query()
+                ->whereHas('iotDevice', function ($query) {
+                    $query->where('user_id', auth()->id());
+                });
+
             // Apply filters if provided
             if (isset($filters['iot_device_id'])) {
                 $query->where('iot_device_id', $filters['iot_device_id']);
             }
-            
+
             // Support filtering by multiple IoT device IDs
             if (isset($filters['iot_device_ids']) && is_array($filters['iot_device_ids']) && !empty($filters['iot_device_ids'])) {
                 $query->whereIn('iot_device_id', $filters['iot_device_ids']);
             }
-            
+
             if (isset($filters['socket_id'])) {
                 $query->where('socket_id', $filters['socket_id']);
             }
-            
+
             // Support filtering by multiple socket IDs
             if (isset($filters['socket_ids']) && is_array($filters['socket_ids']) && !empty($filters['socket_ids'])) {
                 $query->whereIn('socket_id', $filters['socket_ids']);
             }
-            
+
             if (isset($filters['profile_id'])) {
                 $query->where('profile_id', $filters['profile_id']);
             }
-            
+
             // Support filtering by multiple profile IDs
             if (isset($filters['profile_ids']) && is_array($filters['profile_ids']) && !empty($filters['profile_ids'])) {
                 $query->whereIn('profile_id', $filters['profile_ids']);
@@ -180,7 +183,7 @@ class GeminiService
             ]);
 
             $alerts = $query->get();
-            
+
             // Format the data field if it's a JSON field
             $alerts = $alerts->map(function ($alert) {
                 if (is_array($alert->data)) {
@@ -193,8 +196,8 @@ class GeminiService
             return $this->formatData($alerts, $format);
         } catch (\Exception $e) {
             Log::error('Error exporting alert data: ' . $e->getMessage());
-            return $format === 'json' 
-                ? json_encode(['error' => 'Failed to export alert data: ' . $e->getMessage()]) 
+            return $format === 'json'
+                ? json_encode(['error' => 'Failed to export alert data: ' . $e->getMessage()])
                 : 'Error: Failed to export alert data: ' . $e->getMessage();
         }
     }
@@ -210,12 +213,12 @@ class GeminiService
     {
         try {
             $query = IotDevice::query();
-            
+
             // Apply filters if provided
             if (isset($filters['user_id'])) {
                 $query->where('user_id', $filters['user_id']);
             }
-            
+
             if (isset($filters['is_active'])) {
                 $query->where('is_active', $filters['is_active']);
             }
@@ -237,8 +240,8 @@ class GeminiService
             return $this->formatData($devices, $format);
         } catch (\Exception $e) {
             Log::error('Error exporting IoT device data: ' . $e->getMessage());
-            return $format === 'json' 
-                ? json_encode(['error' => 'Failed to export IoT device data']) 
+            return $format === 'json'
+                ? json_encode(['error' => 'Failed to export IoT device data'])
                 : 'Error: Failed to export IoT device data';
         }
     }
@@ -254,16 +257,16 @@ class GeminiService
     {
         try {
             $query = Profile::query();
-            
+
             // Apply filters if provided
             if (isset($filters['user_id'])) {
                 $query->where('user_id', $filters['user_id']);
             }
-            
+
             if (isset($filters['notify_on_anomaly'])) {
                 $query->where('notify_on_anomaly', $filters['notify_on_anomaly']);
             }
-            
+
             if (isset($filters['alert_sensitivity'])) {
                 $query->where('alert_sensitivity', $filters['alert_sensitivity']);
             }
@@ -281,7 +284,7 @@ class GeminiService
             ]);
 
             $profiles = $query->get();
-            
+
             // Format the notification_channels field if it's a JSON field
             $profiles = $profiles->map(function ($profile) {
                 if (is_array($profile->notification_channels)) {
@@ -294,8 +297,8 @@ class GeminiService
             return $this->formatData($profiles, $format);
         } catch (\Exception $e) {
             Log::error('Error exporting profile data: ' . $e->getMessage());
-            return $format === 'json' 
-                ? json_encode(['error' => 'Failed to export profile data']) 
+            return $format === 'json'
+                ? json_encode(['error' => 'Failed to export profile data'])
                 : 'Error: Failed to export profile data';
         }
     }
@@ -315,11 +318,11 @@ class GeminiService
             if ($data->isEmpty()) {
                 return '';
             }
-            
+
             // Create CSV header from the keys of the first item
             $headers = array_keys($data->first()->toArray());
             $csv = implode(',', $headers) . "\n";
-            
+
             // Add data rows
             foreach ($data as $item) {
                 $row = [];
@@ -338,10 +341,10 @@ class GeminiService
                 }
                 $csv .= implode(',', $row) . "\n";
             }
-            
+
             return $csv;
         }
-        
+
         throw new \InvalidArgumentException("Unsupported format: {$format}. Supported formats are 'csv' and 'json'.");
     }
 
@@ -361,33 +364,33 @@ class GeminiService
         if (!isset($filters['start_date'])) {
             $filters['start_date'] = now()->subDays(30)->startOfDay()->toDateTimeString();
         }
-        
+
         if (!isset($filters['end_date'])) {
             $filters['end_date'] = now()->endOfDay()->toDateTimeString();
         }
-        
+
         // If currentUserOnly is true, add user_id filter
         if ($user) {
             $userId = $user->id;
-            
+
             // Add user_id to filters
             $filters['user_id'] = $userId;
-            
+
             // We need to get the user's IoT devices to filter readings and alerts
             $userDevices = IotDevice::where('user_id', $userId)->pluck('id')->toArray();
-            
+
             // Get the user's sockets to filter readings
             $userSockets = Socket::whereIn('iot_device_id', $userDevices)->pluck('id')->toArray();
-            
+
             // Get the user's profiles to filter readings
             $userProfiles = Profile::where('user_id', $userId)->pluck('id')->toArray();
-            
+
             // Create a special filter for device-specific data
             $deviceFilters = array_merge($filters, ['iot_device_ids' => $userDevices]);
-            
+
             // Create a special filter for socket-specific data
             $socketFilters = array_merge($filters, ['socket_ids' => $userSockets]);
-            
+
             // Create a special filter for profile-specific data
             $profileFilters = array_merge($filters, ['profile_ids' => $userProfiles]);
         } else {
@@ -413,7 +416,7 @@ class GeminiService
             $csv .= $this->exportIotDeviceData('csv', $filters);
             $csv .= "\n=== PROFILES ===\n";
             $csv .= $this->exportProfileData('csv', $filters);
-            
+
             return $csv;
         }
     }
@@ -429,22 +432,22 @@ class GeminiService
     {
         try {
             $isLoading = true;
-            
+
             // Get data from the last 30 days
             $data = $this->exportAllData('json', [], $user);
-            
+
             // Store the data in a temporary file
             $tempFilename = 'gemini_data_' . uniqid() . '.json';
             $tempFilePath = Storage::disk('local')->path($tempFilename);
             file_put_contents($tempFilePath, $data);
-            
+
             // Initialize Gemini API data
             $apiKey = config('services.gemini.api_key');
             $modelId = config('services.gemini.model_id', 'gemini-2.0-flash');
-            
+
             // Since the client library doesn't support responseSchema, we'll make a direct API call
             $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$modelId}:generateContent?key={$apiKey}";
-            
+
             // Create prompt text
             $promptText = "Analyze the provided power readings data, integrating device profiles and alert information, to provide actionable insights. The goal is to optimize power consumption, predict equipment failures, and improve energy efficiency for MSMEs.\n\n" .
                 "Specifically:\n\n" .
@@ -529,7 +532,7 @@ class GeminiService
                 ],
                 'required' => ['insights']
             ];
-            
+
             // Construct the request body with the responseMimeType and responseSchema
             $requestBody = [
                 'contents' => [
@@ -554,7 +557,7 @@ class GeminiService
                     'responseSchema' => $responseSchema
                 ]
             ];
-            
+
             // Make the API request using Guzzle
             $client = new \GuzzleHttp\Client();
             $response = $client->post($apiUrl, [
@@ -563,31 +566,30 @@ class GeminiService
                 ],
                 'json' => $requestBody,
             ]);
-            
+
             // Clean up the temporary file
             Storage::disk('local')->delete($tempFilename);
-            
+
             $isLoading = false;
-            
+
             // Parse the response
             $responseData = json_decode($response->getBody(), true);
-            
+
             // Extract the text content from the response
             $content = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? '';
-            
+
             if ($this->isJson($content)) {
                 return json_decode($content, true);
             }
-            
+
             return ['error' => 'The API response was not in the expected JSON format.'];
-            
         } catch (\Exception $e) {
             Log::error('Error generating insights: ' . $e->getMessage());
             $isLoading = false;
             return ['error' => 'Failed to generate insights: ' . $e->getMessage()];
         }
     }
-    
+
     /**
      * Check if a string is valid JSON
      * 
