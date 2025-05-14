@@ -64,7 +64,7 @@ class EnergyCostCalculator extends Widget implements HasForms
     public function calculateCost($powerConsumption, $rate): void
     {
         if (is_numeric($powerConsumption) && is_numeric($rate)) {
-            $this->calculatedCost = floatval($powerConsumption) * floatval($rate);
+            $this->calculatedCost = floatval($powerConsumption) * floatval($rate) * 30; // Assuming 30 days in a month
         } else {
             $this->calculatedCost = 0;
         }
