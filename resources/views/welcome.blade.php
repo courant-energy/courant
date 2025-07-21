@@ -27,8 +27,18 @@
                     </a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('filament.app.auth.login') }}" class="px-4 py-2 text-sm hover:text-gray-600">Login</a>
-                    <a href="{{ route('filament.app.auth.register') }}" class="px-4 py-2 text-sm bg-black text-white rounded-sm hover:bg-gray-800">Register</a>
+
+                    @auth
+                        <a href="{{ route('filament.app.pages.dashboard') }}" class="px-4 py-2 text-sm hover:text-gray-600">Dashboard</a>
+                        <form method="POST" action="{{ route('filament.app.auth.logout') }}">
+                            @csrf
+                            <button type="submit" class="px-4 py-2 text-sm bg-black text-white rounded-md hover:bg-gray-800">Logout</button>
+                        </form>
+                    @else
+                        <a href="{{ route('filament.app.auth.login') }}" class="px-4 py-2 text-sm hover:text-gray-600">Login</a>
+                        <a href="{{ route('filament.app.auth.register') }}" class="px-4 py-2 text-sm bg-black text-white rounded-md hover:bg-gray-800">Register</a>
+                    @endauth
+
                 </div>
             </div>
         </nav>

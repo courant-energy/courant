@@ -22,7 +22,8 @@ class Registration extends BaseRegister
                 ])->columns(2),
                 $this->getCompanyNameFormComponent(),
                 $this->getEmailFormComponent(),
-                $this->getPasswordFormComponent(),
+                $this->getPasswordFormComponent()
+                ->helperText('Your password must be at least 8 characters long.'),
                 $this->getPasswordConfirmationFormComponent(),
             ]);
     }
