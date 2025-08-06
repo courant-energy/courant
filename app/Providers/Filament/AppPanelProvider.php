@@ -57,7 +57,7 @@ class AppPanelProvider extends PanelProvider
                 'Data & Insights',
                 'Learning & Support',
             ])
-            ->theme(asset('css/filament/app/theme.css'))
+            ->viteTheme('resources/css/filament/app/theme.css')
             // ->topNavigation()
             ->renderHook(PanelsRenderHook::BODY_END, fn() => Blade::render("@vite('resources/js/app.js')"))
             ->renderHook(PanelsRenderHook::HEAD_END, fn() => Blade::render("@filamentPWA"))

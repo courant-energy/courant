@@ -6,6 +6,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Pages\Auth\Register as BaseRegister;
@@ -23,8 +24,10 @@ class Registration extends BaseRegister
                 $this->getCompanyNameFormComponent(),
                 $this->getEmailFormComponent(),
                 $this->getPasswordFormComponent()
-                ->helperText('Your password must be at least 8 characters long.'),
+                    ->helperText('Your password must be at least 8 characters long.'),
                 $this->getPasswordConfirmationFormComponent(),
+                ViewField::make('legend')
+                    ->view('filament.customs.legend'),
             ]);
     }
 

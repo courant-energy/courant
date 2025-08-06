@@ -6,6 +6,7 @@ use App\Models\Question;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -47,6 +48,8 @@ class Help extends Page implements HasForms
                             ->minLength(10)
                             ->maxLength(5000)
                             ->required(),
+                        ViewField::make('legend')
+                            ->view('filament.customs.legend'),
                     ])
 
             ])

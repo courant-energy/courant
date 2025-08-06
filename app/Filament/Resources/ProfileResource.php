@@ -6,6 +6,7 @@ use App\Filament\Resources\ProfileResource\Pages;
 use App\Filament\Resources\ProfileResource\RelationManagers;
 use App\Models\Profile;
 use Filament\Forms;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -30,6 +31,8 @@ class ProfileResource extends Resource
                 Forms\Components\Section::make('Device Profile Details')
                     ->description('Configure the device profile settings')
                     ->schema([
+                        ViewField::make('legend')
+                            ->view('filament.customs.legend'),
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
@@ -110,6 +113,7 @@ class ProfileResource extends Resource
                             ->helperText('Choose how you want to be notified about anomalies'),
 
                     ]),
+
             ]);
     }
 
