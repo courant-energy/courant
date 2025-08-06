@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\AlertsTableWidget;
+use App\Filament\Widgets\CustomAccountWidget;
 use App\Filament\Widgets\DeviceStatsWidget;
 use App\Filament\Widgets\EnergyCostCalculator;
 use Filament\Actions\Action;
@@ -41,7 +42,7 @@ class Dashboard extends Page
     protected function getFooterWidgets(): array
     {
         return [
-            AccountWidget::class,
+            CustomAccountWidget::class,
             DeviceStatsWidget::class,
             AlertsTableWidget::class,
             EnergyCostCalculator::class,
