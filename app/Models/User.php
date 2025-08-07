@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, MustVerifyEmail
 {
@@ -88,40 +90,83 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
 
 
 
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
+
+    public function profiles()
+    {
+        return $this->hasMany(Profile::class);
+    }
+
+    /**
+     * Permanently delete all user data
+     */
+    public function wipeAllData(): void
+    {
+        DB::transaction(function () {
+            try {
+                // Delete all notifications sent to this user
+                DB::table('notifications')->where('notifiable_id', $this->id)
+                    ->where('notifiable_type', self::class)->delete();
+
+                // Delete all questions/tickets
+                $this->questions()->delete();
+
+                // Delete all profiles and their related data
+                $this->profiles()->each(function ($profile) {
+                    // Delete all readings for this profile
+                    DB::table('readings')->where('profile_id', $profile->id)->delete();
+                    
+                    // Delete all alerts for devices owned by this user
+                    DB::table('alerts')->whereIn('socket_id', function ($query) use ($profile) {
+                        $query->select('sockets.id')
+                            ->from('sockets')
+                            ->join('iot_devices', 'sockets.iot_device_id', '=', 'iot_devices.id')
+                            ->where('iot_devices.user_id', $this->id);
+                    })->delete();
+                    
+                    $profile->delete();
+                });
+
+                // Delete related IotDevices and their cascading data
+                $this->iotDevices()->each(function ($device) {
+                    // Delete all sockets for this device (and their readings via foreign key cascade)
+                    $device->sockets()->delete();
+                    
+                    // Delete any downtime events
+                    DB::table('downtime_events')->where('device_id', $device->id)->delete();
+                    
+                    $device->delete();
+                });
+
+                // Delete the user's profile picture from storage if it exists
+                if ($this->profile) {
+                    if (Storage::disk('public')->exists($this->profile)) {
+                        Storage::disk('public')->delete($this->profile);
+                    }
+                }
+
+                // Log the data wipe for audit purposes
+                Log::info("User data completely wiped", [
+                    'user_id' => $this->id,
+                    'email' => $this->email,
+                    'wiped_at' => now()
+                ]);
+
+            } catch (\Exception $e) {
+                Log::error("Error during complete user data wipe for User ID {$this->id}: " . $e->getMessage());
+                throw $e;
+            }
+        });
+    }
+
     protected static function booted(): void
     {
         static::deleting(function (User $user) {
-            try {
-                // Delete related IotDevices
-                $user->iotDevices()->each(function ($device) {
-                    try {
-                        // Use forceDelete() if IotDevice uses SoftDeletes and you want permanent deletion
-                        $device->delete();
-                    } catch (\Exception $e) {
-                        // Log or handle the error for individual device deletion
-                        \Log::error("Error deleting IotDevice ID {$device->id} for User ID {$user->id}: " . $e->getMessage());
-                        // Optionally rethrow or handle differently depending on requirements
-                    }
-                });
-            } catch (\Exception $e) {
-                // Log or handle the error for fetching/iterating devices
-                \Log::error("Error processing IotDevices for User ID {$user->id} during deletion: " . $e->getMessage());
-                // Depending on the desired behavior, you might want to stop the user deletion
-                // throw $e; // Re-throw to potentially stop the user deletion process
-            }
-
-            // Delete the user's profile picture from storage if it exists
-            if ($user->profile) {
-                try {
-                    if (Storage::disk('public')->exists($user->profile)) {
-                        Storage::disk('public')->delete($user->profile);
-                    }
-                } catch (\Exception $e) {
-                    // Log or handle the error for profile picture deletion
-                    \Log::error("Error deleting profile picture {$user->profile} for User ID {$user->id}: " . $e->getMessage());
-                    // Decide if this error should prevent user deletion. Usually, it shouldn't.
-                }
-            }
+            // Call the comprehensive data wipe method
+            $user->wipeAllData();
         });
     }
 }

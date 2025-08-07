@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\CheckDeviceStatus;
+use App\Console\Commands\BackupUserData;
 use Illuminate\Foundation\Console\ClosureCommand;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
