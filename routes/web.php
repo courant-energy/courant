@@ -16,4 +16,9 @@ Route::get('login', function () {
     return redirect()->route('filament.app.auth.login');
 })->name('login');
 
+// Display server time
+Route::get('server-time', function () {
+    return response()->json(['time' => now()->toDateTimeString()]);
+})->name('server.time');
+
 // require __DIR__.'/auth.php';
