@@ -6,6 +6,7 @@ use App\Models\Profile;
 use App\Services\ReportService;
 use App\Services\PdfReportService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use Livewire\Component;
 
@@ -30,10 +31,144 @@ class ReportGenerator extends Component
         $this->endDate = Carbon::now()->format('Y-m-d');
     }
 
+    public function updatedTimeRange()
+    {
+        $this->adjustDateRangeForTimeRange();
+    }
+
+    public function updatedStartDate()
+    {
+        $this->validateAndAdjustDateRange();
+    }
+
+    public function updatedEndDate()
+    {
+        $this->validateAndAdjustDateRange();
+    }
+
+    protected function adjustDateRangeForTimeRange()
+    {
+        $endDate = Carbon::parse($this->endDate);
+        $adjusted = false;
+        
+        switch ($this->timeRange) {
+            case 'daily':
+                // No minimum requirement for daily, but ensure at least 1 day
+                $minStartDate = $endDate->copy()->subDay();
+                break;
+            case 'weekly':
+                // Minimum 7 days for weekly reporting
+                $minStartDate = $endDate->copy()->subDays(6); // 7 days total including end date
+                break;
+            case 'monthly':
+                // Minimum 30 days for monthly reporting
+                $minStartDate = $endDate->copy()->subDays(29); // 30 days total including end date
+                break;
+            default:
+                return;
+        }
+
+        $currentStartDate = Carbon::parse($this->startDate);
+        
+        // If current start date is after the minimum required, adjust it
+        if ($currentStartDate->gt($minStartDate)) {
+            $this->startDate = $minStartDate->format('Y-m-d');
+            $adjusted = true;
+        }
+        
+        if ($adjusted) {
+            $this->dispatch('dateRangeAdjusted', [
+                'timeRange' => $this->timeRange,
+                'newStartDate' => $this->startDate,
+                'endDate' => $this->endDate,
+                'reason' => 'time_range_changed'
+            ]);
+        }
+    }
+
+    protected function validateAndAdjustDateRange()
+    {
+        $startDate = Carbon::parse($this->startDate);
+        $endDate = Carbon::parse($this->endDate);
+        
+        // Ensure start date is not after end date
+        if ($startDate->gt($endDate)) {
+            $this->endDate = $startDate->format('Y-m-d');
+            $endDate = $startDate;
+        }
+        
+        $daysDifference = $startDate->diffInDays($endDate) + 1; // +1 to include both start and end dates
+        $adjusted = false;
+        
+        switch ($this->timeRange) {
+            case 'weekly':
+                if ($daysDifference < 7) {
+                    // Extend the start date to make it 7 days
+                    $this->startDate = $endDate->copy()->subDays(6)->format('Y-m-d');
+                    $adjusted = true;
+                }
+                break;
+            case 'monthly':
+                if ($daysDifference < 30) {
+                    // Extend the start date to make it 30 days
+                    $this->startDate = $endDate->copy()->subDays(29)->format('Y-m-d');
+                    $adjusted = true;
+                }
+                break;
+        }
+        
+        if ($adjusted) {
+            $this->dispatch('dateRangeAdjusted', [
+                'timeRange' => $this->timeRange,
+                'newStartDate' => $this->startDate,
+                'endDate' => $this->endDate
+            ]);
+        }
+    }
+
+    public function getMinimumDaysForTimeRange(): int
+    {
+        switch ($this->timeRange) {
+            case 'daily':
+                return 1;
+            case 'weekly':
+                return 7;
+            case 'monthly':
+                return 30;
+            default:
+                return 1;
+        }
+    }
+
+    protected function isDateRangeValid(): bool
+    {
+        $startDate = Carbon::parse($this->startDate);
+        $endDate = Carbon::parse($this->endDate);
+        
+        $daysDifference = $startDate->diffInDays($endDate) + 1;
+        $minimumDays = $this->getMinimumDaysForTimeRange();
+        
+        return $daysDifference >= $minimumDays;
+    }
+
     public function generateReport()
     {
         $this->isLoading = true;
         $this->showReport = false;
+
+        // Validate and adjust date range before generating report
+        $this->validateAndAdjustDateRange();
+
+        // Double-check the date range meets minimum requirements
+        if (!$this->isDateRangeValid()) {
+            $this->isLoading = false;
+            \Filament\Notifications\Notification::make()
+                ->title('Invalid Date Range')
+                ->body('Please select a valid date range that meets the minimum requirements for the selected time range.')
+                ->danger()
+                ->send();
+            return;
+        }
 
         $reportService = app(ReportService::class);
         $startDate = Carbon::parse($this->startDate);
@@ -111,7 +246,7 @@ class ReportGenerator extends Component
 
     public function downloadPdf()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         
         // Dispatch job to generate PDF in the background
         \App\Jobs\GeneratePdfReport::dispatch(
@@ -136,7 +271,7 @@ class ReportGenerator extends Component
     public function getProfiles()
     {
         return Profile::whereHas('sockets')
-            ->where('user_id', auth()->user()->id)
+            ->where('user_id', Auth::user()->id)
             ->orderBy('name')
             ->get()
             ->map(function ($profile) {

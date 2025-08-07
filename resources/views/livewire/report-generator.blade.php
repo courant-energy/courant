@@ -57,6 +57,14 @@
                     Date</label>
                 <input type="date" id="startDate" wire:model.live="startDate"
                     class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <!-- Show minimum date requirement message -->
+                <div x-show="$wire.reportType === 'energy_consumption' || $wire.reportType === 'cost_analysis'">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <span x-show="$wire.timeRange === 'weekly'">Minimum 7 days required for weekly reports</span>
+                        <span x-show="$wire.timeRange === 'monthly'">Minimum 30 days required for monthly reports</span>
+                        <span x-show="$wire.timeRange === 'daily'">Daily reports can use any date range</span>
+                    </p>
+                </div>
             </div>
 
             <div>
@@ -64,6 +72,17 @@
                     Date</label>
                 <input type="date" id="endDate" wire:model.live="endDate"
                     class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <span x-data="{ 
+                        get daysDifference() {
+                            if (!$wire.startDate || !$wire.endDate) return 0;
+                            const start = new Date($wire.startDate);
+                            const end = new Date($wire.endDate);
+                            const diffTime = Math.abs(end - start);
+                            return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                        }
+                    }" x-text="`Selected range: ${daysDifference} day${daysDifference !== 1 ? 's' : ''}`"></span>
+                </div>
             </div>
 
             <!-- Profile Filter -->
@@ -323,6 +342,37 @@
         console.log('Report Generator Component Loaded');
         let reportChart = null;
 
+        // Listen for date range adjustments
+        Livewire.on('dateRangeAdjusted', (event) => {
+            const data = event[0];
+            const timeRange = data.timeRange;
+            const reason = data.reason || 'validation';
+            
+            let message = '';
+            if (timeRange === 'weekly') {
+                message = 'Date range adjusted to minimum 7 days for weekly reporting.';
+            } else if (timeRange === 'monthly') {
+                message = 'Date range adjusted to minimum 30 days for monthly reporting.';
+            }
+            
+            if (message) {
+                // Show a temporary notification
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-opacity duration-300';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+        });
 
         Livewire.on('reportGenerated', (event) => {
             console.log('Report Generated Event Triggered', event);
