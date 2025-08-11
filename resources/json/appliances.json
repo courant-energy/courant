@@ -1,0 +1,154 @@
+{
+  "appliances": [
+    {
+      "name": "Refrigerator",
+      "expected_power": 150,
+      "max_power_threshold": 200,
+      "min_power_threshold": 80
+    },
+    {
+      "name": "Washing Machine",
+      "expected_power": 500,
+      "max_power_threshold": 800,
+      "min_power_threshold": 200
+    },
+    {
+      "name": "Microwave Oven",
+      "expected_power": 1000,
+      "max_power_threshold": 1200,
+      "min_power_threshold": 800
+    },
+    {
+      "name": "Dishwasher",
+      "expected_power": 1800,
+      "max_power_threshold": 2200,
+      "min_power_threshold": 1000
+    },
+    {
+      "name": "Air Conditioner (Window)",
+      "expected_power": 1200,
+      "max_power_threshold": 1500,
+      "min_power_threshold": 800
+    },
+    {
+      "name": "Air Conditioner (Split)",
+      "expected_power": 2000,
+      "max_power_threshold": 2500,
+      "min_power_threshold": 1200
+    },
+    {
+      "name": "Electric Kettle",
+      "expected_power": 1500,
+      "max_power_threshold": 1800,
+      "min_power_threshold": 1200
+    },
+    {
+      "name": "Coffee Machine",
+      "expected_power": 800,
+      "max_power_threshold": 1200,
+      "min_power_threshold": 400
+    },
+    {
+      "name": "Toaster",
+      "expected_power": 800,
+      "max_power_threshold": 1000,
+      "min_power_threshold": 600
+    },
+    {
+      "name": "Blender",
+      "expected_power": 300,
+      "max_power_threshold": 500,
+      "min_power_threshold": 150
+    },
+    {
+      "name": "Television (LED 32\")",
+      "expected_power": 60,
+      "max_power_threshold": 100,
+      "min_power_threshold": 30
+    },
+    {
+      "name": "Television (LED 55\")",
+      "expected_power": 150,
+      "max_power_threshold": 200,
+      "min_power_threshold": 80
+    },
+    {
+      "name": "Desktop Computer",
+      "expected_power": 300,
+      "max_power_threshold": 500,
+      "min_power_threshold": 150
+    },
+    {
+      "name": "Laptop",
+      "expected_power": 65,
+      "max_power_threshold": 100,
+      "min_power_threshold": 30
+    },
+    {
+      "name": "Gaming Console",
+      "expected_power": 150,
+      "max_power_threshold": 200,
+      "min_power_threshold": 80
+    },
+    {
+      "name": "Hair Dryer",
+      "expected_power": 1200,
+      "max_power_threshold": 1500,
+      "min_power_threshold": 800
+    },
+    {
+      "name": "Iron",
+      "expected_power": 1000,
+      "max_power_threshold": 1400,
+      "min_power_threshold": 600
+    },
+    {
+      "name": "Vacuum Cleaner",
+      "expected_power": 800,
+      "max_power_threshold": 1200,
+      "min_power_threshold": 400
+    },
+    {
+      "name": "Electric Fan",
+      "expected_power": 75,
+      "max_power_threshold": 120,
+      "min_power_threshold": 40
+    },
+    {
+      "name": "Heater (Space)",
+      "expected_power": 1500,
+      "max_power_threshold": 2000,
+      "min_power_threshold": 1000
+    },
+    {
+      "name": "Water Heater",
+      "expected_power": 3000,
+      "max_power_threshold": 3500,
+      "min_power_threshold": 2000
+    },
+    {
+      "name": "Printer (Laser)",
+      "expected_power": 400,
+      "max_power_threshold": 600,
+      "min_power_threshold": 200
+    },
+    {
+      "name": "Router/Modem",
+      "expected_power": 15,
+      "max_power_threshold": 30,
+      "min_power_threshold": 5
+    },
+    {
+      "name": "LED Light Bulb (10W)",
+      "expected_power": 10,
+      "max_power_threshold": 15,
+      "min_power_threshold": 8
+    },
+    {
+      "name": "Fluorescent Light",
+      "expected_power": 40,
+      "max_power_threshold": 60,
+      "min_power_threshold": 30
+    }
+  ]
+}

@@ -33,6 +33,32 @@ class ProfileResource extends Resource
                     ->schema([
                         ViewField::make('legend')
                             ->view('filament.customs.legend'),
+                        Forms\Components\Select::make('appliance_preset')
+                            ->label('Appliance Preset')
+                            ->searchable()
+                            ->placeholder('Select a common appliance or leave blank for custom')
+                            ->options(function () {
+                                $appliances = Profile::getAppliancePresets();
+                                $options = ['custom' => 'Custom Profile'];
+                                
+                                foreach ($appliances as $appliance) {
+                                    $options[json_encode($appliance)] = $appliance['name'] . ' (' . $appliance['expected_power'] . 'W)';
+                                }
+                                
+                                return $options;
+                            })
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                if ($state && $state !== 'custom') {
+                                    $appliance = json_decode($state, true);
+                                    $set('name', $appliance['name']);
+                                    $set('expected_power', $appliance['expected_power']);
+                                    $set('max_power_threshold', $appliance['max_power_threshold']);
+                                    $set('min_power_threshold', $appliance['min_power_threshold']);
+                                }
+                            })
+                            ->helperText('Select a preset to auto-fill power values, or choose Custom to enter your own')
+                            ->hiddenOn('edit'),
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)

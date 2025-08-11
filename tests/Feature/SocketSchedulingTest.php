@@ -163,4 +163,38 @@ class SocketSchedulingTest extends TestCase
         Carbon::setTestNow(Carbon::parse('2025-01-06 10:00:00'));
         $this->assertFalse($profile->shouldBeOn());
     }
+
+    public function test_appliance_presets_can_be_loaded()
+    {
+        $presets = Profile::getAppliancePresets();
+        
+        $this->assertIsArray($presets);
+        $this->assertNotEmpty($presets);
+        
+        // Check that each preset has required fields
+        foreach ($presets as $preset) {
+            $this->assertArrayHasKey('name', $preset);
+            $this->assertArrayHasKey('expected_power', $preset);
+            $this->assertArrayHasKey('max_power_threshold', $preset);
+            $this->assertArrayHasKey('min_power_threshold', $preset);
+            
+            // Validate power values are reasonable
+            $this->assertIsInt($preset['expected_power']);
+            $this->assertGreaterThan(0, $preset['expected_power']);
+            $this->assertGreaterThanOrEqual($preset['expected_power'], $preset['max_power_threshold']);
+            $this->assertLessThanOrEqual($preset['expected_power'], $preset['min_power_threshold']);
+        }
+    }
+
+    public function test_appliance_presets_include_common_appliances()
+    {
+        $presets = Profile::getAppliancePresets();
+        $names = array_column($presets, 'name');
+        
+        // Check for some common appliances
+        $this->assertContains('Refrigerator', $names);
+        $this->assertContains('Washing Machine', $names);
+        $this->assertContains('Microwave Oven', $names);
+        $this->assertContains('Television (LED 32")', $names);
+    }
 }

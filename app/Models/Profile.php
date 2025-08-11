@@ -51,6 +51,22 @@ class Profile extends Model
         return $this->hasMany(Reading::class);
     }
 
+    /**
+     * Get available appliance presets from JSON file
+     *
+     * @return array
+     */
+    public static function getAppliancePresets()
+    {
+        $jsonPath = resource_path('json/appliances.json');
+        if (!file_exists($jsonPath)) {
+            return [];
+        }
+        
+        $appliances = json_decode(file_get_contents($jsonPath), true);
+        return $appliances['appliances'] ?? [];
+    }
+
     public function getIsActiveAttribute()
     {
         return $this->sockets()->exists();
