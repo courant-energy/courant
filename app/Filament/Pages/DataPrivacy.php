@@ -16,7 +16,8 @@ use Illuminate\Validation\ValidationException;
 
 class DataPrivacy extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-shield-check';
+    protected static ?string $navigationGroup = 'Data & Insights';
 
     protected static string $view = 'filament.pages.data-privacy';
 
