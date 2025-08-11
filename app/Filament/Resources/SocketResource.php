@@ -102,6 +102,7 @@ class SocketResource extends Resource
                     ->url(fn() => route('filament.app.resources.iot-devices.create'))
 
             ])
+            ->recordUrl(null)
             ->contentGrid([
                 'default' => 1,
                 'lg' => 2,
@@ -129,21 +130,16 @@ class SocketResource extends Resource
                         ->searchable()
                         ->sortable()
                         ->color(fn($state) => $state === 'No Profile Selected' ? 'danger' : null),
-                    Tables\Columns\TextColumn::make('state')
-                        ->label('Power State')
+                    Tables\Columns\TextColumn::make('profile.location')
+                        ->label('Location')
+                        ->default('No Location Set')
                         ->badge()
-                        ->icon(fn($state) => $state ? 'heroicon-o-light-bulb' : 'heroicon-o-light-bulb-off')
-                        ->color(
-                            function ($state) {
-                                return match ($state) {
-                                    'On' => 'success',
-                                    'Off' => 'danger',
-                                };
-                            }
-                        )
-                        ->getStateUsing(function (Socket $record) {
-                            return $record->state ? 'On' : 'Off';
-                        }),
+                        ->searchable()
+                        ->sortable()
+                        ->icon(fn($state) => $state === 'No Location Set' ? 'heroicon-o-x-circle' : 'heroicon-o-map-pin')
+                        ->color(fn($state) => $state === '' ? 'danger' : null),
+                    Tables\Columns\ToggleColumn::make('state')
+                        ->label('Power State')
                 ]),
             ])
             ->filters([
