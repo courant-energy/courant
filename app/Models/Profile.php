@@ -16,7 +16,8 @@ class Profile extends Model
         'notify_on_anomaly',        // Boolean flag for notifications
         'alert_sensitivity',         // enum: 'low', 'medium', 'high'
         'notification_channels',     // JSON field for channels (app, email, sms)
-        'anomaly_detection_enabled'
+        'anomaly_detection_enabled',
+        'location'
     ];
 
     protected $casts = [

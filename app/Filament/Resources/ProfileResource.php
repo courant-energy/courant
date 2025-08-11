@@ -67,6 +67,11 @@ class ProfileResource extends Resource
                                 ->suffix('W')
                                 ->helperText('Minimum acceptable power threshold in watts')
                                 ->live(),
+                            Forms\Components\TextInput::make('location')
+                                ->nullable()
+                                ->maxLength(255)
+                                ->placeholder('e.g., Kitchen, Living Room')
+                                ->helperText('Optional location for this device profile'),
                         ])->columns(3),
                     ])->aside(),
 
@@ -136,6 +141,12 @@ class ProfileResource extends Resource
                     Tables\Columns\TextColumn::make('expected_power')
                         ->label('Expected Power')
                         ->suffix('W')
+                        ->sortable()
+                        ->searchable()
+                        ->color('gray')
+                        ->size('sm'),
+                    Tables\Columns\TextColumn::make('location')
+                        ->label('Location')
                         ->sortable()
                         ->searchable()
                         ->color('gray')
