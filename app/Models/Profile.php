@@ -17,13 +17,21 @@ class Profile extends Model
         'alert_sensitivity',         // enum: 'low', 'medium', 'high'
         'notification_channels',     // JSON field for channels (app, email, sms)
         'anomaly_detection_enabled',
-        'location'
+        'location',
+        'scheduling_enabled',
+        'turn_on_time',
+        'turn_off_time',
+        'schedule_days'
     ];
 
     protected $casts = [
         'notify_on_anomaly' => 'boolean',
         'notification_channels' => 'array',
         'anomaly_detection_enabled' => 'boolean',
+        'scheduling_enabled' => 'boolean',
+        'schedule_days' => 'array',
+        'turn_on_time' => 'datetime:H:i',
+        'turn_off_time' => 'datetime:H:i',
     ];
 
     // Default values for monitoring thresholds if not set
@@ -182,6 +190,123 @@ class Profile extends Model
             ->groupBy(DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H:00:00")'))
             ->orderBy('hour')
             ->get();
+    }
+
+    /**
+     * Check if the profile should be turned on at the current time
+     *
+     * @return bool
+     */
+    public function shouldBeOn()
+    {
+        if (!$this->scheduling_enabled || !$this->turn_on_time || !$this->turn_off_time) {
+            return false;
+        }
+
+        $now = now();
+        $currentTime = $now->format('H:i');
+        $currentDay = strtolower($now->format('l'));
+
+        // Check if today is in the scheduled days
+        if ($this->schedule_days && !in_array($currentDay, $this->schedule_days)) {
+            return false;
+        }
+
+        $turnOnTime = $this->turn_on_time->format('H:i');
+        $turnOffTime = $this->turn_off_time->format('H:i');
+
+        // Handle schedules that span midnight
+        if ($turnOnTime > $turnOffTime) {
+            // Schedule spans midnight (e.g., 22:00 to 06:00)
+            return $currentTime >= $turnOnTime || $currentTime < $turnOffTime;
+        } else {
+            // Normal schedule (e.g., 08:00 to 18:00)
+            return $currentTime >= $turnOnTime && $currentTime < $turnOffTime;
+        }
+    }
+
+    /**
+     * Apply schedule to all sockets linked to this profile
+     *
+     * @return int Number of sockets updated
+     */
+    public function applySchedule()
+    {
+        if (!$this->scheduling_enabled) {
+            return 0;
+        }
+
+        $shouldBeOn = $this->shouldBeOn();
+        $updatedCount = 0;
+
+        foreach ($this->sockets as $socket) {
+            if ($socket->state != $shouldBeOn) {
+                $socket->update(['state' => $shouldBeOn]);
+                $updatedCount++;
+            }
+        }
+
+        return $updatedCount;
+    }
+
+    /**
+     * Get the next scheduled state change
+     *
+     * @return array|null
+     */
+    public function getNextScheduleChange()
+    {
+        if (!$this->scheduling_enabled || !$this->turn_on_time || !$this->turn_off_time) {
+            return null;
+        }
+
+        $now = now();
+        $currentTime = $now->format('H:i');
+        $turnOnTime = $this->turn_on_time->format('H:i');
+        $turnOffTime = $this->turn_off_time->format('H:i');
+
+        $nextChange = null;
+        $nextAction = null;
+
+        // Handle schedules that span midnight
+        if ($turnOnTime > $turnOffTime) {
+            if ($currentTime >= $turnOnTime || $currentTime < $turnOffTime) {
+                // Currently in "on" period, next change is turn off
+                if ($currentTime >= $turnOnTime) {
+                    // Turn off tomorrow
+                    $nextChange = $now->copy()->addDay()->setTimeFromTimeString($turnOffTime);
+                } else {
+                    // Turn off today
+                    $nextChange = $now->copy()->setTimeFromTimeString($turnOffTime);
+                }
+                $nextAction = 'turn_off';
+            } else {
+                // Currently in "off" period, next change is turn on
+                $nextChange = $now->copy()->setTimeFromTimeString($turnOnTime);
+                $nextAction = 'turn_on';
+            }
+        } else {
+            // Normal schedule
+            if ($currentTime >= $turnOnTime && $currentTime < $turnOffTime) {
+                // Currently in "on" period, next change is turn off
+                $nextChange = $now->copy()->setTimeFromTimeString($turnOffTime);
+                $nextAction = 'turn_off';
+            } else if ($currentTime < $turnOnTime) {
+                // Before turn on time today
+                $nextChange = $now->copy()->setTimeFromTimeString($turnOnTime);
+                $nextAction = 'turn_on';
+            } else {
+                // After turn off time today, next turn on is tomorrow
+                $nextChange = $now->copy()->addDay()->setTimeFromTimeString($turnOnTime);
+                $nextAction = 'turn_on';
+            }
+        }
+
+        return [
+            'time' => $nextChange,
+            'action' => $nextAction,
+            'human_readable' => $nextChange->diffForHumans()
+        ];
     }
 
     

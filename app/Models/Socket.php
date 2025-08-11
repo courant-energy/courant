@@ -82,5 +82,59 @@ class Socket extends Model
         }
     }
 
+    /**
+     * Check if this socket is currently scheduled
+     *
+     * @return bool
+     */
+    public function isScheduled()
+    {
+        return $this->profile && $this->profile->scheduling_enabled;
+    }
+
+    /**
+     * Get the next scheduled state change for this socket
+     *
+     * @return array|null
+     */
+    public function getNextScheduleChange()
+    {
+        if (!$this->profile || !$this->profile->scheduling_enabled) {
+            return null;
+        }
+
+        return $this->profile->getNextScheduleChange();
+    }
+
+    /**
+     * Get the current scheduled state (what the state should be according to schedule)
+     *
+     * @return bool|null Returns null if no schedule is active
+     */
+    public function getScheduledState()
+    {
+        if (!$this->profile || !$this->profile->scheduling_enabled) {
+            return null;
+        }
+
+        return $this->profile->shouldBeOn();
+    }
+
+    /**
+     * Check if the socket state matches the scheduled state
+     *
+     * @return bool|null Returns null if no schedule is active
+     */
+    public function isInSync()
+    {
+        $scheduledState = $this->getScheduledState();
+        
+        if ($scheduledState === null) {
+            return null; // No schedule active
+        }
+
+        return $this->state === $scheduledState;
+    }
+
 
 }

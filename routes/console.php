@@ -2,6 +2,8 @@
 
 use App\Console\Commands\CheckDeviceStatus;
 use App\Console\Commands\BackupUserData;
+use App\Console\Commands\ProcessSocketSchedules;
+use App\Jobs\ProcessSocketSchedulesJob;
 use Illuminate\Foundation\Console\ClosureCommand;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -30,4 +32,18 @@ Schedule::command('queue:work --queue=anomaly_detection --sleep=3 --tries=3 --st
         // Handle failure
         Log::error('Anomaly detection queue worker failed.');
     });
+
+// Process socket schedules every minute
+Schedule::job(ProcessSocketSchedulesJob::class)
+    ->everyMinute()
+    ->onFailure(function () {
+        Log::error('Socket schedules processing job failed.');
+    });
+
+// Alternative: Run the command directly instead of using a job
+// Schedule::command(ProcessSocketSchedules::class)
+//     ->everyMinute()
+//     ->onFailure(function () {
+//         Log::error('Socket schedules processing command failed.');
+//     });
 

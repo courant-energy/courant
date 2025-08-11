@@ -75,6 +75,62 @@ class ProfileResource extends Resource
                         ])->columns(3),
                     ])->aside(),
 
+                Forms\Components\Section::make('Socket Scheduling')
+                    ->description('Automatically turn sockets on/off at specific times')
+                    ->collapsible()
+                    ->aside()
+                    ->schema([
+                        Forms\Components\Toggle::make('scheduling_enabled')
+                            ->label('Enable Scheduling')
+                            ->helperText('Automatically control socket state based on time schedule')
+                            ->default(false)
+                            ->live(),
+
+                        Forms\Components\Group::make([
+                            Forms\Components\TimePicker::make('turn_on_time')
+                                ->label('Turn On Time')
+                                ->helperText('Time to automatically turn on the socket')
+                                ->visible(fn(Get $get) => $get('scheduling_enabled'))
+                                ->required(fn(Get $get) => $get('scheduling_enabled')),
+
+                            Forms\Components\TimePicker::make('turn_off_time')
+                                ->label('Turn Off Time')
+                                ->helperText('Time to automatically turn off the socket')
+                                ->visible(fn(Get $get) => $get('scheduling_enabled'))
+                                ->required(fn(Get $get) => $get('scheduling_enabled')),
+                        ])->columns(2),
+
+                        Forms\Components\CheckboxList::make('schedule_days')
+                            ->label('Schedule Days')
+                            ->options([
+                                'monday' => 'Monday',
+                                'tuesday' => 'Tuesday',
+                                'wednesday' => 'Wednesday',
+                                'thursday' => 'Thursday',
+                                'friday' => 'Friday',
+                                'saturday' => 'Saturday',
+                                'sunday' => 'Sunday',
+                            ])
+                            ->default(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])
+                            ->helperText('Select which days the schedule should be active. Leave empty for all days.')
+                            ->visible(fn(Get $get) => $get('scheduling_enabled'))
+                            ->columns(3),
+
+                        Forms\Components\Placeholder::make('schedule_preview')
+                            ->label('Schedule Preview')
+                            ->content(function (Get $get) {
+                                if (!$get('scheduling_enabled') || !$get('turn_on_time') || !$get('turn_off_time')) {
+                                    return 'Enable scheduling and set times to see preview';
+                                }
+
+                                $days = $get('schedule_days') ?: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                                $daysText = count($days) === 7 ? 'Every day' : implode(', ', array_map('ucfirst', $days));
+                                
+                                return "Socket will turn ON at {$get('turn_on_time')} and OFF at {$get('turn_off_time')} on {$daysText}";
+                            })
+                            ->visible(fn(Get $get) => $get('scheduling_enabled')),
+                    ]),
+
                 Forms\Components\Section::make('Advanced Monitoring Settings')
                     ->description('Configure anomaly detection and notification preferences')
                     ->collapsible()
@@ -157,7 +213,33 @@ class ProfileResource extends Resource
                             return $record->is_active ? 'Active' : 'Inactive';
                         })
                         ->color(fn($state) => $state === 'Active' ? 'success' : 'gray')
-                        ->label('Status')
+                        ->label('Status'),
+                    Tables\Columns\TextColumn::make('scheduling_status')
+                        ->badge()
+                        ->getStateUsing(function (Profile $record) {
+                            if (!$record->scheduling_enabled) {
+                                return 'No Schedule';
+                            }
+                            
+                            $shouldBeOn = $record->shouldBeOn();
+                            $nextChange = $record->getNextScheduleChange();
+                            
+                            if ($nextChange) {
+                                return $shouldBeOn ? 'Scheduled ON' : 'Scheduled OFF';
+                            }
+                            
+                            return 'Schedule Inactive';
+                        })
+                        ->color(function ($state) {
+                            return match($state) {
+                                'Scheduled ON' => 'success',
+                                'Scheduled OFF' => 'warning',
+                                'Schedule Inactive' => 'gray',
+                                'No Schedule' => 'gray',
+                                default => 'gray'
+                            };
+                        })
+                        ->label('Schedule'),
                 ]),
             ])
             ->contentGrid([
