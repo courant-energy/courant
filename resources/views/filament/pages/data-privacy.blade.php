@@ -123,4 +123,9 @@
             </div>
         </div>
     </div>
+
+    {{-- delete action --}}
+    <div class="mt-6">
+        {{ $this->deleteAccountAction }}
+    </div>
 </x-filament-panels::page>
