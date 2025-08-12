@@ -108,6 +108,8 @@ class Socket extends Model
 
     /**
      * Get the current scheduled state (what the state should be according to schedule)
+     * Note: This only indicates the theoretical state based on schedule, 
+     * not whether a schedule should be applied right now
      *
      * @return bool|null Returns null if no schedule is active
      */
@@ -121,7 +123,39 @@ class Socket extends Model
     }
 
     /**
+     * Check if a schedule should be applied to this socket right now
+     *
+     * @return array|null Returns array with action details if schedule should be applied, null otherwise
+     */
+    public function getPendingScheduleAction()
+    {
+        if (!$this->profile || !$this->profile->scheduling_enabled) {
+            return null;
+        }
+
+        if ($this->profile->shouldApplyTurnOn() && !$this->state) {
+            return [
+                'action' => 'turn_on',
+                'scheduled_time' => $this->profile->turn_on_time->format('H:i'),
+                'reason' => 'Socket is OFF but should be turned ON according to schedule'
+            ];
+        }
+
+        if ($this->profile->shouldApplyTurnOff() && $this->state) {
+            return [
+                'action' => 'turn_off',
+                'scheduled_time' => $this->profile->turn_off_time->format('H:i'),
+                'reason' => 'Socket is ON but should be turned OFF according to schedule'
+            ];
+        }
+
+        return null;
+    }
+
+    /**
      * Check if the socket state matches the scheduled state
+     * Note: This only compares current state vs theoretical scheduled state,
+     * it doesn't mean the schedule should be applied right now
      *
      * @return bool|null Returns null if no schedule is active
      */

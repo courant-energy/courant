@@ -21,7 +21,9 @@ class Profile extends Model
         'scheduling_enabled',
         'turn_on_time',
         'turn_off_time',
-        'schedule_days'
+        'schedule_days',
+        'last_turn_on_applied',
+        'last_turn_off_applied'
     ];
 
     protected $casts = [
@@ -32,6 +34,8 @@ class Profile extends Model
         'schedule_days' => 'array',
         'turn_on_time' => 'datetime:H:i',
         'turn_off_time' => 'datetime:H:i',
+        'last_turn_on_applied' => 'datetime',
+        'last_turn_off_applied' => 'datetime',
     ];
 
     // Default values for monitoring thresholds if not set
@@ -242,27 +246,153 @@ class Profile extends Model
     }
 
     /**
+     * Check if we need to apply a turn ON schedule now
+     * 
+     * @param int $toleranceMinutes How many minutes after scheduled time to still allow application
+     * @return bool
+     */
+    public function shouldApplyTurnOn($toleranceMinutes = 5)
+    {
+        if (!$this->scheduling_enabled || !$this->turn_on_time) {
+            return false;
+        }
+
+        $now = now();
+        $currentDay = strtolower($now->format('l'));
+
+        // Check if today is in the scheduled days
+        if ($this->schedule_days && !in_array($currentDay, $this->schedule_days)) {
+            return false;
+        }
+
+        // Calculate today's turn on time
+        $todayTurnOn = $now->copy()->setTimeFromTimeString($this->turn_on_time->format('H:i:s'));
+        
+        // Check if we're within the tolerance window after the scheduled time
+        $isWithinWindow = $now >= $todayTurnOn && $now <= $todayTurnOn->copy()->addMinutes($toleranceMinutes);
+        
+        if (!$isWithinWindow) {
+            return false;
+        }
+
+        // Check if we already applied the schedule today
+        if ($this->last_turn_on_applied && $this->last_turn_on_applied->isSameDay($now)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if we need to apply a turn OFF schedule now
+     * 
+     * @param int $toleranceMinutes How many minutes after scheduled time to still allow application
+     * @return bool
+     */
+    public function shouldApplyTurnOff($toleranceMinutes = 5)
+    {
+        if (!$this->scheduling_enabled || !$this->turn_off_time) {
+            return false;
+        }
+
+        $now = now();
+        $currentDay = strtolower($now->format('l'));
+        $turnOnTime = $this->turn_on_time->format('H:i');
+        $turnOffTime = $this->turn_off_time->format('H:i');
+
+        // For schedules spanning midnight, turn off applies to the next day
+        if ($turnOnTime > $turnOffTime) {
+            // Check if we should turn off on the previous day's schedule
+            $yesterday = $now->copy()->subDay();
+            $yesterdayDay = strtolower($yesterday->format('l'));
+            
+            if ($this->schedule_days && !in_array($yesterdayDay, $this->schedule_days)) {
+                return false;
+            }
+        } else {
+            // Normal schedule - check today
+            if ($this->schedule_days && !in_array($currentDay, $this->schedule_days)) {
+                return false;
+            }
+        }
+
+        // Calculate today's turn off time
+        $todayTurnOff = $now->copy()->setTimeFromTimeString($this->turn_off_time->format('H:i:s'));
+        
+        // Check if we're within the tolerance window after the scheduled time
+        $isWithinWindow = $now >= $todayTurnOff && $now <= $todayTurnOff->copy()->addMinutes($toleranceMinutes);
+        
+        if (!$isWithinWindow) {
+            return false;
+        }
+
+        // Check if we already applied the turn off schedule today
+        if ($this->last_turn_off_applied && $this->last_turn_off_applied->isSameDay($now)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Apply schedule to all sockets linked to this profile
+     * Only applies if we're at a scheduled time and haven't applied it already
      *
-     * @return int Number of sockets updated
+     * @return array Results with counts and actions taken
      */
     public function applySchedule()
     {
         if (!$this->scheduling_enabled) {
-            return 0;
+            return ['updated' => 0, 'action' => 'none', 'reason' => 'scheduling_disabled'];
         }
 
-        $shouldBeOn = $this->shouldBeOn();
-        $updatedCount = 0;
+        $result = ['updated' => 0, 'action' => 'none', 'reason' => 'no_schedule_due'];
+        $now = now();
 
-        foreach ($this->sockets as $socket) {
-            if ($socket->state != $shouldBeOn) {
-                $socket->update(['state' => $shouldBeOn]);
-                $updatedCount++;
+        // Check if we should apply turn ON
+        if ($this->shouldApplyTurnOn()) {
+            $updatedCount = 0;
+            foreach ($this->sockets as $socket) {
+                if (!$socket->state) { // Only update if currently OFF
+                    $socket->update(['state' => true]);
+                    $updatedCount++;
+                }
             }
+            
+            // Mark that we applied the turn on schedule
+            $this->update(['last_turn_on_applied' => $now]);
+            
+            $result = [
+                'updated' => $updatedCount,
+                'action' => 'turn_on',
+                'reason' => 'scheduled_turn_on',
+                'scheduled_time' => $this->turn_on_time->format('H:i'),
+                'applied_at' => $now->format('H:i:s')
+            ];
+        }
+        // Check if we should apply turn OFF
+        elseif ($this->shouldApplyTurnOff()) {
+            $updatedCount = 0;
+            foreach ($this->sockets as $socket) {
+                if ($socket->state) { // Only update if currently ON
+                    $socket->update(['state' => false]);
+                    $updatedCount++;
+                }
+            }
+            
+            // Mark that we applied the turn off schedule
+            $this->update(['last_turn_off_applied' => $now]);
+            
+            $result = [
+                'updated' => $updatedCount,
+                'action' => 'turn_off',
+                'reason' => 'scheduled_turn_off',
+                'scheduled_time' => $this->turn_off_time->format('H:i'),
+                'applied_at' => $now->format('H:i:s')
+            ];
         }
 
-        return $updatedCount;
+        return $result;
     }
 
     /**

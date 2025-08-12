@@ -38,21 +38,36 @@ class ProcessSocketSchedulesJob implements ShouldQueue
         }
 
         $totalUpdated = 0;
+        $schedulesApplied = 0;
 
         foreach ($profiles as $profile) {
             try {
-                $updated = $profile->applySchedule();
+                $result = $profile->applySchedule();
                 
-                if ($updated > 0) {
-                    $shouldBeOn = $profile->shouldBeOn();
-                    Log::info("Profile '{$profile->name}': Updated {$updated} sockets to " . ($shouldBeOn ? 'ON' : 'OFF'));
-                    $totalUpdated += $updated;
+                if ($result['action'] !== 'none') {
+                    $schedulesApplied++;
+                    $totalUpdated += $result['updated'];
+                    
+                    Log::info("Profile '{$profile->name}': {$result['action']} schedule applied", [
+                        'sockets_updated' => $result['updated'],
+                        'scheduled_time' => $result['scheduled_time'] ?? 'N/A',
+                        'applied_at' => $result['applied_at'] ?? 'N/A',
+                        'reason' => $result['reason']
+                    ]);
+                } else {
+                    Log::debug("Profile '{$profile->name}': No schedule action needed", [
+                        'reason' => $result['reason']
+                    ]);
                 }
             } catch (\Exception $e) {
                 Log::error("Error processing schedule for profile '{$profile->name}': " . $e->getMessage());
             }
         }
 
-        Log::info("Socket schedules processing completed. Updated {$totalUpdated} sockets across {$profiles->count()} profiles.");
+        if ($schedulesApplied > 0) {
+            Log::info("Socket schedules processing completed. Applied {$schedulesApplied} schedules, updated {$totalUpdated} sockets across {$profiles->count()} profiles.");
+        } else {
+            Log::debug("Socket schedules processing completed. No schedules were due for application across {$profiles->count()} profiles.");
+        }
     }
 }
