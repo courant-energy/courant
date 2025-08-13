@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Services\AnomalyService;
+use Illuminate\Support\Facades\Log;
 
 class Reading extends Model
 {
@@ -51,9 +52,21 @@ class Reading extends Model
                 'status' => 'online',
             ]);
 
+            // Clear energy graph cache for this profile
+            if ($reading->profile_id) {
+                try {
+                    \App\Filament\Widgets\Readings\EnergyUsageGraph::clearCacheForProfile($reading->profile_id);
+                } catch (\Exception $e) {
+                    Log::warning('Failed to clear energy graph cache', [
+                        'profile_id' => $reading->profile_id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+
             // Trigger anomaly detection
             if ($reading->profile_id) {
-                \Log::info('Triggering anomaly detection for reading', [
+                Log::info('Triggering anomaly detection for reading', [
                     'reading_id' => $reading->id,
                     'profile_id' => $reading->profile_id
                 ]);
@@ -61,7 +74,7 @@ class Reading extends Model
                     $anomalyService = app(AnomalyService::class);
                     $anomalyService->processReadingForAnomalyDetection($reading);
                 } catch (\Exception $e) {
-                    \Log::error('Failed to trigger anomaly detection', [
+                    Log::error('Failed to trigger anomaly detection', [
                         'reading_id' => $reading->id,
                         'error' => $e->getMessage()
                     ]);

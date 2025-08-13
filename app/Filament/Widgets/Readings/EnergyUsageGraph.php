@@ -8,6 +8,7 @@ use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection;
 use App\Services\EnergyCalculationService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class EnergyUsageGraph extends ChartWidget
 {
@@ -41,85 +42,121 @@ class EnergyUsageGraph extends ChartWidget
         $profile = $this->socket->profile;
 
         if (!$profile) {
-            // If no profile is associated with the socket, return empty data
-            return [
-                'datasets' => [
-                    [
-                        'label' => 'Energy Usage',
-                        'data' => [],
-                        'backgroundColor' => '#4CAF50',
-                        'borderColor' => '#4CAF50',
-                        'fill' => false,
-                    ],
-                    [
-                        'label' => 'Power Factor',
-                        'data' => [],
-                        'backgroundColor' => '#2196F3',
-                        'borderColor' => '#2196F3',
-                        'fill' => false,
-                        'yAxisID' => 'y1',
-                    ],
-                ],
-                'labels' => [],
-            ];
+            return $this->getEmptyDataset();
         }
 
+        // Use caching for expensive calculations
+        $cacheKey = "energy_graph_{$profile->id}_{$this->filter}_{$startDate->timestamp}_{$endDate->timestamp}";
+        $cacheTime = match ($this->filter) {
+            'past_hour' => 30, // 30 seconds for real-time data
+            'today' => 300,    // 5 minutes
+            'week' => 900,     // 15 minutes
+            'month' => 1800,   // 30 minutes
+            default => 300,
+        };
+
+        return Cache::remember($cacheKey, $cacheTime, function () use ($profile, $startDate, $endDate) {
+            return $this->generateChartData($profile, $startDate, $endDate);
+        });
+    }
+
+    /**
+     * Clear cache for this profile when new data arrives
+     */
+    public static function clearCacheForProfile($profileId): void
+    {
+        $patterns = [
+            "energy_graph_{$profileId}_past_hour_*",
+            "energy_graph_{$profileId}_today_*",
+            "energy_graph_{$profileId}_week_*",
+            "energy_graph_{$profileId}_month_*",
+        ];
+
+        foreach ($patterns as $pattern) {
+            Cache::flush(); // For simplicity, you can implement more targeted cache clearing
+        }
+    }
+
+    protected function getEmptyDataset(): array
+    {
+        return [
+            'datasets' => [
+                [
+                    'label' => 'Energy Usage',
+                    'data' => [],
+                    'backgroundColor' => '#4CAF50',
+                    'borderColor' => '#4CAF50',
+                    'fill' => false,
+                ],
+                [
+                    'label' => 'Power Factor',
+                    'data' => [],
+                    'backgroundColor' => '#2196F3',
+                    'borderColor' => '#2196F3',
+                    'fill' => false,
+                    'yAxisID' => 'y1',
+                ],
+            ],
+            'labels' => [],
+        ];
+    }
+
+    protected function generateChartData($profile, Carbon $startDate, Carbon $endDate): array
+    {
         // Generate time intervals based on filter
         $timeIntervals = $this->generateTimeIntervals($startDate, $endDate, $this->filter);
-        $energyData = [];
-        $powerFactorData = [];
-        $labels = [];
-        $cumulativeEnergy = 0; // Initialize cumulative energy
+        
+        if (empty($timeIntervals)) {
+            return $this->getEmptyDataset();
+        }
 
-        // Calculate energy consumption for each interval
-        foreach ($timeIntervals as $index => $timePoint) {
-            if ($index < count($timeIntervals) - 1) {
-                try {
-                    $intervalStart = Carbon::createFromFormat($this->getTimeFormat(), $timePoint);
-                    $intervalEnd = Carbon::createFromFormat($this->getTimeFormat(), $timeIntervals[$index + 1]);
-
-                    // Use EnergyCalculationService to calculate energy consumption for the interval
-                    $intervalEnergy = $this->energyCalculationService->calculateEnergyConsumption(
-                        $profile,
-                        $intervalStart,
-                        $intervalEnd
-                    );
-
-                    // Add interval energy to cumulative energy
-                    $cumulativeEnergy += $intervalEnergy;
-                    $energyData[] = $cumulativeEnergy; // Store the cumulative energy
-
-                    // Get average power factor for the interval
-                    $avgPowerFactor = $this->getAveragePowerFactorForInterval($profile, $intervalStart, $intervalEnd);
-
-                    $powerFactorData[] = $avgPowerFactor * 100; // Convert to percentage
-
-                    // Format label based on the time filter
-                    $labelFormat = match ($this->filter) {
-                        'month' => 'M-d',
-                        'week' => 'M-d H:00', // Adjust label format for clarity if needed
-                        default => 'M-d H:i',
-                    };
-                    $label = $intervalStart->format($labelFormat);
-                    $labels[] = $label;
-                } catch (\Exception $e) {
-                    // Log the error with context
-                    Log::error('EnergyUsageGraph: Error processing interval.', [
-                        'index' => $index,
-                        'timePoint' => $timePoint,
-                        'nextTimePoint' => $timeIntervals[$index + 1] ?? 'N/A',
-                        'format' => $this->getTimeFormat(),
-                        'exception_message' => $e->getMessage(),
-                        'exception_trace' => $e->getTraceAsString(), // Consider logging trace only in debug/local env
-                    ]);
-                    // Optionally add placeholder data to avoid breaking the chart
-                    // $energyData[] = 0;
-                    // $powerFactorData[] = 0;
-                    // $labels[] = 'Error';
-                    // Depending on requirements, you might want to re-throw or handle differently
-                }
-            } else {
+        // Create interval objects for batch energy calculation
+        $intervalObjects = [];
+        for ($i = 0; $i < count($timeIntervals) - 1; $i++) {
+            try {
+                $intervalStart = Carbon::createFromFormat($this->getTimeFormat(), $timeIntervals[$i]);
+                $intervalEnd = Carbon::createFromFormat($this->getTimeFormat(), $timeIntervals[$i + 1]);
+                $intervalObjects[] = ['start' => $intervalStart, 'end' => $intervalEnd];
+            } catch (\Exception $e) {
+                Log::error('EnergyUsageGraph: Error parsing time interval', [
+                    'start' => $timeIntervals[$i],
+                    'end' => $timeIntervals[$i + 1] ?? 'N/A',
+                    'error' => $e->getMessage(),
+                ]);
+                continue;
             }
+        }
+
+        // Batch calculate energy consumption for all intervals
+        $energyResults = $this->energyCalculationService->calculateEnergyConsumptionForIntervals(
+            $profile,
+            $intervalObjects
+        );
+
+        // Get power factor data efficiently
+        $powerFactorData = $this->getBatchPowerFactorData($profile, $intervalObjects);
+
+        // Process results
+        $energyData = [];
+        $powerFactorDataPoints = [];
+        $labels = [];
+        $cumulativeEnergy = 0;
+
+        foreach ($intervalObjects as $index => $interval) {
+            $intervalEnergy = $energyResults[$index] ?? 0;
+            $cumulativeEnergy += $intervalEnergy;
+            $energyData[] = $cumulativeEnergy;
+
+            $avgPowerFactor = $powerFactorData[$index] ?? 0;
+            $powerFactorDataPoints[] = $avgPowerFactor * 100; // Convert to percentage
+
+            // Format label based on the time filter
+            $labelFormat = match ($this->filter) {
+                'month' => 'M-d',
+                'week' => 'M-d H:00',
+                default => 'M-d H:i',
+            };
+            $labels[] = $interval['start']->format($labelFormat);
         }
 
         return [
@@ -137,7 +174,7 @@ class EnergyUsageGraph extends ChartWidget
                 ],
                 [
                     'label' => 'Power Factor',
-                    'data' => $powerFactorData,
+                    'data' => $powerFactorDataPoints,
                     'backgroundColor' => '#2196F3',
                     'borderColor' => '#2196F3',
                     'fill' => false,
@@ -150,6 +187,35 @@ class EnergyUsageGraph extends ChartWidget
             ],
             'labels' => $labels,
         ];
+    }
+
+    /**
+     * Get power factor data for multiple intervals efficiently
+     */
+    protected function getBatchPowerFactorData($profile, array $intervals): array
+    {
+        if (empty($intervals)) {
+            return [];
+        }
+
+        // Get the overall start and end dates
+        $overallStart = min(array_column($intervals, 'start'));
+        $overallEnd = max(array_column($intervals, 'end'));
+
+        // Fetch all power factor readings in one query
+        $allReadings = $profile->readings()
+            ->select(['power_factor', 'reading_time'])
+            ->whereBetween('reading_time', [$overallStart, $overallEnd])
+            ->whereNotNull('power_factor')
+            ->get();
+
+        $results = [];
+        foreach ($intervals as $interval) {
+            $intervalReadings = $allReadings->whereBetween('reading_time', [$interval['start'], $interval['end']]);
+            $results[] = $intervalReadings->isEmpty() ? 0 : $intervalReadings->avg('power_factor');
+        }
+
+        return $results;
     }
 
     /**
@@ -167,12 +233,14 @@ class EnergyUsageGraph extends ChartWidget
     }
 
     /**
-     * Calculate average power factor for a time interval
+     * Calculate average power factor for a time interval (legacy method, kept for compatibility)
      */
     protected function getAveragePowerFactorForInterval($profile, Carbon $startDate, Carbon $endDate): float
     {
         $readings = $profile->readings()
+            ->select(['power_factor'])
             ->whereBetween('reading_time', [$startDate, $endDate])
+            ->whereNotNull('power_factor')
             ->get();
 
         if ($readings->isEmpty()) {
@@ -183,7 +251,7 @@ class EnergyUsageGraph extends ChartWidget
     }
 
     /**
-     * Generate time intervals for the selected time period
+     * Generate time intervals for the selected time period (optimized)
      */
     protected function generateTimeIntervals(Carbon $startDate, Carbon $endDate, string $filter): array
     {
@@ -195,72 +263,20 @@ class EnergyUsageGraph extends ChartWidget
             default => '1 hour',
         };
 
-        $period = CarbonPeriod::create($startDate, $interval, $endDate);
+        // Use a more efficient approach for generating intervals
         $timePoints = [];
-
+        $format = $this->getTimeFormat();
+        
+        $period = CarbonPeriod::create($startDate, $interval, $endDate);
+        
         foreach ($period as $date) {
-            $format = match ($filter) {
-                'past_hour' => 'Y-m-d H:i',
-                'today' => 'Y-m-d H:i',
-                'week' => 'Y-m-d H',
-                'month' => 'Y-m-d',
-                default => 'Y-m-d H:i',
-            };
-
             if ($filter === 'today') {
                 $date = $date->setMinute(floor($date->minute / 10) * 10);
             }
-
             $timePoints[] = $date->format($format);
         }
 
         return array_unique($timePoints);
-    }
-
-    /**
-     * Fill in missing time points with zeros
-     */
-    protected function fillMissingTimePoints(Collection $readings, array $timeIntervals, string $interval): Collection
-    {
-        $filledReadings = collect();
-
-        $format = match ($interval) {
-            'minute' => 'Y-m-d H:i',
-            '10minutes' => 'Y-m-d H:i',
-            'hour' => 'Y-m-d H',
-            'day' => 'Y-m-d',
-            default => 'Y-m-d H:i',
-        };
-
-        foreach ($timeIntervals as $timePoint) {
-            // Find if we have a reading for this time point
-            $found = false;
-
-            foreach ($readings as $reading) {
-                $readingTime = is_array($reading)
-                    ? $reading['reading_time']->format($format)
-                    : $reading->reading_time->format($format);
-
-                if ($readingTime === $timePoint) {
-                    $filledReadings->push($reading);
-                    $found = true;
-                    break;
-                }
-            }
-
-            // If no reading found for this time point, add a zero placeholder
-            if (!$found) {
-                $carbonTime = Carbon::createFromFormat($format, $timePoint);
-
-                $filledReadings->push([
-                    'energy' => 0,
-                    'power_factor' => 0,
-                    'reading_time' => $carbonTime,
-                ]);
-            }
-        }
-
-        return $filledReadings;
     }
 
     protected function getFilters(): ?array
@@ -273,7 +289,6 @@ class EnergyUsageGraph extends ChartWidget
         ];
     }
 
-
     protected function getType(): string
     {
         return 'line';
@@ -281,7 +296,7 @@ class EnergyUsageGraph extends ChartWidget
 
     public function getDescription(): ?string
     {
-        return 'This graph helps MSMEs monitor energy usage and power factor. Efficient energy usage reduces costs, while maintaining a good power factor improves electrical efficiency and avoids penalties. (Update every 5 seconds)';
+        return 'This graph helps MSMEs monitor energy usage and power factor. Efficient energy usage reduces costs, while maintaining a good power factor improves electrical efficiency and avoids penalties. (Updates every 5 seconds)';
     }
 
     public function getHeading(): ?string
@@ -295,9 +310,11 @@ class EnergyUsageGraph extends ChartWidget
             'aspectRatio' => 1.2,
             'maintainAspectRatio' => true,
             'responsive' => true,
-
+            'interaction' => [
+                'intersect' => false,
+                'mode' => 'index',
+            ],
             'scales' => [
-
                 'y' => [
                     'beginAtZero' => false,
                     'title' => [
@@ -315,12 +332,32 @@ class EnergyUsageGraph extends ChartWidget
                     'position' => 'right',
                     'title' => [
                         'display' => true,
-                        'text' => 'Power Factor'
+                        'text' => 'Power Factor (%)'
                     ],
                     'grid' => [
-                        'drawOnChartArea' => true,
+                        'drawOnChartArea' => false,
                     ],
+                    'max' => 100,
                 ],
+            ],
+            'plugins' => [
+                'legend' => [
+                    'display' => true,
+                    'position' => 'top',
+                ],
+                'tooltip' => [
+                    'mode' => 'index',
+                    'intersect' => false,
+                    'callbacks' => [
+                        'label' => 'function(context) {
+                            if (context.datasetIndex === 0) {
+                                return "Energy: " + context.parsed.y.toFixed(3) + " kWh";
+                            } else {
+                                return "Power Factor: " + context.parsed.y.toFixed(1) + "%";
+                            }
+                        }'
+                    ]
+                ]
             ],
         ];
     }

@@ -16,22 +16,21 @@ class EnergyCalculationService
      * Calculate the energy consumption for a given profile.
      *
      * @param  \App\Models\Profile  $profile
-     * @param  string  $startDate  Start date/time string (e.g., 'YYYY-MM-DD HH:MM:SS')
-     * @param  string  $endDate    End date/time string (e.g., 'YYYY-MM-DD HH:MM:SS')
+     * @param  string|\Carbon\Carbon  $startDate  Start date/time string (e.g., 'YYYY-MM-DD HH:MM:SS')
+     * @param  string|\Carbon\Carbon  $endDate    End date/time string (e.g., 'YYYY-MM-DD HH:MM:SS')
      * @return float
      */
     public function calculateEnergyConsumption($profile, $startDate, $endDate)
     {
+        // Use more efficient query with selected columns only
         $readings = $profile->readings()
+            ->select(['id', 'power', 'reading_time'])
             ->whereBetween('reading_time', [$startDate, $endDate])
-            ->where('profile_id', $profile->id)
             ->orderBy('reading_time', 'asc')
             ->get();
 
         $readingCount = $readings->count();
 
-        // Calculate total energy consumption
-        $totalEnergy = 0;
         if ($readingCount < 2) {
             return 0.0; // Not enough data points to calculate intervals
         }
@@ -74,9 +73,81 @@ class EnergyCalculationService
             $totalKwh += $intervalKwh;
         }
 
-        // Overwrite the initial $totalEnergy with the calculated $totalKwh
-        $totalEnergy = $totalKwh;
+        return $totalKwh;
+    }
 
-        return $totalEnergy;
+    /**
+     * Calculate energy consumption for multiple time intervals efficiently
+     *
+     * @param  \App\Models\Profile  $profile
+     * @param  array  $timeIntervals  Array of ['start' => Carbon, 'end' => Carbon] intervals
+     * @return array
+     */
+    public function calculateEnergyConsumptionForIntervals($profile, array $timeIntervals)
+    {
+        if (empty($timeIntervals)) {
+            return [];
+        }
+
+        // Get the overall start and end dates
+        $overallStart = min(array_column($timeIntervals, 'start'));
+        $overallEnd = max(array_column($timeIntervals, 'end'));
+
+        // Fetch all readings in one query
+        $allReadings = $profile->readings()
+            ->select(['id', 'power', 'reading_time'])
+            ->whereBetween('reading_time', [$overallStart, $overallEnd])
+            ->orderBy('reading_time', 'asc')
+            ->get();
+
+        $results = [];
+        
+        foreach ($timeIntervals as $interval) {
+            $intervalReadings = $allReadings->whereBetween('reading_time', [$interval['start'], $interval['end']]);
+            $results[] = $this->calculateEnergyFromReadings($intervalReadings);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Calculate energy from a collection of readings
+     *
+     * @param  \Illuminate\Support\Collection  $readings
+     * @return float
+     */
+    private function calculateEnergyFromReadings($readings)
+    {
+        $readingCount = $readings->count();
+
+        if ($readingCount < 2) {
+            return 0.0;
+        }
+
+        $totalKwh = 0.0;
+        $maxGapSecondsThreshold = 2 * 60; // 120 seconds
+
+        $readingsArray = $readings->values()->all();
+
+        for ($i = 0; $i < $readingCount - 1; $i++) {
+            $r1 = $readingsArray[$i];
+            $r2 = $readingsArray[$i + 1];
+
+            $deltaTimeSeconds = $r1->reading_time->diffInSeconds($r2->reading_time);
+
+            if ($deltaTimeSeconds <= 0 || $deltaTimeSeconds > $maxGapSecondsThreshold) {
+                continue;
+            }
+
+            if (!is_numeric($r1->power) || !is_numeric($r2->power)) {
+                continue;
+            }
+
+            $avgPowerWatts = ($r1->power + $r2->power) / 2;
+            $intervalKwh = ($avgPowerWatts * $deltaTimeSeconds) / 3600000;
+            $totalKwh += $intervalKwh;
+        }
+
+        return $totalKwh;
     }
 }
