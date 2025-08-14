@@ -84,7 +84,7 @@ class AnomalyService
                 'power' => $reading->power,
                 'frequency' => $reading->frequency,
                 'power_factor' => $reading->power_factor,
-
+                'timestamp' => $reading->created_at->toIso8601String(),
             ];
             \Log::info('Sending LSTM prediction request', [
                 'data' => $data,
@@ -125,19 +125,18 @@ class AnomalyService
     protected function processWithIsolationForest(Reading $reading, Profile $profile)
     {
         \Log::info('Processing reading with Isolation Forest', [
-            'reading_id' => $reading,
+            'reading_id' => $reading->id,
             'profile_id' => $profile->id
         ]);
         try {
             $data = [
                 'profile_id' => $profile->id,
-
                 'voltage' => $reading->voltage,
                 'current' => $reading->current,
                 'power' => $reading->power,
                 'frequency' => $reading->frequency,
                 'power_factor' => $reading->power_factor,
-
+                'timestamp' => $reading->created_at->toIso8601String(),
             ];
 
             // Make request to ML server
