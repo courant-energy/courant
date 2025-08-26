@@ -11,8 +11,8 @@
         {{-- Power --}}
         <div>
             @php
-                $textColorClass = 'text-gray-900'; // Default color
-                
+                $textColorClass = 'text-gray-900 dark:text-gray-400'; // Default color
+
                 if ($socket->profile) {
                     $deviation = 0.05; // 5% deviation allowed
                     $lowerGreen = $socket->profile->expected_power * (1 - $deviation);
