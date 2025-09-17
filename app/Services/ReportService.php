@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ReportService
 {
@@ -38,12 +39,7 @@ class ReportService
      */
     public function generateEnergyConsumptionReport(string $timeRange, Carbon $startDate, Carbon $endDate, ?int $profileId = null): array
     {
-        $profiles = [];
-        if ($profileId) {
-            $profiles = Profile::where('id', $profileId)->get();
-        } else {
-            $profiles = Profile::whereHas('sockets')->get();
-        }
+        $profiles = $this->getUserProfiles($profileId);
 
         // Structure to hold energy data by date
         $energyByDate = [];
@@ -134,12 +130,7 @@ class ReportService
      */
     public function generateCostAnalysisReport(string $timeRange, Carbon $startDate, Carbon $endDate, float $costPerKwh = 0.12, ?int $profileId = null): array
     {
-        $profiles = [];
-        if ($profileId) {
-            $profiles = Profile::where('id', $profileId)->get();
-        } else {
-            $profiles = Profile::whereHas('sockets')->get();
-        }
+        $profiles = $this->getUserProfiles($profileId);
 
         // Structure to hold energy data by date
         $energyByDate = [];
@@ -180,31 +171,32 @@ class ReportService
             }
         }
 
-        // Create cost data from energy data
-        $rawData = collect();
+        // Convert energy data to cost data
+        $costData = collect();
         foreach ($energyByDate as $date => $energy) {
-            $rawData->push((object)[
+            $costData->push((object)[
                 'date' => $date,
-                'total_energy' => $energy,
+                'energy' => $energy,
                 'cost' => $energy * $costPerKwh
             ]);
         }
-        
+
         // Format data based on time range
-        $formattedData = $this->formatTimeSeriesData($rawData, $timeRange, $startDate, $endDate, 'cost');
+        $formattedData = $this->formatTimeSeriesData($costData, $timeRange, $startDate, $endDate, 'cost');
         
         return [
             'labels' => $formattedData['labels'],
             'datasets' => [
                 [
-                    'label' => 'Energy Cost (PHP)',
+                    'label' => 'Energy Cost ($)',
                     'data' => $formattedData['values'],
+                    'backgroundColor' => 'rgba(255, 159, 64, 0.6)',
                 ]
             ],
             'summary' => [
-                'total_cost' => $rawData->sum('cost'),
-                'total_energy' => $rawData->sum('total_energy'),
-                'average_daily_cost' => $rawData->count() > 0 ? $rawData->sum('cost') / $rawData->count() : 0,
+                'total_cost' => $costData->sum('cost'),
+                'total_energy' => $costData->sum('energy'),
+                'average_daily_cost' => $costData->count() > 0 ? $costData->sum('cost') / $costData->count() : 0,
             ]
         ];
     }
@@ -219,6 +211,8 @@ class ReportService
      */
     public function generateEquipmentUsageReport(Carbon $startDate, Carbon $endDate, ?int $profileId = null): array
     {
+        $userProfileIds = $this->getUserProfileIds($profileId);
+        
         $query = Reading::query()
             ->select(
                 'profile_id',
@@ -233,11 +227,8 @@ class ReportService
             )
             ->whereBetween('reading_time', [$startDate, $endDate])
             ->whereNotNull('profile_id')
+            ->whereIn('profile_id', $userProfileIds)
             ->groupBy('profile_id');
-
-        if ($profileId) {
-            $query->where('profile_id', $profileId);
-        }
 
         $profileData = $query->get();
         
@@ -286,13 +277,19 @@ class ReportService
      */
     public function generateAnomalyReport(Carbon $startDate, Carbon $endDate, ?int $profileId = null): array
     {
+        $userProfileIds = $this->getUserProfileIds($profileId);
+        
         $query = Alert::query()
             ->with(['socket.profile'])
             ->whereBetween('created_at', [$startDate, $endDate]);
 
-        if ($profileId) {
-            $query->where('profile_id', $profileId);
-        }
+        // Filter by user's profiles
+        $query->where(function($q) use ($userProfileIds) {
+            $q->whereIn('profile_id', $userProfileIds)
+              ->orWhereHas('socket.profile', function($subQuery) use ($userProfileIds) {
+                  $subQuery->whereIn('id', $userProfileIds);
+              });
+        });
 
         $alerts = $query->get();
         
@@ -429,6 +426,7 @@ class ReportService
     public function getAvailableProfiles(): array
     {
         return Profile::query()
+            ->where('user_id', Auth::id())
             ->whereHas('sockets')
             ->get()
             ->map(function ($profile) {
@@ -513,5 +511,43 @@ class ReportService
         fclose($output);
         
         return $csv;
+    }
+
+    /**
+     * Get user's profiles based on profileId filter
+     *
+     * @param int|null $profileId
+     * @return Collection
+     */
+    protected function getUserProfiles(?int $profileId = null): Collection
+    {
+        $query = Profile::query()->where('user_id', Auth::id());
+        
+        if ($profileId) {
+            $query->where('id', $profileId);
+        } else {
+            $query->whereHas('sockets');
+        }
+        
+        return $query->get();
+    }
+
+    /**
+     * Get user's profile IDs based on profileId filter
+     *
+     * @param int|null $profileId
+     * @return array
+     */
+    protected function getUserProfileIds(?int $profileId = null): array
+    {
+        $query = Profile::query()->where('user_id', Auth::id());
+        
+        if ($profileId) {
+            $query->where('id', $profileId);
+        } else {
+            $query->whereHas('sockets');
+        }
+        
+        return $query->pluck('id')->toArray();
     }
 }

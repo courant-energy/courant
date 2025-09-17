@@ -31,6 +31,7 @@
             font-size: 12px;
             color: #666;
             margin-top: 5px;
+            text-align: left;
         }
         .chart-container {
             width: 100%;
@@ -102,16 +103,19 @@
     <div class="header">
         <img src="{{ public_path('logo.svg') }}" alt="Logo" class="logo">
         <h1>{{ $title }}</h1>
-        <div class="meta">
-            <p>Company: {{ $companyName }}</p>
+        <div class="meta" style="text-align: left;">
+            <p>{{ $companyName }}</p>
             <p>Period: {{ $reportPeriod }}</p>
             <p>Device: {{ $profileName }}</p>
-            <p>Generated: {{ $generatedAt }}</p>
+           
         </div>
     </div>
     
     @yield('content')
     
+    <div style="margin-top: 30px; font-size: 12px; color: #666;">
+         <p>Generated: {{ $generatedAt }}</p>
+    </div>
     <div class="footer">
         <p>© {{ date('Y') }} Courant Energy Monitoring System</p>
     </div>
