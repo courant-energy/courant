@@ -9,7 +9,7 @@
                 img: 'images/Dashboard.webp'
             },
             {
-                number: '10k+', 
+                number: '10', 
                 subtext: 'Active Users',
                 img: 'images/DashboardUsersWhite.webp'
             },
