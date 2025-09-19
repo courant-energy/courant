@@ -3,1034 +3,1034 @@
   [
     {
       "name": "100W light bulb (Incandescent)",
-      "minimum": "100",
-      "maximum": "100",
+      "min_power_threshold": "100",
+      "max_power_threshold": "100",
       "expected_power": "100.00"
     },
     {
       "name": "22 Inch LED TV",
-      "minimum": "17",
-      "maximum": "17",
+      "min_power_threshold": "17",
+      "max_power_threshold": "17",
       "expected_power": "17.00"
     },
     {
       "name": "25\" colour TV",
-      "minimum": "150",
-      "maximum": "150",
+      "min_power_threshold": "150",
+      "max_power_threshold": "150",
       "expected_power": "150.00"
     },
     {
       "name": "3\" belt sander",
-      "minimum": "1000",
-      "maximum": "1000",
+      "min_power_threshold": "1000",
+      "max_power_threshold": "1000",
       "expected_power": "1000.00"
     },
     {
       "name": "32 Inch LED TV",
-      "minimum": "20",
-      "maximum": "60",
+      "min_power_threshold": "20",
+      "max_power_threshold": "60",
       "expected_power": "40.00"
     },
     {
       "name": "3D Printer",
-      "minimum": "50",
-      "maximum": "250",
+      "min_power_threshold": "50",
+      "max_power_threshold": "250",
       "expected_power": "150.00"
     },
     {
       "name": "42 Inch LED TV",
-      "minimum": "58",
-      "maximum": "60",
+      "min_power_threshold": "58",
+      "max_power_threshold": "60",
       "expected_power": "59.00"
     },
     {
       "name": "42 Inch Plasma TV",
-      "minimum": "450",
-      "maximum": "600",
+      "min_power_threshold": "450",
+      "max_power_threshold": "600",
       "expected_power": "525.00"
     },
     {
       "name": "46 Inch LED TV",
-      "minimum": "60",
-      "maximum": "70",
+      "min_power_threshold": "60",
+      "max_power_threshold": "70",
       "expected_power": "65.00"
     },
     {
       "name": "49 Inch LED TV",
-      "minimum": "85",
-      "maximum": "85",
+      "min_power_threshold": "85",
+      "max_power_threshold": "85",
       "expected_power": "85.00"
     },
     {
       "name": "55 Inch LED TV",
-      "minimum": "116",
-      "maximum": "116",
+      "min_power_threshold": "116",
+      "max_power_threshold": "116",
       "expected_power": "116.00"
     },
     {
       "name": "60W light bulb (Incandescent)",
-      "minimum": "60",
-      "maximum": "60",
+      "min_power_threshold": "60",
+      "max_power_threshold": "60",
       "expected_power": "60.00"
     },
     {
       "name": "65 Inch LED TV",
-      "minimum": "120",
-      "maximum": "130",
+      "min_power_threshold": "120",
+      "max_power_threshold": "130",
       "expected_power": "125.00"
     },
     {
       "name": "82 Inch LED TV",
-      "minimum": "228",
-      "maximum": "295",
+      "min_power_threshold": "228",
+      "max_power_threshold": "295",
       "expected_power": "261.50"
     },
     {
       "name": "9\" disc sander",
-      "minimum": "1200",
-      "maximum": "1200",
+      "min_power_threshold": "1200",
+      "max_power_threshold": "1200",
       "expected_power": "1200.00"
     },
     {
       "name": "Air Cooler",
-      "minimum": "65",
-      "maximum": "80",
+      "min_power_threshold": "65",
+      "max_power_threshold": "80",
       "expected_power": "72.50"
     },
     {
       "name": "Air Fryer",
-      "minimum": "1500",
-      "maximum": "1500",
+      "min_power_threshold": "1500",
+      "max_power_threshold": "1500",
       "expected_power": "1500.00"
     },
     {
       "name": "Air Fryer Toaster Oven",
-      "minimum": "1400",
-      "maximum": "1800",
+      "min_power_threshold": "1400",
+      "max_power_threshold": "1800",
       "expected_power": "1600.00"
     },
     {
       "name": "Air Purifier",
-      "minimum": "25",
-      "maximum": "30",
+      "min_power_threshold": "25",
+      "max_power_threshold": "30",
       "expected_power": "27.50"
     },
     {
       "name": "Amazon Echo",
-      "minimum": "3",
-      "maximum": "3",
+      "min_power_threshold": "3",
+      "max_power_threshold": "3",
       "expected_power": "3.00"
     },
     {
       "name": "Amazon Echo Dot",
-      "minimum": "2",
-      "maximum": "3",
+      "min_power_threshold": "2",
+      "max_power_threshold": "3",
       "expected_power": "2.50"
     },
     {
       "name": "Amazon Echo Show",
-      "minimum": "2",
-      "maximum": "4",
+      "min_power_threshold": "2",
+      "max_power_threshold": "4",
       "expected_power": "3.00"
     },
     {
       "name": "American-Style Fridge Freezer",
-      "minimum": "40",
-      "maximum": "80",
+      "min_power_threshold": "40",
+      "max_power_threshold": "80",
       "expected_power": "60.00"
     },
     {
       "name": "Apple TV",
-      "minimum": "3",
-      "maximum": "6",
+      "min_power_threshold": "3",
+      "max_power_threshold": "6",
       "expected_power": "4.50"
     },
     {
       "name": "Aquarium Heater",
-      "minimum": "50",
-      "maximum": "300",
+      "min_power_threshold": "50",
+      "max_power_threshold": "300",
       "expected_power": "175.00"
     },
     {
       "name": "Aquarium Pump",
-      "minimum": "20",
-      "maximum": "50",
+      "min_power_threshold": "20",
+      "max_power_threshold": "50",
       "expected_power": "35.00"
     },
     {
       "name": "AV Receiver",
-      "minimum": "450",
-      "maximum": "450",
+      "min_power_threshold": "450",
+      "max_power_threshold": "450",
       "expected_power": "450.00"
     },
     {
       "name": "Baby Bottle Warmer",
-      "minimum": "150",
-      "maximum": "300",
+      "min_power_threshold": "150",
+      "max_power_threshold": "300",
       "expected_power": "225.00"
     },
     {
       "name": "Bathroom Towel Heater",
-      "minimum": "60",
-      "maximum": "150",
+      "min_power_threshold": "60",
+      "max_power_threshold": "150",
       "expected_power": "105.00"
     },
     {
       "name": "Bread Maker",
-      "minimum": "450",
-      "maximum": "800",
+      "min_power_threshold": "450",
+      "max_power_threshold": "800",
       "expected_power": "625.00"
     },
     {
       "name": "Ceiling Fan",
-      "minimum": "60",
-      "maximum": "70",
+      "min_power_threshold": "60",
+      "max_power_threshold": "70",
       "expected_power": "65.00"
     },
     {
       "name": "Chromebook",
-      "minimum": "45",
-      "maximum": "45",
+      "min_power_threshold": "45",
+      "max_power_threshold": "45",
       "expected_power": "45.00"
     },
     {
       "name": "Chromecast",
-      "minimum": "2",
-      "maximum": "2",
+      "min_power_threshold": "2",
+      "max_power_threshold": "2",
       "expected_power": "2.00"
     },
     {
       "name": "Clock radio",
-      "minimum": "1",
-      "maximum": "2",
+      "min_power_threshold": "1",
+      "max_power_threshold": "2",
       "expected_power": "1.50"
     },
     {
       "name": "Clothes Dryer",
-      "minimum": "1000",
-      "maximum": "4000",
+      "min_power_threshold": "1000",
+      "max_power_threshold": "4000",
       "expected_power": "2500.00"
     },
     {
       "name": "Coffee Maker",
-      "minimum": "800",
-      "maximum": "1400",
+      "min_power_threshold": "800",
+      "max_power_threshold": "1400",
       "expected_power": "1100.00"
     },
     {
       "name": "Computer Monitor",
-      "minimum": "25",
-      "maximum": "30",
+      "min_power_threshold": "25",
+      "max_power_threshold": "30",
       "expected_power": "27.50"
     },
     {
       "name": "Cooker Hood",
-      "minimum": "20",
-      "maximum": "30",
+      "min_power_threshold": "20",
+      "max_power_threshold": "30",
       "expected_power": "25.00"
     },
     {
       "name": "Corded Drill",
-      "minimum": "600",
-      "maximum": "850",
+      "min_power_threshold": "600",
+      "max_power_threshold": "850",
       "expected_power": "725.00"
     },
     {
       "name": "Corded Electric Handheld Leaf Blower",
-      "minimum": "2500",
-      "maximum": "2500",
+      "min_power_threshold": "2500",
+      "max_power_threshold": "2500",
       "expected_power": "2500.00"
     },
     {
       "name": "Cordless Drill Charger",
-      "minimum": "70",
-      "maximum": "150",
+      "min_power_threshold": "70",
+      "max_power_threshold": "150",
       "expected_power": "110.00"
     },
     {
       "name": "Countertop Ice Maker",
-      "minimum": "100",
-      "maximum": "200",
+      "min_power_threshold": "100",
+      "max_power_threshold": "200",
       "expected_power": "150.00"
     },
     {
       "name": "CPAP Machine",
-      "minimum": "30",
-      "maximum": "60",
+      "min_power_threshold": "30",
+      "max_power_threshold": "60",
       "expected_power": "45.00"
     },
     {
       "name": "Curling Iron",
-      "minimum": "25",
-      "maximum": "35",
+      "min_power_threshold": "25",
+      "max_power_threshold": "35",
       "expected_power": "30.00"
     },
     {
       "name": "DAB Mains Radio",
-      "minimum": "5",
-      "maximum": "9",
+      "min_power_threshold": "5",
+      "max_power_threshold": "9",
       "expected_power": "7.00"
     },
     {
       "name": "Deep Freezer",
-      "minimum": "19",
-      "maximum": "19",
+      "min_power_threshold": "19",
+      "max_power_threshold": "19",
       "expected_power": "19.00"
     },
     {
       "name": "Dehumidifier",
-      "minimum": "240",
-      "maximum": "240",
+      "min_power_threshold": "240",
+      "max_power_threshold": "240",
       "expected_power": "240.00"
     },
     {
       "name": "Desk Lamp",
-      "minimum": "40",
-      "maximum": "65",
+      "min_power_threshold": "40",
+      "max_power_threshold": "65",
       "expected_power": "52.50"
     },
     {
       "name": "Desktop Computer",
-      "minimum": "100",
-      "maximum": "450",
+      "min_power_threshold": "100",
+      "max_power_threshold": "450",
       "expected_power": "275.00"
     },
     {
       "name": "Dishwasher",
-      "minimum": "1200",
-      "maximum": "1500",
+      "min_power_threshold": "1200",
+      "max_power_threshold": "1500",
       "expected_power": "1350.00"
     },
     {
       "name": "Domestic Water Pump",
-      "minimum": "200",
-      "maximum": "300",
+      "min_power_threshold": "200",
+      "max_power_threshold": "300",
       "expected_power": "250.00"
     },
     {
       "name": "DVD Player",
-      "minimum": "26",
-      "maximum": "60",
+      "min_power_threshold": "26",
+      "max_power_threshold": "60",
       "expected_power": "43.00"
     },
     {
       "name": "Electric Blanket",
-      "minimum": "200",
-      "maximum": "200",
+      "min_power_threshold": "200",
+      "max_power_threshold": "200",
       "expected_power": "200.00"
     },
     {
       "name": "Electric Boiler",
-      "minimum": "4000",
-      "maximum": "14000",
+      "min_power_threshold": "4000",
+      "max_power_threshold": "14000",
       "expected_power": "9000.00"
     },
     {
       "name": "Electric Car (Charging)",
-      "minimum": "2000",
-      "maximum": "11000",
+      "min_power_threshold": "2000",
+      "max_power_threshold": "11000",
       "expected_power": "6500.00"
     },
     {
       "name": "Electric Combi Boiler",
-      "minimum": "6000",
-      "maximum": "12000",
+      "min_power_threshold": "6000",
+      "max_power_threshold": "12000",
       "expected_power": "9000.00"
     },
     {
       "name": "Electric Doorbell Transformer",
-      "minimum": "2",
-      "maximum": "2",
+      "min_power_threshold": "2",
+      "max_power_threshold": "2",
       "expected_power": "2.00"
     },
     {
       "name": "Electric Heater Fan",
-      "minimum": "2000",
-      "maximum": "3000",
+      "min_power_threshold": "2000",
+      "max_power_threshold": "3000",
       "expected_power": "2500.00"
     },
     {
       "name": "Electric Kettle",
-      "minimum": "1200",
-      "maximum": "3000",
+      "min_power_threshold": "1200",
+      "max_power_threshold": "3000",
       "expected_power": "2100.00"
     },
     {
       "name": "Electric Mower",
-      "minimum": "1500",
-      "maximum": "1500",
+      "min_power_threshold": "1500",
+      "max_power_threshold": "1500",
       "expected_power": "1500.00"
     },
     {
       "name": "Electric Pressure Cooker",
-      "minimum": "1000",
-      "maximum": "1000",
+      "min_power_threshold": "1000",
+      "max_power_threshold": "1000",
       "expected_power": "1000.00"
     },
     {
       "name": "Electric Shaver",
-      "minimum": "15",
-      "maximum": "20",
+      "min_power_threshold": "15",
+      "max_power_threshold": "20",
       "expected_power": "17.50"
     },
     {
       "name": "Electric Stove",
-      "minimum": "2000",
-      "maximum": "2000",
+      "min_power_threshold": "2000",
+      "max_power_threshold": "2000",
       "expected_power": "2000.00"
     },
     {
       "name": "Electric Tankless Water Heater",
-      "minimum": "6600",
-      "maximum": "8800",
+      "min_power_threshold": "6600",
+      "max_power_threshold": "8800",
       "expected_power": "7700.00"
     },
     {
       "name": "Electric Thermal Radiator",
-      "minimum": "500",
-      "maximum": "500",
+      "min_power_threshold": "500",
+      "max_power_threshold": "500",
       "expected_power": "500.00"
     },
     {
       "name": "Electric Toothbrush Charger",
-      "minimum": "6",
-      "maximum": "6",
+      "min_power_threshold": "6",
+      "max_power_threshold": "6",
       "expected_power": "6.00"
     },
     {
       "name": "Espresso Coffee Machine",
-      "minimum": "1300",
-      "maximum": "1500",
+      "min_power_threshold": "1300",
+      "max_power_threshold": "1500",
       "expected_power": "1400.00"
     },
     {
       "name": "Essential Oil Diffuser",
-      "minimum": "10",
-      "maximum": "25",
+      "min_power_threshold": "10",
+      "max_power_threshold": "25",
       "expected_power": "17.50"
     },
     {
       "name": "EV Car Charger",
-      "minimum": "2000",
-      "maximum": "7000",
+      "min_power_threshold": "2000",
+      "max_power_threshold": "7000",
       "expected_power": "4500.00"
     },
     {
       "name": "EV Home Charger",
-      "minimum": "2000",
-      "maximum": "7000",
+      "min_power_threshold": "2000",
+      "max_power_threshold": "7000",
       "expected_power": "4500.00"
     },
     {
       "name": "Evaporative Air Conditioner",
-      "minimum": "2600",
-      "maximum": "2600",
+      "min_power_threshold": "2600",
+      "max_power_threshold": "2600",
       "expected_power": "2600.00"
     },
     {
       "name": "External Hard Drive",
-      "minimum": "1",
-      "maximum": "3",
+      "min_power_threshold": "1",
+      "max_power_threshold": "3",
       "expected_power": "2.00"
     },
     {
       "name": "Extractor Fan",
-      "minimum": "12",
-      "maximum": "12",
+      "min_power_threshold": "12",
+      "max_power_threshold": "12",
       "expected_power": "12.00"
     },
     {
       "name": "Fluorescent Lamp",
-      "minimum": "28",
-      "maximum": "45",
+      "min_power_threshold": "28",
+      "max_power_threshold": "45",
       "expected_power": "36.50"
     },
     {
       "name": "Food Blender",
-      "minimum": "300",
-      "maximum": "400",
+      "min_power_threshold": "300",
+      "max_power_threshold": "400",
       "expected_power": "350.00"
     },
     {
       "name": "Food Dehydrator",
-      "minimum": "800",
-      "maximum": "800",
+      "min_power_threshold": "800",
+      "max_power_threshold": "800",
       "expected_power": "800.00"
     },
     {
       "name": "Freezer",
-      "minimum": "30",
-      "maximum": "50",
+      "min_power_threshold": "30",
+      "max_power_threshold": "50",
       "expected_power": "40.00"
     },
     {
       "name": "Fridge",
-      "minimum": "100",
-      "maximum": "220",
+      "min_power_threshold": "100",
+      "max_power_threshold": "220",
       "expected_power": "160.00"
     },
     {
       "name": "Fridge / Freezer",
-      "minimum": "150",
-      "maximum": "400",
+      "min_power_threshold": "150",
+      "max_power_threshold": "400",
       "expected_power": "275.00"
     },
     {
       "name": "Fryer",
-      "minimum": "1000",
-      "maximum": "1000",
+      "min_power_threshold": "1000",
+      "max_power_threshold": "1000",
       "expected_power": "1000.00"
     },
     {
       "name": "Game Console",
-      "minimum": "120",
-      "maximum": "200",
+      "min_power_threshold": "120",
+      "max_power_threshold": "200",
       "expected_power": "160.00"
     },
     {
       "name": "Gaming PC",
-      "minimum": "300",
-      "maximum": "600",
+      "min_power_threshold": "300",
+      "max_power_threshold": "600",
       "expected_power": "450.00"
     },
     {
       "name": "Garage Door Opener",
-      "minimum": "300",
-      "maximum": "400",
+      "min_power_threshold": "300",
+      "max_power_threshold": "400",
       "expected_power": "350.00"
     },
     {
       "name": "Google Home Mini",
-      "minimum": "15",
-      "maximum": "15",
+      "min_power_threshold": "15",
+      "max_power_threshold": "15",
       "expected_power": "15.00"
     },
     {
       "name": "Guitar Amplifier",
-      "minimum": "20",
-      "maximum": "30",
+      "min_power_threshold": "20",
+      "max_power_threshold": "30",
       "expected_power": "25.00"
     },
     {
       "name": "Hair Clippers",
-      "minimum": "10",
-      "maximum": "20",
+      "min_power_threshold": "10",
+      "max_power_threshold": "20",
       "expected_power": "15.00"
     },
     {
       "name": "Hair Dryer",
-      "minimum": "1800",
-      "maximum": "2500",
+      "min_power_threshold": "1800",
+      "max_power_threshold": "2500",
       "expected_power": "2150.00"
     },
     {
       "name": "Hand Wash Oversink Water Heater",
-      "minimum": "3000",
-      "maximum": "3000",
+      "min_power_threshold": "3000",
+      "max_power_threshold": "3000",
       "expected_power": "3000.00"
     },
     {
       "name": "Heated Bathroom Mirror",
-      "minimum": "50",
-      "maximum": "100",
+      "min_power_threshold": "50",
+      "max_power_threshold": "100",
       "expected_power": "75.00"
     },
     {
       "name": "Heated Hair Rollers",
-      "minimum": "400",
-      "maximum": "400",
+      "min_power_threshold": "400",
+      "max_power_threshold": "400",
       "expected_power": "400.00"
     },
     {
       "name": "Home Air Conditioner",
-      "minimum": "1000",
-      "maximum": "4000",
+      "min_power_threshold": "1000",
+      "max_power_threshold": "4000",
       "expected_power": "2500.00"
     },
     {
       "name": "Home Internet Router",
-      "minimum": "5",
-      "maximum": "15",
+      "min_power_threshold": "5",
+      "max_power_threshold": "15",
       "expected_power": "10.00"
     },
     {
       "name": "Home Phone",
-      "minimum": "3",
-      "maximum": "5",
+      "min_power_threshold": "3",
+      "max_power_threshold": "5",
       "expected_power": "4.00"
     },
     {
       "name": "Home Sound System",
-      "minimum": "95",
-      "maximum": "95",
+      "min_power_threshold": "95",
+      "max_power_threshold": "95",
       "expected_power": "95.00"
     },
     {
       "name": "Hot Water Dispenser",
-      "minimum": "1200",
-      "maximum": "1300",
+      "min_power_threshold": "1200",
+      "max_power_threshold": "1300",
       "expected_power": "1250.00"
     },
     {
       "name": "Hot Water Immersion Heater",
-      "minimum": "3000",
-      "maximum": "3000",
+      "min_power_threshold": "3000",
+      "max_power_threshold": "3000",
       "expected_power": "3000.00"
     },
     {
       "name": "Humidifier",
-      "minimum": "35",
-      "maximum": "40",
+      "min_power_threshold": "35",
+      "max_power_threshold": "40",
       "expected_power": "37.50"
     },
     {
       "name": "iMac",
-      "minimum": "60",
-      "maximum": "240",
+      "min_power_threshold": "60",
+      "max_power_threshold": "240",
       "expected_power": "150.00"
     },
     {
       "name": "Induction Hob (per hob)",
-      "minimum": "1400",
-      "maximum": "1800",
+      "min_power_threshold": "1400",
+      "max_power_threshold": "1800",
       "expected_power": "1600.00"
     },
     {
       "name": "Inkjet Printer",
-      "minimum": "20",
-      "maximum": "30",
+      "min_power_threshold": "20",
+      "max_power_threshold": "30",
       "expected_power": "25.00"
     },
     {
       "name": "Inverter Air conditioner",
-      "minimum": "1300",
-      "maximum": "1800",
+      "min_power_threshold": "1300",
+      "max_power_threshold": "1800",
       "expected_power": "1550.00"
     },
     {
       "name": "Iron",
-      "minimum": "1000",
-      "maximum": "1000",
+      "min_power_threshold": "1000",
+      "max_power_threshold": "1000",
       "expected_power": "1000.00"
     },
     {
       "name": "Jacuzzi",
-      "minimum": "3000",
-      "maximum": "7500",
+      "min_power_threshold": "3000",
+      "max_power_threshold": "7500",
       "expected_power": "5250.00"
     },
     {
       "name": "Kitchen Extractor Fan",
-      "minimum": "200",
-      "maximum": "200",
+      "min_power_threshold": "200",
+      "max_power_threshold": "200",
       "expected_power": "200.00"
     },
     {
       "name": "Laptop Computer",
-      "minimum": "50",
-      "maximum": "100",
+      "min_power_threshold": "50",
+      "max_power_threshold": "100",
       "expected_power": "75.00"
     },
     {
       "name": "Laser Printer",
-      "minimum": "600",
-      "maximum": "800",
+      "min_power_threshold": "600",
+      "max_power_threshold": "800",
       "expected_power": "700.00"
     },
     {
       "name": "Lawnmower",
-      "minimum": "1000",
-      "maximum": "1400",
+      "min_power_threshold": "1000",
+      "max_power_threshold": "1400",
       "expected_power": "1200.00"
     },
     {
       "name": "LED Christmas Lights",
-      "minimum": "5",
-      "maximum": "5",
+      "min_power_threshold": "5",
+      "max_power_threshold": "5",
       "expected_power": "5.00"
     },
     {
       "name": "LED Light Bulb",
-      "minimum": "7",
-      "maximum": "10",
+      "min_power_threshold": "7",
+      "max_power_threshold": "10",
       "expected_power": "8.50"
     },
     {
       "name": "LG Soundbar",
-      "minimum": "23",
-      "maximum": "30",
+      "min_power_threshold": "23",
+      "max_power_threshold": "30",
       "expected_power": "26.50"
     },
     {
       "name": "Mi Box",
-      "minimum": "5",
-      "maximum": "7",
+      "min_power_threshold": "5",
+      "max_power_threshold": "7",
       "expected_power": "6.00"
     },
     {
       "name": "Microwave",
-      "minimum": "600",
-      "maximum": "1700",
+      "min_power_threshold": "600",
+      "max_power_threshold": "1700",
       "expected_power": "1150.00"
     },
     {
       "name": "Mini Fridge Freezer",
-      "minimum": "50",
-      "maximum": "75",
+      "min_power_threshold": "50",
+      "max_power_threshold": "75",
       "expected_power": "62.50"
     },
     {
       "name": "Night Light",
-      "minimum": "1",
-      "maximum": "1",
+      "min_power_threshold": "1",
+      "max_power_threshold": "1",
       "expected_power": "1.00"
     },
     {
       "name": "Nintendo Switch AC Adapter",
-      "minimum": "7",
-      "maximum": "40",
+      "min_power_threshold": "7",
+      "max_power_threshold": "40",
       "expected_power": "23.50"
     },
     {
       "name": "OLED TV",
-      "minimum": "80",
-      "maximum": "200",
+      "min_power_threshold": "80",
+      "max_power_threshold": "200",
       "expected_power": "140.00"
     },
     {
       "name": "Outdoor Hot Tub",
-      "minimum": "60",
-      "maximum": "500",
+      "min_power_threshold": "60",
+      "max_power_threshold": "500",
       "expected_power": "280.00"
     },
     {
       "name": "Oven",
-      "minimum": "2150",
-      "maximum": "2150",
+      "min_power_threshold": "2150",
+      "max_power_threshold": "2150",
       "expected_power": "2150.00"
     },
     {
       "name": "Paper Shredder",
-      "minimum": "200",
-      "maximum": "220",
+      "min_power_threshold": "200",
+      "max_power_threshold": "220",
       "expected_power": "210.00"
     },
     {
       "name": "Pedestal Fan",
-      "minimum": "50",
-      "maximum": "60",
+      "min_power_threshold": "50",
+      "max_power_threshold": "60",
       "expected_power": "55.00"
     },
     {
       "name": "Percolator",
-      "minimum": "800",
-      "maximum": "1100",
+      "min_power_threshold": "800",
+      "max_power_threshold": "1100",
       "expected_power": "950.00"
     },
     {
       "name": "Philips Hue Smart Bulb",
-      "minimum": "8",
-      "maximum": "9",
+      "min_power_threshold": "8",
+      "max_power_threshold": "9",
       "expected_power": "8.50"
     },
     {
       "name": "Phone Charger",
-      "minimum": "4",
-      "maximum": "7",
+      "min_power_threshold": "4",
+      "max_power_threshold": "7",
       "expected_power": "5.50"
     },
     {
       "name": "Playstation 4",
-      "minimum": "85",
-      "maximum": "90",
+      "min_power_threshold": "85",
+      "max_power_threshold": "90",
       "expected_power": "87.50"
     },
     {
       "name": "Playstation 5",
-      "minimum": "160",
-      "maximum": "200",
+      "min_power_threshold": "160",
+      "max_power_threshold": "200",
       "expected_power": "180.00"
     },
     {
       "name": "Portable Air Conditioner",
-      "minimum": "1000",
-      "maximum": "1200",
+      "min_power_threshold": "1000",
+      "max_power_threshold": "1200",
       "expected_power": "1100.00"
     },
     {
       "name": "Portable Mini Dehumidifier",
-      "minimum": "20",
-      "maximum": "80",
+      "min_power_threshold": "20",
+      "max_power_threshold": "80",
       "expected_power": "50.00"
     },
     {
       "name": "Power Shower",
-      "minimum": "7500",
-      "maximum": "10500",
+      "min_power_threshold": "7500",
+      "max_power_threshold": "10500",
       "expected_power": "9000.00"
     },
     {
       "name": "Pressure Cooker",
-      "minimum": "700",
-      "maximum": "700",
+      "min_power_threshold": "700",
+      "max_power_threshold": "700",
       "expected_power": "700.00"
     },
     {
       "name": "Pressure Washer",
-      "minimum": "1500",
-      "maximum": "1500",
+      "min_power_threshold": "1500",
+      "max_power_threshold": "1500",
       "expected_power": "1500.00"
     },
     {
       "name": "Projector",
-      "minimum": "220",
-      "maximum": "270",
+      "min_power_threshold": "220",
+      "max_power_threshold": "270",
       "expected_power": "245.00"
     },
     {
       "name": "Rice Cooker",
-      "minimum": "200",
-      "maximum": "800",
+      "min_power_threshold": "200",
+      "max_power_threshold": "800",
       "expected_power": "500.00"
     },
     {
       "name": "Ring Spotlight Cam Wired",
-      "minimum": "4",
-      "maximum": "25",
+      "min_power_threshold": "4",
+      "max_power_threshold": "25",
       "expected_power": "14.50"
     },
     {
       "name": "Robot Vacuum Base Station",
-      "minimum": "30",
-      "maximum": "100",
+      "min_power_threshold": "30",
+      "max_power_threshold": "100",
       "expected_power": "65.00"
     },
     {
       "name": "Robot Vacuum Cleaner",
-      "minimum": "20",
-      "maximum": "70",
+      "min_power_threshold": "20",
+      "max_power_threshold": "70",
       "expected_power": "45.00"
     },
     {
       "name": "Sandwich Maker",
-      "minimum": "700",
-      "maximum": "1000",
+      "min_power_threshold": "700",
+      "max_power_threshold": "1000",
       "expected_power": "850.00"
     },
     {
       "name": "Scanner",
-      "minimum": "10",
-      "maximum": "18",
+      "min_power_threshold": "10",
+      "max_power_threshold": "18",
       "expected_power": "14.00"
     },
     {
       "name": "Set Top Box",
-      "minimum": "27",
-      "maximum": "30",
+      "min_power_threshold": "27",
+      "max_power_threshold": "30",
       "expected_power": "28.50"
     },
     {
       "name": "Sewing Machine",
-      "minimum": "70",
-      "maximum": "80",
+      "min_power_threshold": "70",
+      "max_power_threshold": "80",
       "expected_power": "75.00"
     },
     {
       "name": "Singer Sewing Machine (Generic)",
-      "minimum": "100",
-      "maximum": "100",
+      "min_power_threshold": "100",
+      "max_power_threshold": "100",
       "expected_power": "100.00"
     },
     {
       "name": "Sky Q 2TB Box",
-      "minimum": "40",
-      "maximum": "40",
+      "min_power_threshold": "40",
+      "max_power_threshold": "40",
       "expected_power": "40.00"
     },
     {
       "name": "Slow Cooker",
-      "minimum": "160",
-      "maximum": "180",
+      "min_power_threshold": "160",
+      "max_power_threshold": "180",
       "expected_power": "170.00"
     },
     {
       "name": "Smart Speaker with Display",
-      "minimum": "5",
-      "maximum": "15",
+      "min_power_threshold": "5",
+      "max_power_threshold": "15",
       "expected_power": "10.00"
     },
     {
       "name": "Smoke Detector",
-      "minimum": "0",
-      "maximum": "1",
+      "min_power_threshold": "0",
+      "max_power_threshold": "1",
       "expected_power": "0.50"
     },
     {
       "name": "Soldering Iron",
-      "minimum": "30",
-      "maximum": "60",
+      "min_power_threshold": "30",
+      "max_power_threshold": "60",
       "expected_power": "45.00"
     },
     {
       "name": "Space Heater",
-      "minimum": "2000",
-      "maximum": "5000",
+      "min_power_threshold": "2000",
+      "max_power_threshold": "5000",
       "expected_power": "3500.00"
     },
     {
       "name": "Steam Iron",
-      "minimum": "2200",
-      "maximum": "2500",
+      "min_power_threshold": "2200",
+      "max_power_threshold": "2500",
       "expected_power": "2350.00"
     },
     {
       "name": "Steriliser",
-      "minimum": "650",
-      "maximum": "650",
+      "min_power_threshold": "650",
+      "max_power_threshold": "650",
       "expected_power": "650.00"
     },
     {
       "name": "Straightening Iron",
-      "minimum": "75",
-      "maximum": "300",
+      "min_power_threshold": "75",
+      "max_power_threshold": "300",
       "expected_power": "187.50"
     },
     {
       "name": "Strimmer",
-      "minimum": "300",
-      "maximum": "500",
+      "min_power_threshold": "300",
+      "max_power_threshold": "500",
       "expected_power": "400.00"
     },
     {
       "name": "Submersible Water Pump",
-      "minimum": "200",
-      "maximum": "400",
+      "min_power_threshold": "200",
+      "max_power_threshold": "400",
       "expected_power": "300.00"
     },
     {
       "name": "Table Fan",
-      "minimum": "10",
-      "maximum": "25",
+      "min_power_threshold": "10",
+      "max_power_threshold": "25",
       "expected_power": "17.50"
     },
     {
       "name": "Table Top Fridge",
-      "minimum": "10",
-      "maximum": "15",
+      "min_power_threshold": "10",
+      "max_power_threshold": "15",
       "expected_power": "12.50"
     },
     {
       "name": "Tablet Charger",
-      "minimum": "10",
-      "maximum": "15",
+      "min_power_threshold": "10",
+      "max_power_threshold": "15",
       "expected_power": "12.50"
     },
     {
       "name": "Tablet Computer",
-      "minimum": "5",
-      "maximum": "10",
+      "min_power_threshold": "5",
+      "max_power_threshold": "10",
       "expected_power": "7.50"
     },
     {
       "name": "Toaster",
-      "minimum": "800",
-      "maximum": "1800",
+      "min_power_threshold": "800",
+      "max_power_threshold": "1800",
       "expected_power": "1300.00"
     },
     {
       "name": "Tower Fan",
-      "minimum": "60",
-      "maximum": "60",
+      "min_power_threshold": "60",
+      "max_power_threshold": "60",
       "expected_power": "60.00"
     },
     {
       "name": "Treadmill",
-      "minimum": "280",
-      "maximum": "900",
+      "min_power_threshold": "280",
+      "max_power_threshold": "900",
       "expected_power": "590.00"
     },
     {
       "name": "Tube Light (1500mm)",
-      "minimum": "22",
-      "maximum": "22",
+      "min_power_threshold": "22",
+      "max_power_threshold": "22",
       "expected_power": "22.00"
     },
     {
       "name": "TV (19\" colour)",
-      "minimum": "40",
-      "maximum": "100",
+      "min_power_threshold": "40",
+      "max_power_threshold": "100",
       "expected_power": "70.00"
     },
     {
       "name": "Ultrasonic Nebulizer",
-      "minimum": "20",
-      "maximum": "60",
+      "min_power_threshold": "20",
+      "max_power_threshold": "60",
       "expected_power": "40.00"
     },
     {
       "name": "Vacuum Cleaner",
-      "minimum": "450",
-      "maximum": "900",
+      "min_power_threshold": "450",
+      "max_power_threshold": "900",
       "expected_power": "675.00"
     },
     {
       "name": "Wall Fan",
-      "minimum": "45",
-      "maximum": "60",
+      "min_power_threshold": "45",
+      "max_power_threshold": "60",
       "expected_power": "52.50"
     },
     {
       "name": "Washing Machine",
-      "minimum": "500",
-      "maximum": "500",
+      "min_power_threshold": "500",
+      "max_power_threshold": "500",
       "expected_power": "500.00"
     },
     {
       "name": "Water Dispenser",
-      "minimum": "100",
-      "maximum": "100",
+      "min_power_threshold": "100",
+      "max_power_threshold": "100",
       "expected_power": "100.00"
     },
     {
       "name": "Water Feature",
-      "minimum": "35",
-      "maximum": "35",
+      "min_power_threshold": "35",
+      "max_power_threshold": "35",
       "expected_power": "35.00"
     },
     {
       "name": "Water Filter and Cooler",
-      "minimum": "70",
-      "maximum": "100",
+      "min_power_threshold": "70",
+      "max_power_threshold": "100",
       "expected_power": "85.00"
     },
     {
       "name": "WiFi Booster",
-      "minimum": "1",
-      "maximum": "2",
+      "min_power_threshold": "1",
+      "max_power_threshold": "2",
       "expected_power": "1.50"
     },
     {
       "name": "WiFi Router",
-      "minimum": "4",
-      "maximum": "10",
+      "min_power_threshold": "4",
+      "max_power_threshold": "10",
       "expected_power": "7.00"
     },
     {
       "name": "Window Air Conditioner",
-      "minimum": "500",
-      "maximum": "1500",
+      "min_power_threshold": "500",
+      "max_power_threshold": "1500",
       "expected_power": "1000.00"
     },
     {
       "name": "Wine cooler (18 bottles)",
-      "minimum": "83",
-      "maximum": "83",
+      "min_power_threshold": "83",
+      "max_power_threshold": "83",
       "expected_power": "83.00"
     },
     {
       "name": "Xbox One",
-      "minimum": "50",
-      "maximum": "110",
+      "min_power_threshold": "50",
+      "max_power_threshold": "110",
       "expected_power": "80.00"
     }
   ]
