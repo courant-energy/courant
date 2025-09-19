@@ -1,7 +1,7 @@
 <!-- Load Lottie Player -->
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <div
-class="relative w-full max-w-7xl h-[500px] flex items-center justify-center overflow-hidden mockups-container"
+class="relative w-full max-w-7xl h-[400px] md:h-[500px] flex items-center justify-center overflow-hidden mockups-container"
 x-data="{
  cards: [
  { aspect: 'aspect-[1/1]', image: '/images/SquareImg.webp' },

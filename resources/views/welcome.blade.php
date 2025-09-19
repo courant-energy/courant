@@ -52,15 +52,15 @@
                     <div class="md:w-1/2 md:pr-10">
 
                         <div class="flex flex-col hero-heading">
-                        <h1 class="text-6xl md:text-7xl font-bold leading-tight mb-6">Smarter Energy, Smarter Business</h1>
-                        <h1 class="text-2xl md:text-3xl font-bold leading-tight mb-6">For MSMEs</h1>
+                        <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-3 md:mb-6 text-center md:text-left">Smarter Energy, Smarter Business</h1>
+                        <h1 class="text-2xl md:text-3xl font-bold leading-tight mb-8 md:mb-6 text-center md:text-left">For MSMEs</h1>
                         </div>
 
                         <div class="hero-subtext flex flex-col space-y-3 sm:space-y-0">
-                            <p class="text-lg text-gray-600 mb-8">We simplified energy management so you can focus on what matters: running your business.</p>
-                            <div class="flex-row space-x-4">
-                                 <a href="{{ route('filament.app.auth.register') }}" class="px-8 py-3 bg-black text-white font-medium rounded-sm text-center hover:bg-gray-800 transition">Get Started</a>
-                                <a href="#features" class="px-8 py-3 border border-gray-200 text-black font-medium rounded-sm text-center hover:bg-gray-100 transition">Learn More</a>
+                            <p class="text-lg text-gray-600 mb-8 text-center md:text-left">We simplified energy management so you can focus on what matters: running your business.</p>
+                            <div class="flex flex-col md:flex-row gap-4 items-center justify-center md:justify-start">
+                                <a href="{{ route('filament.app.auth.register') }}" class="w-full md:w-auto px-8 py-3 bg-black text-white font-medium rounded-sm text-center hover:bg-gray-800 transition">Get Started</a>
+                                <a href="#features" class="w-full md:w-auto px-8 py-3 border border-gray-200 text-black font-medium rounded-sm text-center hover:bg-gray-100 transition">Learn More</a>
                             </div>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
 
         <!-- Features Section -->
         <section id="features" class="pt-20 bg-white">
-            <div class="container mx-auto pb-10 border-l border-r border-gray-200">
+            <div class="container mx-auto border-l border-r border-gray-200">
                 <h2 class="text-5xl section-header font-bold text-center mb-16">Why Choose Courant</h2>
                 <livewire:feature-card>
             </div>

@@ -1,7 +1,7 @@
 
 
 <div 
-  class="grid grid-cols-1 md:grid-cols-3 divide-0 md:divide-x divide-gray-200 bg-white"
+  class="grid grid-cols-1 md:grid-cols-3 divide-0 md:divide-x divide-gray-200 bg-white p-5 md:p-0"
   x-data="{ 
     cards: [
         {
