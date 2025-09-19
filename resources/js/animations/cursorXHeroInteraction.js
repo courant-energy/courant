@@ -49,7 +49,7 @@ export default function cursorXHeroInteraction() {
                             const shiftX = gsap.utils.clamp(
                                 -getMaxShift(),
                                 getMaxShift(),
-                                gsap.utils.mapRange(0, 1, getMaxShift() + containerHeight + 100, -getMaxShift(), progress)
+                                gsap.utils.mapRange(0, 1, getMaxShift() + containerHeight + 600, -getMaxShift(), progress)
                             );
                             console.log('shiftX:', shiftX);
 
