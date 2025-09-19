@@ -6,7 +6,7 @@
             {
                 number: '30%', 
                 subtext: 'Average Energy Savings',
-                img: 'images/SquareImg.webp'
+                img: 'images/Dashboard.webp'
             },
             {
                 number: '10k+', 
@@ -16,12 +16,12 @@
             {
                 number: '24/7', 
                 subtext: 'Monitoring',
-                img: ''
+                img: 'images/MonitoringGraph.webp'
             },
             {
                 number: '100%', 
                 subtext: 'Renewable Focus',
-                img: ''
+                img: 'images/RenewableFocus.webp'
             },
             ]
         }"
@@ -44,9 +44,15 @@
                 <p class="text-base z-10 mb-8" x-text="card.subtext"></p>
             </div>
             <!-- Image wrapper directly below <p> -->
-            <div class="relative w-full aspect-[1/1] overflow-hidden">
+            <div class="relative flex-1 w-full aspect-[1/1] pt-20 overflow-hidden">
                 <img 
-                    class="absolute top-0 left-0 w-full h-auto z-0 mission-img"
+                    class="absolute bottom-0 left-20 w-full h-auto z-0 mission-img"
+                    :style="{
+                        transform
+                        : index === 0 ? 'scale(1.5)'
+                        : index === 2 ? 'rotate3d(-1, 1, 0, 35deg)'
+                        : ''
+                    }"
                     :src="card.img"
                 />
                 <!-- Gradient overlay above image -->
