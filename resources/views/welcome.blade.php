@@ -78,7 +78,7 @@
 
         <!-- Features Section -->
         <section id="features" class="pt-20 bg-white">
-            <div class="container mx-auto pb-10 border-l border-r border-gray-200">
+            <div class="container mx-auto border-l border-r border-gray-200">
                 <h2 class="text-5xl section-header font-bold text-center mb-16">Why Choose Courant</h2>
                 <livewire:feature-card>
             </div>
