@@ -10,10 +10,15 @@ export default function heroSubtext() {
 
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
+// Prevent animations on mobile
+if (isMobile) {
+    return;
+}
+
     // Animate heading
     gsap.fromTo(
         heading,
-        { y: isMobile ? 150 : 200 },
+        { y: 200 },
         {
             y: 0,
             duration: 0.75,
@@ -21,7 +26,7 @@ export default function heroSubtext() {
             scrollTrigger: {
                 trigger: heading,
                 start: isMobile ? 'top 30%' : 'top 40%',
-                toggleActions: 'play none none none', // No reverse animation
+                toggleActions: 'play none none none',
                 markers: false,
             }
         }
@@ -54,7 +59,7 @@ export default function heroSubtext() {
                 trigger: wrapper,
                 start: 'top top',
                 end: '+=300',
-                toggleActions: 'play none none none', // Prevent reverse
+                toggleActions: 'play none none none',
                 markers: false,
             }
         }

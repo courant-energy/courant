@@ -6,6 +6,7 @@ import sectionHeaderBlur from './animations/sectionHeaderBlur.js';
 import featureHover from './animations/featureHover.js';
 import numCounter from './animations/numCounter.js';
 import missionImgFloat from './animations/missionImgFloat.js';
+import mockupFloatUp from './animations/mockupFloatUp.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-animation]').forEach(el => {
@@ -23,4 +24,5 @@ document.addEventListener('DOMContentLoaded', () => {
     featureHover();
     numCounter();
     missionImgFloat();
+    mockupFloatUp();
 });
