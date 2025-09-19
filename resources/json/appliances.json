@@ -1,154 +1,1038 @@
 {
-  "appliances": [
+  "appliances":
+  [
     {
-      "name": "Refrigerator",
-      "expected_power": 150,
-      "max_power_threshold": 200,
-      "min_power_threshold": 80
+      "name": "100W light bulb (Incandescent)",
+      "minimum": "100W",
+      "maximum": "100W",
+      "expected_power": "100.00W"
     },
     {
-      "name": "Washing Machine",
-      "expected_power": 500,
-      "max_power_threshold": 800,
-      "min_power_threshold": 200
+      "name": "22 Inch LED TV",
+      "minimum": "17W",
+      "maximum": "17W",
+      "expected_power": "17.00W"
     },
     {
-      "name": "Microwave Oven",
-      "expected_power": 1000,
-      "max_power_threshold": 1200,
-      "min_power_threshold": 800
+      "name": "25\" colour TV",
+      "minimum": "150W",
+      "maximum": "150W",
+      "expected_power": "150.00W"
     },
     {
-      "name": "Dishwasher",
-      "expected_power": 1800,
-      "max_power_threshold": 2200,
-      "min_power_threshold": 1000
+      "name": "3\" belt sander",
+      "minimum": "1000W",
+      "maximum": "1000W",
+      "expected_power": "1000.00W"
     },
     {
-      "name": "Air Conditioner (Window)",
-      "expected_power": 1200,
-      "max_power_threshold": 1500,
-      "min_power_threshold": 800
+      "name": "32 Inch LED TV",
+      "minimum": "20W",
+      "maximum": "60W",
+      "expected_power": "40.00W"
     },
     {
-      "name": "Air Conditioner (Split)",
-      "expected_power": 2000,
-      "max_power_threshold": 2500,
-      "min_power_threshold": 1200
+      "name": "3D Printer",
+      "minimum": "50W",
+      "maximum": "250W",
+      "expected_power": "150.00W"
     },
     {
-      "name": "Electric Kettle",
-      "expected_power": 1500,
-      "max_power_threshold": 1800,
-      "min_power_threshold": 1200
+      "name": "42 Inch LED TV",
+      "minimum": "58W",
+      "maximum": "60W",
+      "expected_power": "59.00W"
     },
     {
-      "name": "Coffee Machine",
-      "expected_power": 800,
-      "max_power_threshold": 1200,
-      "min_power_threshold": 400
+      "name": "42 Inch Plasma TV",
+      "minimum": "450W",
+      "maximum": "600W",
+      "expected_power": "525.00W"
     },
     {
-      "name": "Toaster",
-      "expected_power": 800,
-      "max_power_threshold": 1000,
-      "min_power_threshold": 600
+      "name": "46 Inch LED TV",
+      "minimum": "60W",
+      "maximum": "70W",
+      "expected_power": "65.00W"
     },
     {
-      "name": "Blender",
-      "expected_power": 300,
-      "max_power_threshold": 500,
-      "min_power_threshold": 150
+      "name": "49 Inch LED TV",
+      "minimum": "85W",
+      "maximum": "85W",
+      "expected_power": "85.00W"
     },
     {
-      "name": "Television (LED 32\")",
-      "expected_power": 60,
-      "max_power_threshold": 100,
-      "min_power_threshold": 30
+      "name": "55 Inch LED TV",
+      "minimum": "116W",
+      "maximum": "116W",
+      "expected_power": "116.00W"
     },
     {
-      "name": "Television (LED 55\")",
-      "expected_power": 150,
-      "max_power_threshold": 200,
-      "min_power_threshold": 80
+      "name": "60W light bulb (Incandescent)",
+      "minimum": "60W",
+      "maximum": "60W",
+      "expected_power": "60.00W"
+    },
+    {
+      "name": "65 Inch LED TV",
+      "minimum": "120W",
+      "maximum": "130W",
+      "expected_power": "125.00W"
+    },
+    {
+      "name": "82 Inch LED TV",
+      "minimum": "228W",
+      "maximum": "295W",
+      "expected_power": "261.50W"
+    },
+    {
+      "name": "9\" disc sander",
+      "minimum": "1200W",
+      "maximum": "1200W",
+      "expected_power": "1200.00W"
+    },
+    {
+      "name": "Air Cooler",
+      "minimum": "65W",
+      "maximum": "80W",
+      "expected_power": "72.50W"
+    },
+    {
+      "name": "Air Fryer",
+      "minimum": "1500W",
+      "maximum": "1500W",
+      "expected_power": "1500.00W"
+    },
+    {
+      "name": "Air Fryer Toaster Oven",
+      "minimum": "1400W",
+      "maximum": "1800W",
+      "expected_power": "1600.00W"
+    },
+    {
+      "name": "Air Purifier",
+      "minimum": "25W",
+      "maximum": "30W",
+      "expected_power": "27.50W"
+    },
+    {
+      "name": "Amazon Echo",
+      "minimum": "3W",
+      "maximum": "3W",
+      "expected_power": "3.00W"
+    },
+    {
+      "name": "Amazon Echo Dot",
+      "minimum": "2W",
+      "maximum": "3W",
+      "expected_power": "2.50W"
+    },
+    {
+      "name": "Amazon Echo Show",
+      "minimum": "2W",
+      "maximum": "4W",
+      "expected_power": "3.00W"
+    },
+    {
+      "name": "American-Style Fridge Freezer",
+      "minimum": "40W",
+      "maximum": "80W",
+      "expected_power": "60.00W"
+    },
+    {
+      "name": "Apple TV",
+      "minimum": "3W",
+      "maximum": "6W",
+      "expected_power": "4.50W"
+    },
+    {
+      "name": "Aquarium Heater",
+      "minimum": "50W",
+      "maximum": "300W",
+      "expected_power": "175.00W"
+    },
+    {
+      "name": "Aquarium Pump",
+      "minimum": "20W",
+      "maximum": "50W",
+      "expected_power": "35.00W"
+    },
+    {
+      "name": "AV Receiver",
+      "minimum": "450W",
+      "maximum": "450W",
+      "expected_power": "450.00W"
+    },
+    {
+      "name": "Baby Bottle Warmer",
+      "minimum": "150W",
+      "maximum": "300W",
+      "expected_power": "225.00W"
+    },
+    {
+      "name": "Bathroom Towel Heater",
+      "minimum": "60W",
+      "maximum": "150W",
+      "expected_power": "105.00W"
+    },
+    {
+      "name": "Bread Maker",
+      "minimum": "450W",
+      "maximum": "800W",
+      "expected_power": "625.00W"
+    },
+    {
+      "name": "Ceiling Fan",
+      "minimum": "60W",
+      "maximum": "70W",
+      "expected_power": "65.00W"
+    },
+    {
+      "name": "Chromebook",
+      "minimum": "45W",
+      "maximum": "45W",
+      "expected_power": "45.00W"
+    },
+    {
+      "name": "Chromecast",
+      "minimum": "2W",
+      "maximum": "2W",
+      "expected_power": "2.00W"
+    },
+    {
+      "name": "Clock radio",
+      "minimum": "1W",
+      "maximum": "2W",
+      "expected_power": "1.50W"
+    },
+    {
+      "name": "Clothes Dryer",
+      "minimum": "1000W",
+      "maximum": "4000W",
+      "expected_power": "2500.00W"
+    },
+    {
+      "name": "Coffee Maker",
+      "minimum": "800W",
+      "maximum": "1400W",
+      "expected_power": "1100.00W"
+    },
+    {
+      "name": "Computer Monitor",
+      "minimum": "25W",
+      "maximum": "30W",
+      "expected_power": "27.50W"
+    },
+    {
+      "name": "Cooker Hood",
+      "minimum": "20W",
+      "maximum": "30W",
+      "expected_power": "25.00W"
+    },
+    {
+      "name": "Corded Drill",
+      "minimum": "600W",
+      "maximum": "850W",
+      "expected_power": "725.00W"
+    },
+    {
+      "name": "Corded Electric Handheld Leaf Blower",
+      "minimum": "2500W",
+      "maximum": "2500W",
+      "expected_power": "2500.00W"
+    },
+    {
+      "name": "Cordless Drill Charger",
+      "minimum": "70W",
+      "maximum": "150W",
+      "expected_power": "110.00W"
+    },
+    {
+      "name": "Countertop Ice Maker",
+      "minimum": "100W",
+      "maximum": "200W",
+      "expected_power": "150.00W"
+    },
+    {
+      "name": "CPAP Machine",
+      "minimum": "30W",
+      "maximum": "60W",
+      "expected_power": "45.00W"
+    },
+    {
+      "name": "Curling Iron",
+      "minimum": "25W",
+      "maximum": "35W",
+      "expected_power": "30.00W"
+    },
+    {
+      "name": "DAB Mains Radio",
+      "minimum": "5W",
+      "maximum": "9W",
+      "expected_power": "7.00W"
+    },
+    {
+      "name": "Deep Freezer",
+      "minimum": "19W",
+      "maximum": "19W",
+      "expected_power": "19.00W"
+    },
+    {
+      "name": "Dehumidifier",
+      "minimum": "240W",
+      "maximum": "240W",
+      "expected_power": "240.00W"
+    },
+    {
+      "name": "Desk Lamp",
+      "minimum": "40W",
+      "maximum": "65W",
+      "expected_power": "52.50W"
     },
     {
       "name": "Desktop Computer",
-      "expected_power": 300,
-      "max_power_threshold": 500,
-      "min_power_threshold": 150
+      "minimum": "100W",
+      "maximum": "450W",
+      "expected_power": "275.00W"
     },
     {
-      "name": "Laptop",
-      "expected_power": 65,
-      "max_power_threshold": 100,
-      "min_power_threshold": 30
+      "name": "Dishwasher",
+      "minimum": "1200W",
+      "maximum": "1500W",
+      "expected_power": "1350.00W"
     },
     {
-      "name": "Gaming Console",
-      "expected_power": 150,
-      "max_power_threshold": 200,
-      "min_power_threshold": 80
+      "name": "Domestic Water Pump",
+      "minimum": "200W",
+      "maximum": "300W",
+      "expected_power": "250.00W"
+    },
+    {
+      "name": "DVD Player",
+      "minimum": "26W",
+      "maximum": "60W",
+      "expected_power": "43.00W"
+    },
+    {
+      "name": "Electric Blanket",
+      "minimum": "200W",
+      "maximum": "200W",
+      "expected_power": "200.00W"
+    },
+    {
+      "name": "Electric Boiler",
+      "minimum": "4000W",
+      "maximum": "14000W",
+      "expected_power": "9000.00W"
+    },
+    {
+      "name": "Electric Car (Charging)",
+      "minimum": "2000W",
+      "maximum": "11000W",
+      "expected_power": "6500.00W"
+    },
+    {
+      "name": "Electric Combi Boiler",
+      "minimum": "6000W",
+      "maximum": "12000W",
+      "expected_power": "9000.00W"
+    },
+    {
+      "name": "Electric Doorbell Transformer",
+      "minimum": "2W",
+      "maximum": "2W",
+      "expected_power": "2.00W"
+    },
+    {
+      "name": "Electric Heater Fan",
+      "minimum": "2000W",
+      "maximum": "3000W",
+      "expected_power": "2500.00W"
+    },
+    {
+      "name": "Electric Kettle",
+      "minimum": "1200W",
+      "maximum": "3000W",
+      "expected_power": "2100.00W"
+    },
+    {
+      "name": "Electric Mower",
+      "minimum": "1500W",
+      "maximum": "1500W",
+      "expected_power": "1500.00W"
+    },
+    {
+      "name": "Electric Pressure Cooker",
+      "minimum": "1000W",
+      "maximum": "1000W",
+      "expected_power": "1000.00W"
+    },
+    {
+      "name": "Electric Shaver",
+      "minimum": "15W",
+      "maximum": "20W",
+      "expected_power": "17.50W"
+    },
+    {
+      "name": "Electric Stove",
+      "minimum": "2000W",
+      "maximum": "2000W",
+      "expected_power": "2000.00W"
+    },
+    {
+      "name": "Electric Tankless Water Heater",
+      "minimum": "6600W",
+      "maximum": "8800W",
+      "expected_power": "7700.00W"
+    },
+    {
+      "name": "Electric Thermal Radiator",
+      "minimum": "500W",
+      "maximum": "500W",
+      "expected_power": "500.00W"
+    },
+    {
+      "name": "Electric Toothbrush Charger",
+      "minimum": "6W",
+      "maximum": "6W",
+      "expected_power": "6.00W"
+    },
+    {
+      "name": "Espresso Coffee Machine",
+      "minimum": "1300W",
+      "maximum": "1500W",
+      "expected_power": "1400.00W"
+    },
+    {
+      "name": "Essential Oil Diffuser",
+      "minimum": "10W",
+      "maximum": "25W",
+      "expected_power": "17.50W"
+    },
+    {
+      "name": "EV Car Charger",
+      "minimum": "2000W",
+      "maximum": "7000W",
+      "expected_power": "4500.00W"
+    },
+    {
+      "name": "EV Home Charger",
+      "minimum": "2000W",
+      "maximum": "7000W",
+      "expected_power": "4500.00W"
+    },
+    {
+      "name": "Evaporative Air Conditioner",
+      "minimum": "2600W",
+      "maximum": "2600W",
+      "expected_power": "2600.00W"
+    },
+    {
+      "name": "External Hard Drive",
+      "minimum": "1W",
+      "maximum": "3W",
+      "expected_power": "2.00W"
+    },
+    {
+      "name": "Extractor Fan",
+      "minimum": "12W",
+      "maximum": "12W",
+      "expected_power": "12.00W"
+    },
+    {
+      "name": "Fluorescent Lamp",
+      "minimum": "28W",
+      "maximum": "45W",
+      "expected_power": "36.50W"
+    },
+    {
+      "name": "Food Blender",
+      "minimum": "300W",
+      "maximum": "400W",
+      "expected_power": "350.00W"
+    },
+    {
+      "name": "Food Dehydrator",
+      "minimum": "800W",
+      "maximum": "800W",
+      "expected_power": "800.00W"
+    },
+    {
+      "name": "Freezer",
+      "minimum": "30W",
+      "maximum": "50W",
+      "expected_power": "40.00W"
+    },
+    {
+      "name": "Fridge",
+      "minimum": "100W",
+      "maximum": "220W",
+      "expected_power": "160.00W"
+    },
+    {
+      "name": "Fridge / Freezer",
+      "minimum": "150W",
+      "maximum": "400W",
+      "expected_power": "275.00W"
+    },
+    {
+      "name": "Fryer",
+      "minimum": "1000W",
+      "maximum": "1000W",
+      "expected_power": "1000.00W"
+    },
+    {
+      "name": "Game Console",
+      "minimum": "120W",
+      "maximum": "200W",
+      "expected_power": "160.00W"
+    },
+    {
+      "name": "Gaming PC",
+      "minimum": "300W",
+      "maximum": "600W",
+      "expected_power": "450.00W"
+    },
+    {
+      "name": "Garage Door Opener",
+      "minimum": "300W",
+      "maximum": "400W",
+      "expected_power": "350.00W"
+    },
+    {
+      "name": "Google Home Mini",
+      "minimum": "15W",
+      "maximum": "15W",
+      "expected_power": "15.00W"
+    },
+    {
+      "name": "Guitar Amplifier",
+      "minimum": "20W",
+      "maximum": "30W",
+      "expected_power": "25.00W"
+    },
+    {
+      "name": "Hair Clippers",
+      "minimum": "10W",
+      "maximum": "20W",
+      "expected_power": "15.00W"
     },
     {
       "name": "Hair Dryer",
-      "expected_power": 1200,
-      "max_power_threshold": 1500,
-      "min_power_threshold": 800
+      "minimum": "1800W",
+      "maximum": "2500W",
+      "expected_power": "2150.00W"
+    },
+    {
+      "name": "Hand Wash Oversink Water Heater",
+      "minimum": "3000W",
+      "maximum": "3000W",
+      "expected_power": "3000.00W"
+    },
+    {
+      "name": "Heated Bathroom Mirror",
+      "minimum": "50W",
+      "maximum": "100W",
+      "expected_power": "75.00W"
+    },
+    {
+      "name": "Heated Hair Rollers",
+      "minimum": "400W",
+      "maximum": "400W",
+      "expected_power": "400.00W"
+    },
+    {
+      "name": "Home Air Conditioner",
+      "minimum": "1000W",
+      "maximum": "4000W",
+      "expected_power": "2500.00W"
+    },
+    {
+      "name": "Home Internet Router",
+      "minimum": "5W",
+      "maximum": "15W",
+      "expected_power": "10.00W"
+    },
+    {
+      "name": "Home Phone",
+      "minimum": "3W",
+      "maximum": "5W",
+      "expected_power": "4.00W"
+    },
+    {
+      "name": "Home Sound System",
+      "minimum": "95W",
+      "maximum": "95W",
+      "expected_power": "95.00W"
+    },
+    {
+      "name": "Hot Water Dispenser",
+      "minimum": "1200W",
+      "maximum": "1300W",
+      "expected_power": "1250.00W"
+    },
+    {
+      "name": "Hot Water Immersion Heater",
+      "minimum": "3000W",
+      "maximum": "3000W",
+      "expected_power": "3000.00W"
+    },
+    {
+      "name": "Humidifier",
+      "minimum": "35W",
+      "maximum": "40W",
+      "expected_power": "37.50W"
+    },
+    {
+      "name": "iMac",
+      "minimum": "60W",
+      "maximum": "240W",
+      "expected_power": "150.00W"
+    },
+    {
+      "name": "Induction Hob (per hob)",
+      "minimum": "1400W",
+      "maximum": "1800W",
+      "expected_power": "1600.00W"
+    },
+    {
+      "name": "Inkjet Printer",
+      "minimum": "20W",
+      "maximum": "30W",
+      "expected_power": "25.00W"
+    },
+    {
+      "name": "Inverter Air conditioner",
+      "minimum": "1300W",
+      "maximum": "1800W",
+      "expected_power": "1550.00W"
     },
     {
       "name": "Iron",
-      "expected_power": 1000,
-      "max_power_threshold": 1400,
-      "min_power_threshold": 600
+      "minimum": "1000W",
+      "maximum": "1000W",
+      "expected_power": "1000.00W"
+    },
+    {
+      "name": "Jacuzzi",
+      "minimum": "3000W",
+      "maximum": "7500W",
+      "expected_power": "5250.00W"
+    },
+    {
+      "name": "Kitchen Extractor Fan",
+      "minimum": "200W",
+      "maximum": "200W",
+      "expected_power": "200.00W"
+    },
+    {
+      "name": "Laptop Computer",
+      "minimum": "50W",
+      "maximum": "100W",
+      "expected_power": "75.00W"
+    },
+    {
+      "name": "Laser Printer",
+      "minimum": "600W",
+      "maximum": "800W",
+      "expected_power": "700.00W"
+    },
+    {
+      "name": "Lawnmower",
+      "minimum": "1000W",
+      "maximum": "1400W",
+      "expected_power": "1200.00W"
+    },
+    {
+      "name": "LED Christmas Lights",
+      "minimum": "5W",
+      "maximum": "5W",
+      "expected_power": "5.00W"
+    },
+    {
+      "name": "LED Light Bulb",
+      "minimum": "7W",
+      "maximum": "10W",
+      "expected_power": "8.50W"
+    },
+    {
+      "name": "LG Soundbar",
+      "minimum": "23W",
+      "maximum": "30W",
+      "expected_power": "26.50W"
+    },
+    {
+      "name": "Mi Box",
+      "minimum": "5W",
+      "maximum": "7W",
+      "expected_power": "6.00W"
+    },
+    {
+      "name": "Microwave",
+      "minimum": "600W",
+      "maximum": "1700W",
+      "expected_power": "1150.00W"
+    },
+    {
+      "name": "Mini Fridge Freezer",
+      "minimum": "50W",
+      "maximum": "75W",
+      "expected_power": "62.50W"
+    },
+    {
+      "name": "Night Light",
+      "minimum": "1W",
+      "maximum": "1W",
+      "expected_power": "1.00W"
+    },
+    {
+      "name": "Nintendo Switch AC Adapter",
+      "minimum": "7W",
+      "maximum": "40W",
+      "expected_power": "23.50W"
+    },
+    {
+      "name": "OLED TV",
+      "minimum": "80W",
+      "maximum": "200W",
+      "expected_power": "140.00W"
+    },
+    {
+      "name": "Outdoor Hot Tub",
+      "minimum": "60W",
+      "maximum": "500W",
+      "expected_power": "280.00W"
+    },
+    {
+      "name": "Oven",
+      "minimum": "2150W",
+      "maximum": "2150W",
+      "expected_power": "2150.00W"
+    },
+    {
+      "name": "Paper Shredder",
+      "minimum": "200W",
+      "maximum": "220W",
+      "expected_power": "210.00W"
+    },
+    {
+      "name": "Pedestal Fan",
+      "minimum": "50W",
+      "maximum": "60W",
+      "expected_power": "55.00W"
+    },
+    {
+      "name": "Percolator",
+      "minimum": "800W",
+      "maximum": "1100W",
+      "expected_power": "950.00W"
+    },
+    {
+      "name": "Philips Hue Smart Bulb",
+      "minimum": "8W",
+      "maximum": "9W",
+      "expected_power": "8.50W"
+    },
+    {
+      "name": "Phone Charger",
+      "minimum": "4W",
+      "maximum": "7W",
+      "expected_power": "5.50W"
+    },
+    {
+      "name": "Playstation 4",
+      "minimum": "85W",
+      "maximum": "90W",
+      "expected_power": "87.50W"
+    },
+    {
+      "name": "Playstation 5",
+      "minimum": "160W",
+      "maximum": "200W",
+      "expected_power": "180.00W"
+    },
+    {
+      "name": "Portable Air Conditioner",
+      "minimum": "1000W",
+      "maximum": "1200W",
+      "expected_power": "1100.00W"
+    },
+    {
+      "name": "Portable Mini Dehumidifier",
+      "minimum": "20W",
+      "maximum": "80W",
+      "expected_power": "50.00W"
+    },
+    {
+      "name": "Power Shower",
+      "minimum": "7500W",
+      "maximum": "10500W",
+      "expected_power": "9000.00W"
+    },
+    {
+      "name": "Pressure Cooker",
+      "minimum": "700W",
+      "maximum": "700W",
+      "expected_power": "700.00W"
+    },
+    {
+      "name": "Pressure Washer",
+      "minimum": "1500W",
+      "maximum": "1500W",
+      "expected_power": "1500.00W"
+    },
+    {
+      "name": "Projector",
+      "minimum": "220W",
+      "maximum": "270W",
+      "expected_power": "245.00W"
+    },
+    {
+      "name": "Rice Cooker",
+      "minimum": "200W",
+      "maximum": "800W",
+      "expected_power": "500.00W"
+    },
+    {
+      "name": "Ring Spotlight Cam Wired",
+      "minimum": "4W",
+      "maximum": "25W",
+      "expected_power": "14.50W"
+    },
+    {
+      "name": "Robot Vacuum Base Station",
+      "minimum": "30W",
+      "maximum": "100W",
+      "expected_power": "65.00W"
+    },
+    {
+      "name": "Robot Vacuum Cleaner",
+      "minimum": "20W",
+      "maximum": "70W",
+      "expected_power": "45.00W"
+    },
+    {
+      "name": "Sandwich Maker",
+      "minimum": "700W",
+      "maximum": "1000W",
+      "expected_power": "850.00W"
+    },
+    {
+      "name": "Scanner",
+      "minimum": "10W",
+      "maximum": "18W",
+      "expected_power": "14.00W"
+    },
+    {
+      "name": "Set Top Box",
+      "minimum": "27W",
+      "maximum": "30W",
+      "expected_power": "28.50W"
+    },
+    {
+      "name": "Sewing Machine",
+      "minimum": "70W",
+      "maximum": "80W",
+      "expected_power": "75.00W"
+    },
+    {
+      "name": "Singer Sewing Machine (Generic)",
+      "minimum": "100W",
+      "maximum": "100W",
+      "expected_power": "100.00W"
+    },
+    {
+      "name": "Sky Q 2TB Box",
+      "minimum": "40W",
+      "maximum": "40W",
+      "expected_power": "40.00W"
+    },
+    {
+      "name": "Slow Cooker",
+      "minimum": "160W",
+      "maximum": "180W",
+      "expected_power": "170.00W"
+    },
+    {
+      "name": "Smart Speaker with Display",
+      "minimum": "5W",
+      "maximum": "15W",
+      "expected_power": "10.00W"
+    },
+    {
+      "name": "Smoke Detector",
+      "minimum": "0W",
+      "maximum": "1W",
+      "expected_power": "0.50W"
+    },
+    {
+      "name": "Soldering Iron",
+      "minimum": "30W",
+      "maximum": "60W",
+      "expected_power": "45.00W"
+    },
+    {
+      "name": "Space Heater",
+      "minimum": "2000W",
+      "maximum": "5000W",
+      "expected_power": "3500.00W"
+    },
+    {
+      "name": "Steam Iron",
+      "minimum": "2200W",
+      "maximum": "2500W",
+      "expected_power": "2350.00W"
+    },
+    {
+      "name": "Steriliser",
+      "minimum": "650W",
+      "maximum": "650W",
+      "expected_power": "650.00W"
+    },
+    {
+      "name": "Straightening Iron",
+      "minimum": "75W",
+      "maximum": "300W",
+      "expected_power": "187.50W"
+    },
+    {
+      "name": "Strimmer",
+      "minimum": "300W",
+      "maximum": "500W",
+      "expected_power": "400.00W"
+    },
+    {
+      "name": "Submersible Water Pump",
+      "minimum": "200W",
+      "maximum": "400W",
+      "expected_power": "300.00W"
+    },
+    {
+      "name": "Table Fan",
+      "minimum": "10W",
+      "maximum": "25W",
+      "expected_power": "17.50W"
+    },
+    {
+      "name": "Table Top Fridge",
+      "minimum": "10W",
+      "maximum": "15W",
+      "expected_power": "12.50W"
+    },
+    {
+      "name": "Tablet Charger",
+      "minimum": "10W",
+      "maximum": "15W",
+      "expected_power": "12.50W"
+    },
+    {
+      "name": "Tablet Computer",
+      "minimum": "5W",
+      "maximum": "10W",
+      "expected_power": "7.50W"
+    },
+    {
+      "name": "Toaster",
+      "minimum": "800W",
+      "maximum": "1800W",
+      "expected_power": "1300.00W"
+    },
+    {
+      "name": "Tower Fan",
+      "minimum": "60W",
+      "maximum": "60W",
+      "expected_power": "60.00W"
+    },
+    {
+      "name": "Treadmill",
+      "minimum": "280W",
+      "maximum": "900W",
+      "expected_power": "590.00W"
+    },
+    {
+      "name": "Tube Light (1500mm)",
+      "minimum": "22W",
+      "maximum": "22W",
+      "expected_power": "22.00W"
+    },
+    {
+      "name": "TV (19\" colour)",
+      "minimum": "40W",
+      "maximum": "100W",
+      "expected_power": "70.00W"
+    },
+    {
+      "name": "Ultrasonic Nebulizer",
+      "minimum": "20W",
+      "maximum": "60W",
+      "expected_power": "40.00W"
     },
     {
       "name": "Vacuum Cleaner",
-      "expected_power": 800,
-      "max_power_threshold": 1200,
-      "min_power_threshold": 400
+      "minimum": "450W",
+      "maximum": "900W",
+      "expected_power": "675.00W"
     },
     {
-      "name": "Electric Fan",
-      "expected_power": 75,
-      "max_power_threshold": 120,
-      "min_power_threshold": 40
+      "name": "Wall Fan",
+      "minimum": "45W",
+      "maximum": "60W",
+      "expected_power": "52.50W"
     },
     {
-      "name": "Heater (Space)",
-      "expected_power": 1500,
-      "max_power_threshold": 2000,
-      "min_power_threshold": 1000
+      "name": "Washing Machine",
+      "minimum": "500W",
+      "maximum": "500W",
+      "expected_power": "500.00W"
     },
     {
-      "name": "Water Heater",
-      "expected_power": 3000,
-      "max_power_threshold": 3500,
-      "min_power_threshold": 2000
+      "name": "Water Dispenser",
+      "minimum": "100W",
+      "maximum": "100W",
+      "expected_power": "100.00W"
     },
     {
-      "name": "Printer (Laser)",
-      "expected_power": 400,
-      "max_power_threshold": 600,
-      "min_power_threshold": 200
+      "name": "Water Feature",
+      "minimum": "35W",
+      "maximum": "35W",
+      "expected_power": "35.00W"
     },
     {
-      "name": "Router/Modem",
-      "expected_power": 15,
-      "max_power_threshold": 30,
-      "min_power_threshold": 5
+      "name": "Water Filter and Cooler",
+      "minimum": "70W",
+      "maximum": "100W",
+      "expected_power": "85.00W"
     },
     {
-      "name": "LED Light Bulb (10W)",
-      "expected_power": 10,
-      "max_power_threshold": 15,
-      "min_power_threshold": 8
+      "name": "WiFi Booster",
+      "minimum": "1W",
+      "maximum": "2W",
+      "expected_power": "1.50W"
     },
     {
-      "name": "Fluorescent Light",
-      "expected_power": 40,
-      "max_power_threshold": 60,
-      "min_power_threshold": 30
+      "name": "WiFi Router",
+      "minimum": "4W",
+      "maximum": "10W",
+      "expected_power": "7.00W"
+    },
+    {
+      "name": "Window Air Conditioner",
+      "minimum": "500W",
+      "maximum": "1500W",
+      "expected_power": "1000.00W"
+    },
+    {
+      "name": "Wine cooler (18 bottles)",
+      "minimum": "83W",
+      "maximum": "83W",
+      "expected_power": "83.00W"
+    },
+    {
+      "name": "Xbox One",
+      "minimum": "50W",
+      "maximum": "110W",
+      "expected_power": "80.00W"
     }
   ]
-}
+  }
+  
