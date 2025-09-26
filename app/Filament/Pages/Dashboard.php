@@ -44,8 +44,8 @@ class Dashboard extends Page
         return [
             CustomAccountWidget::class,
             DeviceStatsWidget::class,
-            AlertsTableWidget::class,
             EnergyCostCalculator::class,
+            AlertsTableWidget::class,
         ];
     }
 }

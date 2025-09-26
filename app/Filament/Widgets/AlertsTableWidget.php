@@ -27,7 +27,7 @@ class AlertsTableWidget extends BaseWidget implements HasTable
     use InteractsWithTable;
 
 
-    protected int|string|array $columnSpan = '1';
+    protected int|string|array $columnSpan = 'full';
 
     protected static ?int $sort = 2;
 

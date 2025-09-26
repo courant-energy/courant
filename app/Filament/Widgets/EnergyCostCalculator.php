@@ -17,7 +17,7 @@ class EnergyCostCalculator extends Widget implements HasForms
     
     protected static ?string $heading = 'Cost Calculator';
     
-    protected int|string|array $columnSpan = 1;
+    protected int|string|array $columnSpan = 'full';
     
     protected static ?int $sort = 3;
     
