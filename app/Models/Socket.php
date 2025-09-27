@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Socket extends Model
 {
@@ -80,6 +81,32 @@ class Socket extends Model
             // Device is offline (no recent reading or no reading at all)
             return 0; // Return 0 if offline or no reading found
         }
+    }
+
+    public function getPowerConsumptionAttribute()
+    {
+        // Calculate the total power consumption for the current profile based on power (W) readings
+        /**
+         * Query:
+         * where profile_id = current profile
+         * group by hour
+         * average power per hour
+         * sum all avg power per hour
+         * divide by 1000 to get kWh
+         */
+
+        
+
+        return DB::table('readings')
+            ->where('socket_id', $this->id)
+            ->where('profile_id', $this->profile_id)
+            ->select(
+                DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H") as hour'),
+                DB::raw('AVG(power) as avg_power')
+            )
+            ->groupBy(DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H")'))
+            ->get()
+            ->sum('avg_power') / 1000; // Convert W to kWh
     }
 
     /**

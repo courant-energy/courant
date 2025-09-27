@@ -1,15 +1,30 @@
 <div wire:poll.5s>
     {{-- stats --}}
-    <div class="grid grid-cols-1 gap-4 my-4 md:grid-cols-2">
-        <h2 class="text-lg font-semibold md:col-span-2">Status</h2>
+    <div class="grid grid-cols-1 gap-4 my-4 md:grid-cols-3">
+        <h2 class="text-lg font-semibold md:col-span-3">Status</h2>
         <div class="hidden">
             <span class="text-gray-900"></span>
             <span class="text-red-600"></span>
             <span class="text-green-600"></span>
             <span class="text-yellow-500"></span>
         </div>
+        <div>
+            {{-- TODO: Add the Power Consumption (kWh) --}} 
+            <h3 class="text-xl font-semibold">
+                {{ number_format($socket->powerConsumption ?? 0, 2) }} kWh
+            </h3>
+            <p class="text-sm text-gray-500">
+                Power Consumption
+                <span class="block mt-1 text-xs text-gray-400">
+                    Total energy consumed over time, measured in kilowatt-hours (kWh).
+                </span>
+            </p>
+        </div>
+
+
         {{-- Power --}}
         <div>
+
             @php
                 $textColorClass = 'text-gray-900 dark:text-gray-400'; // Default color
 

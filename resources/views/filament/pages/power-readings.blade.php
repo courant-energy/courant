@@ -38,18 +38,46 @@
                     </x-slot>
                     <x-slot name="description">
                         {{ $socket->name }}
-                        @if(!$socket->profile)
-                            <span class="block text-xs text-amber-500 mt-1">
+                        @if (!$socket->profile)
+                            <span class="block mt-1 text-xs text-amber-500">
                                 No profile assigned. Power thresholds and expected values unavailable.
                             </span>
                         @endif
                     </x-slot>
-                    @livewire('readings.socket-widget', ['socket' => $socket], key('stats-'.$socket->id))
+                    @livewire('readings.socket-widget', ['socket' => $socket], key('stats-' . $socket->id))
                 </x-filament::section>
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <div></div>
-                    @livewire(App\Filament\Widgets\Readings\EnergyUsageGraph::class, ['socket' => $socket], key($socket->id))
+                    <div class="flex flex-col col-span-2 gap-4" x-data="{ activeTab: 'power-consumption' }">
+                        <x-filament::tabs>
+                            <x-filament::tabs.item alpine-active="activeTab === 'power-consumption'"
+                                x-on:click="activeTab = 'power-consumption'">
+                                Power Consumption (kWh)
+                            </x-filament::tabs.item>
+                            <x-filament::tabs.item alpine-active="activeTab === 'power'"
+                                x-on:click="activeTab = 'power'">
+                                Power (W)
+                            </x-filament::tabs.item>
+                            <x-filament::tabs.item alpine-active="activeTab === 'power-factor'"
+                                x-on:click="activeTab = 'power-factor'">
+                                Power Factor
+                            </x-filament::tabs.item>
+                        </x-filament::tabs>
+
+                        {{-- Power Consumption Graph --}}
+                        <div x-show="activeTab === 'power-consumption'">
+                            @livewire(App\Filament\Widgets\PowerConsumption::class, ['socket' => $socket], key('power-consumption-' . $socket->id))
+                        </div>
+
+                        {{-- Power Graph --}}
+                        <div x-show="activeTab === 'power'">
+                        </div>
+
+                        {{-- Power Factor --}}
+                        <div x-show="activeTab === 'power-factor'">
+                        </div>
+                    </div>
                 </div>
             </div>
         @endforeach
