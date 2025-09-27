@@ -1,14 +1,14 @@
 <div class="space-y-6">
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Generate Report</h2>
+    <div class="p-4 bg-white rounded-lg shadow dark:bg-gray-800">
+        <h2 class="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">Generate Report</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3">
             <!-- Report Type -->
             <div>
-                <label for="reportType" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Report
+                <label for="reportType" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Report
                     Type</label>
                 <select id="reportType" wire:model.live="reportType"
-                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    class="w-full border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option value="energy_consumption">Energy Consumption</option>
                     <option value="cost_analysis">Cost Analysis</option>
                     <option value="equipment_usage">Equipment Usage</option>
@@ -18,10 +18,10 @@
 
             <!-- Time Range (not applicable to equipment usage) -->
             <div x-show="$wire.reportType !== 'equipment_usage' && $wire.reportType !== 'anomaly'">
-                <label for="timeRange" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time
+                <label for="timeRange" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Time
                     Range</label>
                 <select id="timeRange" wire:model.live="timeRange"
-                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    class="w-full border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
@@ -30,19 +30,19 @@
 
             <!-- Cost per kWh (only for cost analysis) -->
             <div x-show="$wire.reportType === 'cost_analysis'">
-                <label for="costPerKwh" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cost per
+                <label for="costPerKwh" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Cost per
                     kWh (PHP)</label>
                 <input type="number" id="costPerKwh" wire:model.live="costPerKwh" step="0.01" min="0.01"
                     max="1"
-                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    class="w-full border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
             </div>
 
             <!-- Chart Type (not applicable to equipment usage) -->
             <div x-show="$wire.reportType !== 'equipment_usage'">
-                <label for="chartType" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Chart
+                <label for="chartType" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Chart
                     Type</label>
                 <select id="chartType" wire:model.live="chartType"
-                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    class="w-full border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option value="bar">Bar Chart</option>
                     <option value="line">Line Chart</option>
                     <option value="pie" x-show="$wire.reportType === 'anomaly'">Pie Chart</option>
@@ -50,16 +50,16 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3">
             <!-- Date Range -->
             <div>
-                <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start
+                <label for="startDate" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Start
                     Date</label>
                 <input type="date" id="startDate" wire:model.live="startDate"
-                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    class="w-full border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                 <!-- Show minimum date requirement message -->
                 <div x-show="$wire.reportType === 'energy_consumption' || $wire.reportType === 'cost_analysis'">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                         <span x-show="$wire.timeRange === 'weekly'">Minimum 7 days required for weekly reports</span>
                         <span x-show="$wire.timeRange === 'monthly'">Minimum 30 days required for monthly reports</span>
                         <span x-show="$wire.timeRange === 'daily'">Daily reports can use any date range</span>
@@ -68,11 +68,11 @@
             </div>
 
             <div>
-                <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End
+                <label for="endDate" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">End
                     Date</label>
                 <input type="date" id="endDate" wire:model.live="endDate"
-                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    class="w-full border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     <span x-data="{ 
                         get daysDifference() {
                             if (!$wire.startDate || !$wire.endDate) return 0;
@@ -88,10 +88,10 @@
             <!-- Profile Filter -->
             <div>
                 <label for="profileId"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Profile/Appliance
+                    class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Profile/Appliance
                     Type</label>
                 <select id="profileId" wire:model.live="selectedProfileId"
-                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    class="w-full border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option value="">All Profiles</option>
                     @foreach ($profiles as $profile)
                         <option value="{{ $profile['id'] }}">{{ $profile['name'] }} ({{ $profile['socket_count'] }}
@@ -103,24 +103,15 @@
 
         <div class="flex justify-end">
             <x-filament::button wire:click="generateReport" wire:loading.attr="disabled"
->                <span wire:loading wire:target="generateReport" class="mr-2">
-                    <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                    </svg>
-                </span>
+>                
                 Generate Report
             </x-filament::button>
         </div>
     </div>
 
     <!-- Report Results -->
-    <div x-show="$wire.showReport" class="bg-white dark:bg-gray-800 shadow rounded-lg p-4" x-cloak>
-        <div class="flex justify-between items-center mb-4">
+    <div x-show="$wire.showReport" class="p-4 bg-white rounded-lg shadow dark:bg-gray-800" x-cloak>
+        <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Report Results</h2>
             <div class="flex space-x-2">
                 <x-filament::button wire:click="downloadCsv" color="success">
@@ -134,47 +125,47 @@
 
         <!-- Chart Container -->
         <div class="mb-6">
-            <div class="w-full h-80 bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+            <div class="w-full p-4 rounded-lg h-80 bg-gray-50 dark:bg-gray-900">
                 <canvas id="reportChart"></canvas>
             </div>
         </div>
 
         <!-- Report Summary -->
         <div class="mb-6">
-            <h3 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">Summary</h3>
+            <h3 class="mb-3 font-medium text-gray-800 text-md dark:text-gray-200">Summary</h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <!-- Energy Consumption Summary -->
                 <div x-show="$wire.reportType === 'energy_consumption'"
-                    class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Total Energy Consumption</p>
+                    class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <p class="mb-1 text-sm text-gray-600 dark:text-gray-300">Total Energy Consumption</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
                         {{ isset($reportData['summary']['total_energy']) ? number_format($reportData['summary']['total_energy'], 2) : 0 }}
                         kWh</p>
                 </div>
                 <div x-show="$wire.reportType === 'energy_consumption'"
-                    class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Average Daily Consumption</p>
+                    class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <p class="mb-1 text-sm text-gray-600 dark:text-gray-300">Average Daily Consumption</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
                         {{ isset($reportData['summary']['average_daily']) ? number_format($reportData['summary']['average_daily'], 2) : 0 }}
                         kWh</p>
                 </div>
 
                 <!-- Cost Analysis Summary -->
-                <div x-show="$wire.reportType === 'cost_analysis'" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Total Energy Cost</p>
+                <div x-show="$wire.reportType === 'cost_analysis'" class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <p class="mb-1 text-sm text-gray-600 dark:text-gray-300">Total Energy Cost</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
                         PHP {{ isset($reportData['summary']['total_cost']) ? number_format($reportData['summary']['total_cost'], 2) : 0 }}
                     </p>
                 </div>
-                <div x-show="$wire.reportType === 'cost_analysis'" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Total Energy Used</p>
+                <div x-show="$wire.reportType === 'cost_analysis'" class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <p class="mb-1 text-sm text-gray-600 dark:text-gray-300">Total Energy Used</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
                         {{ isset($reportData['summary']['total_energy']) ? number_format($reportData['summary']['total_energy'], 2) : 0 }}
                         kWh</p>
                 </div>
-                <div x-show="$wire.reportType === 'cost_analysis'" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Average Daily Cost</p>
+                <div x-show="$wire.reportType === 'cost_analysis'" class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <p class="mb-1 text-sm text-gray-600 dark:text-gray-300">Average Daily Cost</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
                         PHP {{ isset($reportData['summary']['average_daily_cost']) ? number_format($reportData['summary']['average_daily_cost'], 2) : 0 }}
                     </p>
@@ -182,35 +173,35 @@
 
                 <!-- Equipment Usage Summary -->
                 <div x-show="$wire.reportType === 'equipment_usage'"
-                    class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Total Monitored Profiles</p>
+                    class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <p class="mb-1 text-sm text-gray-600 dark:text-gray-300">Total Monitored Profiles</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
                         {{ isset($reportData['summary']['total_profiles']) ? $reportData['summary']['total_profiles'] : 0 }}
                     </p>
                 </div>
                 <div x-show="$wire.reportType === 'equipment_usage'"
-                    class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Average Uptime</p>
+                    class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <p class="mb-1 text-sm text-gray-600 dark:text-gray-300">Average Uptime</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
                         {{ isset($reportData['summary']['average_uptime']) ? number_format($reportData['summary']['average_uptime'], 1) : 0 }}%
                     </p>
                 </div>
 
                 <!-- Anomaly Summary -->
-                <div x-show="$wire.reportType === 'anomaly'" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Total Anomalies</p>
+                <div x-show="$wire.reportType === 'anomaly'" class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <p class="mb-1 text-sm text-gray-600 dark:text-gray-300">Total Anomalies</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
                         {{ isset($reportData['summary']['total_anomalies']) ? $reportData['summary']['total_anomalies'] : 0 }}
                     </p>
                 </div>
-                <div x-show="$wire.reportType === 'anomaly'" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Critical Anomalies</p>
+                <div x-show="$wire.reportType === 'anomaly'" class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <p class="mb-1 text-sm text-gray-600 dark:text-gray-300">Critical Anomalies</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
                         {{ isset($reportData['summary']['critical_count']) ? $reportData['summary']['critical_count'] : 0 }}
                     </p>
                 </div>
-                <div x-show="$wire.reportType === 'anomaly'" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Warning Anomalies</p>
+                <div x-show="$wire.reportType === 'anomaly'" class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <p class="mb-1 text-sm text-gray-600 dark:text-gray-300">Warning Anomalies</p>
                     <p class="text-lg font-bold text-gray-800 dark:text-gray-100">
                         {{ isset($reportData['summary']['warning_count']) ? $reportData['summary']['warning_count'] : 0 }}
                     </p>
@@ -220,46 +211,46 @@
 
         <!-- Detailed Results Section -->
         <div x-show="$wire.reportType === 'equipment_usage'">
-            <h3 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">Equipment Details</h3>
+            <h3 class="mb-3 font-medium text-gray-800 text-md dark:text-gray-200">Equipment Details</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Profile</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Uptime %</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Min Power</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Max Power</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Avg Power</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Voltage Range</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                         @if (isset($reportData['equipment_data']))
                             @foreach ($reportData['equipment_data'] as $item)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
                                         {{ $item['profile_name'] }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
                                         {{ $item['uptime_percentage'] }}%</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
                                         {{ $item['power_fluctuation']['min'] }}W</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
                                         {{ $item['power_fluctuation']['max'] }}W</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
                                         {{ $item['power_fluctuation']['avg'] }}W</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
                                         {{ $item['voltage_fluctuation']['min'] }} -
                                         {{ $item['voltage_fluctuation']['max'] }}V
                                     </td>
@@ -272,38 +263,38 @@
         </div>
 
         <div x-show="$wire.reportType === 'anomaly'">
-            <h3 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">Anomaly Details</h3>
+            <h3 class="mb-3 font-medium text-gray-800 text-md dark:text-gray-200">Anomaly Details</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Type</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Severity</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Profile</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Reading</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Message</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">
                                 Time</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                         @if (isset($reportData['details']))
                             @foreach ($reportData['details'] as $item)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
                                         {{ $item['type'] }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td class="px-6 py-4 text-sm whitespace-nowrap">
                                         <span
                                             class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                             {{ $item['severity'] === 'critical'
@@ -314,13 +305,13 @@
                                             {{ ucfirst($item['severity']) }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
                                         {{ $item['profile'] }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
                                         {{ $item['reading_value'] }}W</td>
                                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                                         {{ $item['message'] }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
                                         {{ $item['timestamp'] }}</td>
                                 </tr>
                             @endforeach
