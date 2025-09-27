@@ -188,7 +188,7 @@ class ReportService
             'labels' => $formattedData['labels'],
             'datasets' => [
                 [
-                    'label' => 'Energy Cost ($)',
+                    'label' => 'Energy Cost (PHP)',
                     'data' => $formattedData['values'],
                     'backgroundColor' => 'rgba(255, 159, 64, 0.6)',
                 ]

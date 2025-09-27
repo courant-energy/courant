@@ -14,6 +14,7 @@ class EnergyCalculationService
 
     /**
      * Calculate the energy consumption for a given profile.
+     * Uses the same calculation method as PowerConsumption widget.
      *
      * @param  \App\Models\Profile  $profile
      * @param  string  $startDate  Start date/time string (e.g., 'YYYY-MM-DD HH:MM:SS')
@@ -28,55 +29,127 @@ class EnergyCalculationService
             ->orderBy('reading_time', 'asc')
             ->get();
 
-        $readingCount = $readings->count();
-
-        // Calculate total energy consumption
-        $totalEnergy = 0;
-        if ($readingCount < 2) {
-            return 0.0; // Not enough data points to calculate intervals
+        if ($readings->isEmpty()) {
+            return 0.0; // No data points available
         }
 
-        $totalKwh = 0.0;
-        // Define the maximum allowed gap threshold in seconds (2 minutes)
-        $maxGapSecondsThreshold = 2 * 60; // 120 seconds
+        // Calculate total energy consumption using the same method as PowerConsumption widget
+        // Sum all power values and convert from watts to kWh
+        $totalPowerWatts = $readings->sum('power');
+        $totalKwh = round($totalPowerWatts / 1000, 2);
 
-        // Iterate through readings pairwise
-        for ($i = 0; $i < $readingCount - 1; $i++) {
-            $r1 = $readings[$i];
-            $r2 = $readings[$i + 1];
+        return $totalKwh;
+    }
 
-            // Ensure reading_time is a Carbon instance (usually handled by Eloquent casts)
-            if (!($r1->reading_time instanceof \Carbon\Carbon) || !($r2->reading_time instanceof \Carbon\Carbon)) {
-                continue;
-            }
+    /**
+     * Calculate energy consumption by minute intervals (last hour).
+     * Matches PowerConsumption widget's getDataByMinute method.
+     *
+     * @param  \App\Models\Profile  $profile
+     * @return array ['labels' => [], 'data' => []]
+     */
+    public function calculateEnergyByMinute($profile)
+    {
+        $readings = $profile->readings()
+            ->where('reading_time', '>=', now()->subHour())
+            ->orderBy('reading_time')
+            ->get()
+            ->groupBy(function ($reading) {
+                return $reading->reading_time->format('H:i');
+            });
 
-            // Calculate time difference in seconds
-            $deltaTimeSeconds = $r1->reading_time->diffInSeconds($r2->reading_time);
+        $labels = [];
+        $data = [];
 
-            // If the gap is non-positive or exceeds the threshold, skip this interval
-            if ($deltaTimeSeconds <= 0 || $deltaTimeSeconds > $maxGapSecondsThreshold) {
-                continue;
-            }
-
-            // Ensure power exists and is numeric
-            if (!isset($r1->power) || !is_numeric($r1->power) || !isset($r2->power) || !is_numeric($r2->power)) {
-                continue;
-            }
-
-            // Calculate average power in Watts for the interval
-            $avgPowerWatts = ($r1->power + $r2->power) / 2;
-
-            // Calculate energy for the interval in kWh
-            // Energy (kWh) = (Power (W) * Time (s)) / (1000 * 3600)
-            $intervalKwh = ($avgPowerWatts * $deltaTimeSeconds) / 3600000; // 1000 * 3600
-
-            // Add interval energy to total
-            $totalKwh += $intervalKwh;
+        foreach ($readings as $time => $group) {
+            $labels[] = $time;
+            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
         }
 
-        // Overwrite the initial $totalEnergy with the calculated $totalKwh
-        $totalEnergy = $totalKwh;
+        return ['labels' => $labels, 'data' => $data];
+    }
 
-        return $totalEnergy;
+    /**
+     * Calculate energy consumption by hour intervals (today).
+     * Matches PowerConsumption widget's getDataByHour method.
+     *
+     * @param  \App\Models\Profile  $profile
+     * @return array ['labels' => [], 'data' => []]
+     */
+    public function calculateEnergyByHour($profile)
+    {
+        $readings = $profile->readings()
+            ->where('reading_time', '>=', now()->subDay())
+            ->orderBy('reading_time')
+            ->get()
+            ->groupBy(function ($reading) {
+                return $reading->reading_time->format('H:00');
+            });
+
+        $labels = [];
+        $data = [];
+
+        foreach ($readings as $time => $group) {
+            $labels[] = $time;
+            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
+        }
+
+        return ['labels' => $labels, 'data' => $data];
+    }
+
+    /**
+     * Calculate energy consumption by day intervals.
+     * Matches PowerConsumption widget's getDataByDay method.
+     *
+     * @param  \App\Models\Profile  $profile
+     * @param  int  $days  Number of days to look back
+     * @return array ['labels' => [], 'data' => []]
+     */
+    public function calculateEnergyByDay($profile, int $days = 7)
+    {
+        $readings = $profile->readings()
+            ->where('reading_time', '>=', now()->subDays($days))
+            ->orderBy('reading_time')
+            ->get()
+            ->groupBy(function ($reading) {
+                return $reading->reading_time->format('Y-m-d');
+            });
+
+        $labels = [];
+        $data = [];
+
+        foreach ($readings as $date => $group) {
+            $labels[] = $date;
+            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
+        }
+
+        return ['labels' => $labels, 'data' => $data];
+    }
+
+    /**
+     * Calculate energy consumption by month intervals (all time).
+     * Matches PowerConsumption widget's getDataByMonth method.
+     *
+     * @param  \App\Models\Profile  $profile
+     * @return array ['labels' => [], 'data' => []]
+     */
+    public function calculateEnergyByMonth($profile)
+    {
+        $readings = $profile->readings()
+            ->orderBy('reading_time')
+            ->get()
+            ->groupBy(function ($reading) {
+                return $reading->reading_time->format('Y-m');
+            });
+
+        $labels = [];
+        $data = [];
+
+        foreach ($readings as $month => $group) {
+            $labels[] = $month;
+            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
+        }
+
+        return ['labels' => $labels, 'data' => $data];
     }
 }
