@@ -44,33 +44,25 @@ class ReportService
         // Structure to hold energy data by date
         $energyByDate = [];
         foreach ($profiles as $profile) {
-            // Use the EnergyCalculationService to calculate energy consumption
-            $totalEnergy = $this->energyCalculationService->calculateEnergyConsumption(
-                $profile,
-                $startDate->format('Y-m-d H:i:s'),
-                $endDate->format('Y-m-d H:i:s')
-            );
-
-            // For daily reporting, we need to split the energy by day
-            if ($timeRange === 'daily') {
-                $period = CarbonPeriod::create($startDate, '1 day', $endDate);
-                foreach ($period as $date) {
-                    $dayStart = $date->copy()->startOfDay();
-                    $dayEnd = $date->copy()->endOfDay();
-                    $formattedDate = $dayStart->format('Y-m-d');
-                    
-                    // Calculate energy for this specific day
-                    $dayEnergy = $this->energyCalculationService->calculateEnergyConsumption(
-                        $profile,
-                        $dayStart->format('Y-m-d H:i:s'),
-                        $dayEnd->format('Y-m-d H:i:s')
-                    );
-                    
-                    if (!isset($energyByDate[$formattedDate])) {
-                        $energyByDate[$formattedDate] = 0;
-                    }
-                    $energyByDate[$formattedDate] += $dayEnergy;
+            // For all reporting types (daily, weekly, monthly), we need to split the energy by day
+            // so that formatTimeSeriesData can properly group them
+            $period = CarbonPeriod::create($startDate, '1 day', $endDate);
+            foreach ($period as $date) {
+                $dayStart = $date->copy()->startOfDay();
+                $dayEnd = $date->copy()->endOfDay();
+                $formattedDate = $dayStart->format('Y-m-d');
+                
+                // Calculate energy for this specific day
+                $dayEnergy = $this->energyCalculationService->calculateEnergyConsumption(
+                    $profile,
+                    $dayStart->format('Y-m-d H:i:s'),
+                    $dayEnd->format('Y-m-d H:i:s')
+                );
+                
+                if (!isset($energyByDate[$formattedDate])) {
+                    $energyByDate[$formattedDate] = 0;
                 }
+                $energyByDate[$formattedDate] += $dayEnergy;
             }
         }
 
@@ -80,23 +72,6 @@ class ReportService
             $rawData->push((object)[
                 'date' => $date,
                 'total_energy' => $energy
-            ]);
-        }
-
-        // If not daily or no data yet (for weekly/monthly), use the total for the period
-        if (empty($energyByDate)) {
-            $totalEnergyAllProfiles = $profiles->sum(function ($profile) use ($startDate, $endDate) {
-                return $this->energyCalculationService->calculateEnergyConsumption(
-                    $profile,
-                    $startDate->format('Y-m-d H:i:s'),
-                    $endDate->format('Y-m-d H:i:s')
-                );
-            });
-            
-            // For weekly or monthly, add a single entry representing the total period
-            $rawData->push((object)[
-                'date' => $startDate->format('Y-m-d'),
-                'total_energy' => $totalEnergyAllProfiles
             ]);
         }
         
@@ -135,39 +110,25 @@ class ReportService
         // Structure to hold energy data by date
         $energyByDate = [];
         foreach ($profiles as $profile) {
-            // For daily reporting, we need to split the energy by day
-            if ($timeRange === 'daily') {
-                $period = CarbonPeriod::create($startDate, '1 day', $endDate);
-                foreach ($period as $date) {
-                    $dayStart = $date->copy()->startOfDay();
-                    $dayEnd = $date->copy()->endOfDay();
-                    $formattedDate = $dayStart->format('Y-m-d');
-                    
-                    // Calculate energy for this specific day using the service
-                    $dayEnergy = $this->energyCalculationService->calculateEnergyConsumption(
-                        $profile,
-                        $dayStart->format('Y-m-d H:i:s'),
-                        $dayEnd->format('Y-m-d H:i:s')
-                    );
-                    
-                    if (!isset($energyByDate[$formattedDate])) {
-                        $energyByDate[$formattedDate] = 0;
-                    }
-                    $energyByDate[$formattedDate] += $dayEnergy;
-                }
-            } else {
-                // For weekly/monthly, calculate the total for the entire period
-                $totalEnergy = $this->energyCalculationService->calculateEnergyConsumption(
+            // For all reporting types (daily, weekly, monthly), we need to split the energy by day
+            // so that formatTimeSeriesData can properly group them
+            $period = CarbonPeriod::create($startDate, '1 day', $endDate);
+            foreach ($period as $date) {
+                $dayStart = $date->copy()->startOfDay();
+                $dayEnd = $date->copy()->endOfDay();
+                $formattedDate = $dayStart->format('Y-m-d');
+                
+                // Calculate energy for this specific day using the service
+                $dayEnergy = $this->energyCalculationService->calculateEnergyConsumption(
                     $profile,
-                    $startDate->format('Y-m-d H:i:s'),
-                    $endDate->format('Y-m-d H:i:s')
+                    $dayStart->format('Y-m-d H:i:s'),
+                    $dayEnd->format('Y-m-d H:i:s')
                 );
                 
-                $formattedDate = $startDate->format('Y-m-d');
                 if (!isset($energyByDate[$formattedDate])) {
                     $energyByDate[$formattedDate] = 0;
                 }
-                $energyByDate[$formattedDate] += $totalEnergy;
+                $energyByDate[$formattedDate] += $dayEnergy;
             }
         }
 
