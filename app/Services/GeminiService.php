@@ -15,6 +15,7 @@ use GeminiAPI\Resources\Content;
 use GeminiAPI\Resources\Parts\FileDataPart;
 use GeminiAPI\Resources\Parts\FilePart;
 use GeminiAPI\Resources\Parts\TextPart;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,10 +31,16 @@ class GeminiService
      */
     public function exportReadingData(string $format = 'json', array $filters = [])
     {
+        Log::debug('GeminiService::exportReadingData started', [
+            'user_id' => Auth::id(),
+            'format' => $format,
+            'filters' => $filters
+        ]);
+
         try {
             $query = Reading::query()
                 ->whereHas('socket.iotDevice', function ($query) {
-                    $query->where('user_id', auth()->id());
+                    $query->where('user_id', Auth::id());
                 });
 
             // Apply filters if provided
@@ -106,10 +113,25 @@ class GeminiService
             // Sort by time for better readability
             $sortedReadings = $hourlyReadings->sortBy('reading_time')->values();
 
+            Log::debug('GeminiService::exportReadingData completed successfully', [
+                'user_id' => Auth::id(),
+                'format' => $format,
+                'total_readings_processed' => $readings->count(),
+                'hourly_readings_generated' => $sortedReadings->count()
+            ]);
+
             // Return formatted data
             return $this->formatData($sortedReadings, $format);
         } catch (\Exception $e) {
-            Log::error('Error exporting reading data: ' . $e->getMessage());
+            Log::error('GeminiService::exportReadingData failed', [
+                'user_id' => Auth::id(),
+                'format' => $format,
+                'filters' => $filters,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return $format === 'json'
                 ? json_encode(['error' => 'Failed to export reading data: ' . $e->getMessage()])
                 : 'Error: Failed to export reading data: ' . $e->getMessage();
@@ -125,10 +147,16 @@ class GeminiService
      */
     public function exportAlertData(string $format = 'json', array $filters = [])
     {
+        Log::debug('GeminiService::exportAlertData started', [
+            'user_id' => Auth::id(),
+            'format' => $format,
+            'filters' => $filters
+        ]);
+
         try {
             $query = Alert::query()
                 ->whereHas('iotDevice', function ($query) {
-                    $query->where('user_id', auth()->id());
+                    $query->where('user_id', Auth::id());
                 });
 
             // Apply filters if provided
@@ -195,10 +223,24 @@ class GeminiService
                 return $alert;
             });
 
+            Log::debug('GeminiService::exportAlertData completed successfully', [
+                'user_id' => Auth::id(),
+                'format' => $format,
+                'alerts_count' => $alerts->count()
+            ]);
+
             // Return formatted data
             return $this->formatData($alerts, $format);
         } catch (\Exception $e) {
-            Log::error('Error exporting alert data: ' . $e->getMessage());
+            Log::error('GeminiService::exportAlertData failed', [
+                'user_id' => Auth::id(),
+                'format' => $format,
+                'filters' => $filters,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return $format === 'json'
                 ? json_encode(['error' => 'Failed to export alert data: ' . $e->getMessage()])
                 : 'Error: Failed to export alert data: ' . $e->getMessage();
@@ -214,9 +256,15 @@ class GeminiService
      */
     public function exportIotDeviceData(string $format = 'json', array $filters = [])
     {
+        Log::debug('GeminiService::exportIotDeviceData started', [
+            'user_id' => Auth::id(),
+            'format' => $format,
+            'filters' => $filters
+        ]);
+
         try {
             $query = IotDevice::query()
-                ->where('user_id', auth()->id());
+                ->where('user_id', Auth::id());
 
             // Apply filters if provided
             if (isset($filters['user_id'])) {
@@ -240,13 +288,27 @@ class GeminiService
 
             $devices = $query->get();
 
+            Log::debug('GeminiService::exportIotDeviceData completed successfully', [
+                'user_id' => Auth::id(),
+                'format' => $format,
+                'devices_count' => $devices->count()
+            ]);
+
             // Return formatted data
             return $this->formatData($devices, $format);
         } catch (\Exception $e) {
-            Log::error('Error exporting IoT device data: ' . $e->getMessage());
+            Log::error('GeminiService::exportIotDeviceData failed', [
+                'user_id' => Auth::id(),
+                'format' => $format,
+                'filters' => $filters,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return $format === 'json'
-                ? json_encode(['error' => 'Failed to export IoT device data'])
-                : 'Error: Failed to export IoT device data';
+                ? json_encode(['error' => 'Failed to export IoT device data: ' . $e->getMessage()])
+                : 'Error: Failed to export IoT device data: ' . $e->getMessage();
         }
     }
 
@@ -259,9 +321,15 @@ class GeminiService
      */
     public function exportProfileData(string $format = 'json', array $filters = [])
     {
+        Log::debug('GeminiService::exportProfileData started', [
+            'user_id' => Auth::id(),
+            'format' => $format,
+            'filters' => $filters
+        ]);
+
         try {
             $query = Profile::query()
-                ->where('user_id', auth()->id());
+                ->where('user_id', Auth::id());
 
             // Apply filters if provided
             if (isset($filters['user_id'])) {
@@ -298,13 +366,27 @@ class GeminiService
                 return $profile;
             });
 
+            Log::debug('GeminiService::exportProfileData completed successfully', [
+                'user_id' => Auth::id(),
+                'format' => $format,
+                'profiles_count' => $profiles->count()
+            ]);
+
             // Return formatted data
             return $this->formatData($profiles, $format);
         } catch (\Exception $e) {
-            Log::error('Error exporting profile data: ' . $e->getMessage());
+            Log::error('GeminiService::exportProfileData failed', [
+                'user_id' => Auth::id(),
+                'format' => $format,
+                'filters' => $filters,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return $format === 'json'
-                ? json_encode(['error' => 'Failed to export profile data'])
-                : 'Error: Failed to export profile data';
+                ? json_encode(['error' => 'Failed to export profile data: ' . $e->getMessage()])
+                : 'Error: Failed to export profile data: ' . $e->getMessage();
         }
     }
 
@@ -317,6 +399,13 @@ class GeminiService
      */
     private function formatData($data, string $format)
     {
+        Log::debug('GeminiService::formatData started', [
+            'format' => $format,
+            'data_count' => $data->count(),
+            'data_type' => get_class($data)
+        ]);
+
+        try {
         if ($format === 'json') {
             return json_encode($data, JSON_PRETTY_PRINT);
         } elseif ($format === 'csv') {
@@ -350,7 +439,21 @@ class GeminiService
             return $csv;
         }
 
-        throw new \InvalidArgumentException("Unsupported format: {$format}. Supported formats are 'csv' and 'json'.");
+            Log::error('GeminiService::formatData unsupported format', [
+                'format' => $format,
+                'supported_formats' => ['csv', 'json']
+            ]);
+            throw new \InvalidArgumentException("Unsupported format: {$format}. Supported formats are 'csv' and 'json'.");
+        } catch (\Exception $e) {
+            Log::error('GeminiService::formatData failed', [
+                'format' => $format,
+                'data_count' => $data->count(),
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            throw $e;
+        }
     }
 
     /**
@@ -365,6 +468,11 @@ class GeminiService
      */
     public function exportAllData(string $format = 'json', array $filters = [], $user = null)
     {
+        Log::debug('GeminiService::exportAllData started', [
+            'format' => $format,
+            'filters' => $filters,
+            'user_id' => $user ? $user->id : null
+        ]);
         // Set default date range to past 30 days if not specified
         if (!isset($filters['start_date'])) {
             $filters['start_date'] = now()->subDays(30)->startOfDay()->toDateTimeString();
@@ -435,20 +543,56 @@ class GeminiService
      */
     public function generateInsights($user = null, &$isLoading = false)
     {
+        Log::info('GeminiService::generateInsights started', [
+            'user_id' => $user ? $user->id : null,
+            'timestamp' => now()->toISOString()
+        ]);
+
         try {
             $isLoading = true;
 
+            Log::debug('GeminiService::generateInsights exporting data for analysis');
+
             // Get data from the last 30 days
             $data = $this->exportAllData('json', [], $user);
+            
+            Log::debug('GeminiService::generateInsights data exported', [
+                'data_size_bytes' => strlen($data),
+                'user_id' => $user ? $user->id : null
+            ]);
 
             // Store the data in a temporary file
             $tempFilename = 'gemini_data_' . uniqid() . '.json';
             $tempFilePath = Storage::disk('local')->path($tempFilename);
-            file_put_contents($tempFilePath, $data);
+            
+            try {
+                file_put_contents($tempFilePath, $data);
+                Log::debug('GeminiService::generateInsights temp file created', [
+                    'temp_filename' => $tempFilename,
+                    'temp_file_path' => $tempFilePath
+                ]);
+            } catch (\Exception $e) {
+                Log::error('GeminiService::generateInsights failed to create temp file', [
+                    'temp_filename' => $tempFilename,
+                    'error' => $e->getMessage()
+                ]);
+                throw $e;
+            }
 
             // Initialize Gemini API data
             $apiKey = config('services.gemini.api_key');
             $modelId = config('services.gemini.model_id', 'gemini-2.0-flash');
+            
+            Log::debug('GeminiService::generateInsights API configuration', [
+                'model_id' => $modelId,
+                'has_api_key' => !empty($apiKey),
+                'api_key_length' => $apiKey ? strlen($apiKey) : 0
+            ]);
+            
+            if (empty($apiKey)) {
+                Log::error('GeminiService::generateInsights missing API key');
+                throw new \Exception('Gemini API key is not configured');
+            }
 
             // Since the client library doesn't support responseSchema, we'll make a direct API call
             $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$modelId}:generateContent?key={$apiKey}";
@@ -476,8 +620,16 @@ class GeminiService
                 "Identify patterns in type, severity, and resolved status.\n\n" .
                 "Calculate the average resolution time (resolved_at - alert time) for each alert type.\n\n" .
                 "Reporting Requirements\n\n" .
-                "Provide a clear explanation for each insight.\n\n" .
-                "Include key supporting data points (values from the tables).\n\n" .
+                "Provide clear explanations for each insight that are easy to understand by non-technical users.\n\n" .
+                "Write descriptions in plain language, avoiding technical jargon and complex terminology.\n\n" .
+                "Use everyday language that business owners and facility managers can easily understand.\n\n" .
+                "Include specific numbers, percentages, and monetary impact where possible to make insights concrete.\n\n" .
+                "Focus on the business impact and what it means for the user's operations and costs.\n\n" .
+                "Start descriptions with action-oriented language like 'Your equipment is using...', 'We detected...', 'Your system shows...'.\n\n" .
+                "Include key supporting data points (values from the tables) but explain them in simple terms.\n\n" .
+                "When mentioning dates and times, use human-readable formats instead of technical timestamps.\n\n" .
+                "Convert timestamps to friendly formats like 'yesterday at 2:30 PM', 'last Tuesday', 'this morning', '3 days ago', etc.\n\n" .
+                "For date ranges, use phrases like 'over the past week', 'in the last 3 days', 'since Monday', etc.\n\n" .
                 "Provide actionable recommendations from the list in step 4.\n\n" .
                 "Prioritize insights as 'High', 'Medium', or 'Low' based on potential impact on cost, equipment, and operations.\n\n" .
                 "Filtering\n\n" .
@@ -487,7 +639,16 @@ class GeminiService
                 "The JSON should contain ONLY the labels and data types as specified in the example structure.\n\n" .
                 "Do not include any descriptive text or explanations within the JSON data itself.\n\n" .
                 "Use the aliases and names instead of the data ids.\n\n" .
-                "The insight_type should be one of the following: 'Energy Wastage', 'Anomaly Detection', 'Predictive Maintenance', or 'Alert System Effectiveness'.";
+                "The insight_type should be one of the following: 'Energy Wastage', 'Anomaly Detection', 'Predictive Maintenance', or 'Alert System Effectiveness'.\n\n" .
+                "Example of user-friendly descriptions:\n\n" .
+                "Instead of: 'Voltage fluctuation detected with 15% variance from nominal'\n\n" .
+                "Write: 'Your equipment is experiencing unstable power supply, which could damage your devices and increase electricity bills by up to 15%.'\n\n" .
+                "Instead of: 'Power consumption exceeds threshold by 200W'\n\n" .
+                "Write: 'One of your devices is using 200 watts more electricity than expected, costing you approximately $30 extra per month.'\n\n" .
+                "Instead of: 'Alert triggered at 2024-09-27 14:32:15'\n\n" .
+                "Write: 'We detected an issue yesterday afternoon around 2:30 PM'\n\n" .
+                "Instead of: 'Trend observed from 2024-09-20 00:00:00 to 2024-09-27 23:59:59'\n\n" .
+                "Write: 'Over the past week, we noticed a pattern in your energy usage'";
 
             // Define response schema
             $responseSchema = [
@@ -501,7 +662,7 @@ class GeminiService
                                 'insight_id' => ['type' => 'integer'],
                                 'insight_type' => [
                                     'type' => 'string',
-                                    'enum' => ['Energy Wastage', 'Anomaly Detection', 'Predictive Maintenance']
+                                    'enum' => ['Energy Wastage', 'Anomaly Detection', 'Predictive Maintenance', 'Alert System Effectiveness']
                                 ],
                                 'description' => ['type' => 'string'],
                                 'supporting_data' => [
@@ -522,7 +683,10 @@ class GeminiService
                                     'type' => 'array',
                                     'items' => ['type' => 'string']
                                 ],
-                                'priority' => ['type' => 'string']
+                                'priority' => [
+                                    'type' => 'string',
+                                    'enum' => ['High', 'Medium', 'Low']
+                                ]
                             ],
                             'required' => [
                                 'insight_id',
@@ -563,33 +727,117 @@ class GeminiService
                 ]
             ];
 
-            // Make the API request using Guzzle
-            $client = new \GuzzleHttp\Client();
-            $response = $client->post($apiUrl, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
-                'json' => $requestBody,
+            Log::debug('GeminiService::generateInsights making API request', [
+                'api_url' => $apiUrl,
+                'request_body_size' => strlen(json_encode($requestBody)),
+                'prompt_length' => strlen($promptText)
             ]);
 
+            // Make the API request using Guzzle
+            $client = new \GuzzleHttp\Client();
+            
+            try {
+                $response = $client->post($apiUrl, [
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                    ],
+                    'json' => $requestBody,
+                ]);
+                
+                Log::debug('GeminiService::generateInsights API request successful', [
+                    'response_status' => $response->getStatusCode(),
+                    'response_size' => strlen($response->getBody())
+                ]);
+            } catch (\GuzzleHttp\Exception\RequestException $e) {
+                Log::error('GeminiService::generateInsights API request failed', [
+                    'error' => $e->getMessage(),
+                    'response_body' => $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : null,
+                    'status_code' => $e->hasResponse() ? $e->getResponse()->getStatusCode() : null
+                ]);
+                throw $e;
+            }
+
             // Clean up the temporary file
-            Storage::disk('local')->delete($tempFilename);
+            try {
+                Storage::disk('local')->delete($tempFilename);
+                Log::debug('GeminiService::generateInsights temp file cleaned up', [
+                    'temp_filename' => $tempFilename
+                ]);
+            } catch (\Exception $e) {
+                Log::warning('GeminiService::generateInsights failed to clean up temp file', [
+                    'temp_filename' => $tempFilename,
+                    'error' => $e->getMessage()
+                ]);
+            }
 
             $isLoading = false;
 
             // Parse the response
-            $responseData = json_decode($response->getBody(), true);
+            $responseBody = $response->getBody();
+            Log::debug('GeminiService::generateInsights parsing API response', [
+                'response_body_length' => strlen($responseBody)
+            ]);
+            
+            $responseData = json_decode($responseBody, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::error('GeminiService::generateInsights failed to parse JSON response', [
+                    'json_error' => json_last_error_msg(),
+                    'response_body_preview' => substr($responseBody, 0, 500)
+                ]);
+                throw new \Exception('Failed to parse API response: ' . json_last_error_msg());
+            }
 
             // Extract the text content from the response
             $content = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? '';
-
-            if ($this->isJson($content)) {
-                return json_decode($content, true);
+            
+            Log::debug('GeminiService::generateInsights content extracted', [
+                'content_length' => strlen($content),
+                'has_content' => !empty($content)
+            ]);
+            
+            if (empty($content)) {
+                Log::error('GeminiService::generateInsights empty content in API response', [
+                    'response_data' => $responseData
+                ]);
+                return ['error' => 'Empty content received from API'];
             }
 
+            if ($this->isJson($content)) {
+                $insights = json_decode($content, true);
+                Log::info('GeminiService::generateInsights completed successfully', [
+                    'user_id' => $user ? $user->id : null,
+                    'insights_count' => isset($insights['insights']) ? count($insights['insights']) : 0
+                ]);
+                return $insights;
+            }
+
+            Log::error('GeminiService::generateInsights API response not valid JSON', [
+                'content_preview' => substr($content, 0, 500)
+            ]);
             return ['error' => 'The API response was not in the expected JSON format.'];
         } catch (\Exception $e) {
-            Log::error('Error generating insights: ' . $e->getMessage());
+            Log::error('GeminiService::generateInsights failed', [
+                'user_id' => $user ? $user->id : null,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'exception_type' => get_class($e)
+            ]);
+            
+            // Clean up temp file if it exists
+            if (isset($tempFilename)) {
+                try {
+                    Storage::disk('local')->delete($tempFilename);
+                } catch (\Exception $cleanupException) {
+                    Log::warning('GeminiService::generateInsights failed to cleanup temp file during error handling', [
+                        'temp_filename' => $tempFilename,
+                        'cleanup_error' => $cleanupException->getMessage()
+                    ]);
+                }
+            }
+            
             $isLoading = false;
             return ['error' => 'Failed to generate insights: ' . $e->getMessage()];
         }
