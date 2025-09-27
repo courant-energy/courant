@@ -3,6 +3,7 @@
 use App\Console\Commands\CheckDeviceStatus;
 use App\Console\Commands\BackupUserData;
 use App\Console\Commands\ProcessSocketSchedules;
+use App\Console\Commands\ProcessBatchAnomalyDetection;
 use App\Jobs\ProcessSocketSchedulesJob;
 use Illuminate\Foundation\Console\ClosureCommand;
 use Illuminate\Foundation\Inspiring;
@@ -31,6 +32,21 @@ Schedule::command('queue:work --queue=anomaly_detection --sleep=3 --tries=3 --st
     ->onFailure(function () {
         // Handle failure
         Log::error('Anomaly detection queue worker failed.');
+    });
+
+// Run batch anomaly detection every hour for global outlier detection and LSTM error validation
+Schedule::command(ProcessBatchAnomalyDetection::class, ['--hours=1'])
+    ->hourly()
+    ->onFailure(function () {
+        Log::error('Batch anomaly detection command failed.');
+    });
+
+// Run daily comprehensive batch analysis for model drift detection
+Schedule::command(ProcessBatchAnomalyDetection::class, ['--hours=24'])
+    ->daily()
+    ->at('02:00') // Run at 2 AM to avoid peak usage
+    ->onFailure(function () {
+        Log::error('Daily batch anomaly detection command failed.');
     });
 
 // Process socket schedules every minute

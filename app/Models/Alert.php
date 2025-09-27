@@ -164,7 +164,7 @@ class Alert extends Model
             $existingAlert = static::where('iot_device_id', $alert->iot_device_id)
                 ->where('socket_id', $alert->socket_id)
                 ->where('type', $alert->type)
-                ->where('created_at', '>=', now()->subMinutes(1))
+                ->where('created_at', '>=', now()->subMinutes(60))
                 ->first();
             if ($existingAlert) {
                 Log::info('Similar alert already exists, not creating a new one', [
