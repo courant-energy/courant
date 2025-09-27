@@ -6,7 +6,8 @@ use Filament\Widgets\ChartWidget;
 
 class PowerConsumption extends ChartWidget
 {
-    protected static ?string $heading = 'Power Consumption (kWh)';
+    protected static ?string $heading = 'Energy Consumption (kWh)';
+    protected static ?string $pollingInterval = '10s';
     public $socket;
     public ?string $filter = 'hour'; // default filter
 
@@ -47,6 +48,7 @@ class PowerConsumption extends ChartWidget
                 [
                     'label' => 'Power Consumption (kWh)',
                     'data' =>  $data,
+
                 ],
             ],
             'labels' => $labels
@@ -170,17 +172,7 @@ class PowerConsumption extends ChartWidget
                         'maxTicksLimit' => 10,
                     ],
                 ],
-                'y1' => [
-                    'beginAtZero' => true,
-                    'position' => 'right',
-                    'title' => [
-                        'display' => true,
-                        'text' => 'Power Factor'
-                    ],
-                    'grid' => [
-                        'drawOnChartArea' => true,
-                    ],
-                ],
+                
             ],
         ];
     }

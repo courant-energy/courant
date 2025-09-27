@@ -52,11 +52,11 @@
 
                     <div class="grid grid-cols-1 gap-4 ">
 
-                        <div class="flex flex-col gap-4" x-data="{ activeTab: 'power-consumption' }">
+                        <div class="flex flex-col gap-4" x-data="{ activeTab: 'energy-consumption' }">
                             <x-filament::tabs>
-                                <x-filament::tabs.item alpine-active="activeTab === 'power-consumption'"
-                                    x-on:click="activeTab = 'power-consumption'">
-                                    Power Consumption (kWh)
+                                <x-filament::tabs.item alpine-active="activeTab === 'energy-consumption'"
+                                    x-on:click="activeTab = 'energy-consumption'">
+                                    Energy Consumption (kWh)
                                 </x-filament::tabs.item>
                                 <x-filament::tabs.item alpine-active="activeTab === 'power'"
                                     x-on:click="activeTab = 'power'">
@@ -69,7 +69,7 @@
                             </x-filament::tabs>
 
                             {{-- Power Consumption Graph --}}
-                            <div x-show="activeTab === 'power-consumption'">
+                            <div x-show="activeTab === 'energy-consumption'">
                                 @livewire(App\Filament\Widgets\PowerConsumption::class, ['socket' => $socket], key('power-consumption-' . $socket->id))
                             </div>
 
@@ -81,6 +81,7 @@
 
                             {{-- Power Factor --}}
                             <div x-show="activeTab === 'power-factor'">
+                                @livewire(App\Filament\Widgets\PowerFactor::class, ['socket' => $socket], key('power-factor-' . $socket->id))
                             </div>
                         </div>
                     </div>
