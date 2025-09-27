@@ -152,7 +152,7 @@ class PowerConsumption extends ChartWidget
     protected function getOptions(): array
     {
         return [
-            'aspectRatio' => 1,
+            'aspectRatio' => 1.2,
             'maintainAspectRatio' => true,
             'responsive' => true,
 
