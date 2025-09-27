@@ -13,6 +13,8 @@ class Power extends ChartWidget
 
     public ?string $filter = 'hour'; // default filter
 
+    protected static string $view = 'filament.custom-chart-widget';
+
     public $socket;
 
     protected function getFilters(): ?array
@@ -184,6 +186,4 @@ class Power extends ChartWidget
     {
         return 'line';
     }
-
-
 }

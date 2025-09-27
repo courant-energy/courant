@@ -8,7 +8,10 @@ use Filament\Widgets\ChartWidget;
 class PowerFactor extends ChartWidget
 {
     protected static ?string $heading = 'Power Factor & Current (A)';
+
     protected static ?string $pollingInterval = '10s';
+
+    protected static string $view = 'filament.custom-chart-widget';
 
     public $socket;
 
@@ -47,7 +50,7 @@ class PowerFactor extends ChartWidget
         $currentAvgData = [];
         $currentMaxData = [];
         $pfAvgData = [];
-        
+
         $cumulativeKWh = 0;
         $cumulativeKVAh = 0;
 
@@ -56,11 +59,11 @@ class PowerFactor extends ChartWidget
             $powerFactorData[] = round($reading->avg_power_factor, 2);
             $currentAvgData[] = round($reading->avg_current, 2);
             $currentMaxData[] = round($reading->max_current, 2);
-            
+
             // Calculate energy-weighted average power factor
             $cumulativeKWh += $reading->sum_kw;
             $cumulativeKVAh += $reading->sum_kva;
-            
+
             $pfAvg = $cumulativeKVAh > 0 ? ($cumulativeKWh / $cumulativeKVAh) * 100 : 0;
             $pfAvgData[] = round($pfAvg, 2);
         }
@@ -90,7 +93,7 @@ class PowerFactor extends ChartWidget
         $currentAvgData = [];
         $currentMaxData = [];
         $pfAvgData = [];
-        
+
         $cumulativeKWh = 0;
         $cumulativeKVAh = 0;
 
@@ -99,11 +102,11 @@ class PowerFactor extends ChartWidget
             $powerFactorData[] = round($reading->avg_power_factor, 2);
             $currentAvgData[] = round($reading->avg_current, 2);
             $currentMaxData[] = round($reading->max_current, 2);
-            
+
             // Calculate energy-weighted average power factor
             $cumulativeKWh += $reading->sum_kw;
             $cumulativeKVAh += $reading->sum_kva;
-            
+
             $pfAvg = $cumulativeKVAh > 0 ? ($cumulativeKWh / $cumulativeKVAh) * 100 : 0;
             $pfAvgData[] = round($pfAvg, 2);
         }
@@ -133,7 +136,7 @@ class PowerFactor extends ChartWidget
         $currentAvgData = [];
         $currentMaxData = [];
         $pfAvgData = [];
-        
+
         $cumulativeKWh = 0;
         $cumulativeKVAh = 0;
 
@@ -142,11 +145,11 @@ class PowerFactor extends ChartWidget
             $powerFactorData[] = round($reading->avg_power_factor, 2);
             $currentAvgData[] = round($reading->avg_current, 2);
             $currentMaxData[] = round($reading->max_current, 2);
-            
+
             // Calculate energy-weighted average power factor
             $cumulativeKWh += $reading->sum_kw;
             $cumulativeKVAh += $reading->sum_kva;
-            
+
             $pfAvg = $cumulativeKVAh > 0 ? ($cumulativeKWh / $cumulativeKVAh) * 100 : 0;
             $pfAvgData[] = round($pfAvg, 2);
         }
@@ -176,7 +179,7 @@ class PowerFactor extends ChartWidget
         $currentAvgData = [];
         $currentMaxData = [];
         $pfAvgData = [];
-        
+
         $cumulativeKWh = 0;
         $cumulativeKVAh = 0;
 
@@ -185,11 +188,11 @@ class PowerFactor extends ChartWidget
             $powerFactorData[] = round($reading->avg_power_factor, 2);
             $currentAvgData[] = round($reading->avg_current, 2);
             $currentMaxData[] = round($reading->max_current, 2);
-            
+
             // Calculate energy-weighted average power factor
             $cumulativeKWh += $reading->sum_kw;
             $cumulativeKVAh += $reading->sum_kva;
-            
+
             $pfAvg = $cumulativeKVAh > 0 ? ($cumulativeKWh / $cumulativeKVAh) * 100 : 0;
             $pfAvgData[] = round($pfAvg, 2);
         }
@@ -310,6 +313,4 @@ class PowerFactor extends ChartWidget
     {
         return 'bar'; // Mixed chart with both bar and line
     }
-
-
 }

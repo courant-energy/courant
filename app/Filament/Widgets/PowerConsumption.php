@@ -13,6 +13,8 @@ class PowerConsumption extends ChartWidget
     public ?string $filter = 'hour'; // default filter
     protected EnergyCalculationService $energyService;
 
+    protected static string $view = 'filament.custom-chart-widget';
+
     public function __construct()
     {
         $this->energyService = new EnergyCalculationService();
