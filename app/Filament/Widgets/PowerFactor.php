@@ -31,7 +31,9 @@ class PowerFactor extends ChartWidget
             \DB::raw('DATE_FORMAT(reading_time, "%H:%i") as minute'),
             \DB::raw('AVG(power_factor * 100) as avg_power_factor'),
             \DB::raw('AVG(current) as avg_current'),
-            \DB::raw('MAX(current) as max_current')
+            \DB::raw('MAX(current) as max_current'),
+            \DB::raw('SUM(power_factor * power) as sum_kw'),
+            \DB::raw('SUM(power) as sum_kva')
         )
             ->where('socket_id', $this->socket->id)
             ->where('profile_id', $this->socket->profile_id)
@@ -44,15 +46,26 @@ class PowerFactor extends ChartWidget
         $powerFactorData = [];
         $currentAvgData = [];
         $currentMaxData = [];
+        $pfAvgData = [];
+        
+        $cumulativeKWh = 0;
+        $cumulativeKVAh = 0;
 
         foreach ($readings as $reading) {
             $labels[] = $reading->minute;
             $powerFactorData[] = round($reading->avg_power_factor, 2);
             $currentAvgData[] = round($reading->avg_current, 2);
             $currentMaxData[] = round($reading->max_current, 2);
+            
+            // Calculate energy-weighted average power factor
+            $cumulativeKWh += $reading->sum_kw;
+            $cumulativeKVAh += $reading->sum_kva;
+            
+            $pfAvg = $cumulativeKVAh > 0 ? ($cumulativeKWh / $cumulativeKVAh) * 100 : 0;
+            $pfAvgData[] = round($pfAvg, 2);
         }
 
-        return [$labels, $powerFactorData, $currentAvgData, $currentMaxData];
+        return [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData];
     }
 
     protected function getDataByHour(): array
@@ -61,7 +74,9 @@ class PowerFactor extends ChartWidget
             \DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H:00") as hour'),
             \DB::raw('AVG(power_factor * 100) as avg_power_factor'),
             \DB::raw('AVG(current) as avg_current'),
-            \DB::raw('MAX(current) as max_current')
+            \DB::raw('MAX(current) as max_current'),
+            \DB::raw('SUM(power_factor * power) as sum_kw'),
+            \DB::raw('SUM(power) as sum_kva')
         )
             ->where('socket_id', $this->socket->id)
             ->where('profile_id', $this->socket->profile_id)
@@ -74,15 +89,26 @@ class PowerFactor extends ChartWidget
         $powerFactorData = [];
         $currentAvgData = [];
         $currentMaxData = [];
+        $pfAvgData = [];
+        
+        $cumulativeKWh = 0;
+        $cumulativeKVAh = 0;
 
         foreach ($readings as $reading) {
             $labels[] = $reading->hour;
             $powerFactorData[] = round($reading->avg_power_factor, 2);
             $currentAvgData[] = round($reading->avg_current, 2);
             $currentMaxData[] = round($reading->max_current, 2);
+            
+            // Calculate energy-weighted average power factor
+            $cumulativeKWh += $reading->sum_kw;
+            $cumulativeKVAh += $reading->sum_kva;
+            
+            $pfAvg = $cumulativeKVAh > 0 ? ($cumulativeKWh / $cumulativeKVAh) * 100 : 0;
+            $pfAvgData[] = round($pfAvg, 2);
         }
 
-        return [$labels, $powerFactorData, $currentAvgData, $currentMaxData];
+        return [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData];
     }
 
     protected function getDataByDay(int $days): array
@@ -91,7 +117,9 @@ class PowerFactor extends ChartWidget
             \DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d") as day'),
             \DB::raw('AVG(power_factor * 100) as avg_power_factor'),
             \DB::raw('AVG(current) as avg_current'),
-            \DB::raw('MAX(current) as max_current')
+            \DB::raw('MAX(current) as max_current'),
+            \DB::raw('SUM(power_factor * power) as sum_kw'),
+            \DB::raw('SUM(power) as sum_kva')
         )
             ->where('socket_id', $this->socket->id)
             ->where('profile_id', $this->socket->profile_id)
@@ -104,15 +132,26 @@ class PowerFactor extends ChartWidget
         $powerFactorData = [];
         $currentAvgData = [];
         $currentMaxData = [];
+        $pfAvgData = [];
+        
+        $cumulativeKWh = 0;
+        $cumulativeKVAh = 0;
 
         foreach ($readings as $reading) {
             $labels[] = $reading->day;
             $powerFactorData[] = round($reading->avg_power_factor, 2);
             $currentAvgData[] = round($reading->avg_current, 2);
             $currentMaxData[] = round($reading->max_current, 2);
+            
+            // Calculate energy-weighted average power factor
+            $cumulativeKWh += $reading->sum_kw;
+            $cumulativeKVAh += $reading->sum_kva;
+            
+            $pfAvg = $cumulativeKVAh > 0 ? ($cumulativeKWh / $cumulativeKVAh) * 100 : 0;
+            $pfAvgData[] = round($pfAvg, 2);
         }
 
-        return [$labels, $powerFactorData, $currentAvgData, $currentMaxData];
+        return [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData];
     }
 
     protected function getDataByMonth(): array
@@ -121,7 +160,9 @@ class PowerFactor extends ChartWidget
             \DB::raw('DATE_FORMAT(reading_time, "%Y-%m") as month'),
             \DB::raw('AVG(power_factor * 100) as avg_power_factor'),
             \DB::raw('AVG(current) as avg_current'),
-            \DB::raw('MAX(current) as max_current')
+            \DB::raw('MAX(current) as max_current'),
+            \DB::raw('SUM(power_factor * power) as sum_kw'),
+            \DB::raw('SUM(power) as sum_kva')
         )
             ->where('socket_id', $this->socket->id)
             ->where('profile_id', $this->socket->profile_id)
@@ -134,15 +175,26 @@ class PowerFactor extends ChartWidget
         $powerFactorData = [];
         $currentAvgData = [];
         $currentMaxData = [];
+        $pfAvgData = [];
+        
+        $cumulativeKWh = 0;
+        $cumulativeKVAh = 0;
 
         foreach ($readings as $reading) {
             $labels[] = $reading->month;
             $powerFactorData[] = round($reading->avg_power_factor, 2);
             $currentAvgData[] = round($reading->avg_current, 2);
             $currentMaxData[] = round($reading->max_current, 2);
+            
+            // Calculate energy-weighted average power factor
+            $cumulativeKWh += $reading->sum_kw;
+            $cumulativeKVAh += $reading->sum_kva;
+            
+            $pfAvg = $cumulativeKVAh > 0 ? ($cumulativeKWh / $cumulativeKVAh) * 100 : 0;
+            $pfAvgData[] = round($pfAvg, 2);
         }
 
-        return [$labels, $powerFactorData, $currentAvgData, $currentMaxData];
+        return [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData];
     }
 
     protected function getData(): array
@@ -152,22 +204,22 @@ class PowerFactor extends ChartWidget
 
         switch ($currentFilter) {
             case 'hour':
-                [$labels, $powerFactorData, $currentAvgData, $currentMaxData] = $this->getDataByMinute();
+                [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData] = $this->getDataByMinute();
                 break;
             case 'today':
-                [$labels, $powerFactorData, $currentAvgData, $currentMaxData] = $this->getDataByHour();
+                [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData] = $this->getDataByHour();
                 break;
             case 'week':
-                [$labels, $powerFactorData, $currentAvgData, $currentMaxData] = $this->getDataByDay(7);
+                [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData] = $this->getDataByDay(7);
                 break;
             case 'month':
-                [$labels, $powerFactorData, $currentAvgData, $currentMaxData] = $this->getDataByDay(30);
+                [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData] = $this->getDataByDay(30);
                 break;
             case 'all':
-                [$labels, $powerFactorData, $currentAvgData, $currentMaxData] = $this->getDataByMonth();
+                [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData] = $this->getDataByMonth();
                 break;
             default:
-                [$labels, $powerFactorData, $currentAvgData, $currentMaxData] = $this->getDataByMinute();
+                [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData] = $this->getDataByMinute();
                 break;
         }
 
@@ -183,6 +235,19 @@ class PowerFactor extends ChartWidget
                     'borderWidth' => 2,
                     'fill' => false,
                     'yAxisID' => 'y',
+                ],
+                [
+                    'label' => 'Energy-Weighted Avg PF',
+                    'data' => $pfAvgData,
+                    'type' => 'line',
+                    'backgroundColor' => 'rgba(156, 39, 176, 0.1)',
+                    'borderColor' => '#9C27B0',
+                    'borderWidth' => 3,
+                    'borderDash' => [5, 5],
+                    'fill' => false,
+                    'yAxisID' => 'y',
+                    'pointRadius' => 4,
+                    'pointHoverRadius' => 6,
                 ],
                 [
                     'label' => 'Current Avg (Bar)',
