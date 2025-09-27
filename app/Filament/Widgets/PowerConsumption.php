@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
+use App\Services\EnergyCalculationService;
 
 class PowerConsumption extends ChartWidget
 {
@@ -10,6 +11,12 @@ class PowerConsumption extends ChartWidget
     protected static ?string $pollingInterval = '10s';
     public $socket;
     public ?string $filter = 'hour'; // default filter
+    protected EnergyCalculationService $energyService;
+
+    public function __construct()
+    {
+        $this->energyService = new EnergyCalculationService();
+    }
 
     protected function getFilters(): ?array
 {
@@ -63,91 +70,26 @@ class PowerConsumption extends ChartWidget
 
     protected function getDataByMinute()
     {
-        $readings = $this->socket->readings()
-            ->forProfile($this->socket->profile_id)
-            ->where('reading_time', '>=', now()->subHour())
-            ->orderBy('reading_time')
-            ->get()
-            ->groupBy(function ($reading) {
-                return $reading->reading_time->format('H:i');
-            });
-
-        $labels = [];
-        $data = [];
-
-        foreach ($readings as $time => $group) {
-            $labels[] = $time;
-            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
-        }
-
-        return [$labels, $data];
-
+        $result = $this->energyService->calculateEnergyByMinute($this->socket->profile);
+        return [$result['labels'], $result['data']];
     }
 
     protected function getDataByHour()
     {
-        $readings = $this->socket->readings()
-            ->forProfile($this->socket->profile_id)
-            ->where('reading_time', '>=', now()->subDay())
-            ->orderBy('reading_time')
-            ->get()
-            ->groupBy(function ($reading) {
-                return $reading->reading_time->format('H:00');
-            });
-
-        $labels = [];
-        $data = [];
-
-        foreach ($readings as $time => $group) {
-            $labels[] = $time;
-            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
-        }
-
-        return [$labels, $data];
+        $result = $this->energyService->calculateEnergyByHour($this->socket->profile);
+        return [$result['labels'], $result['data']];
     }
 
     protected function getDataByDay(int $days)
     {
-        
-        $readings = $this->socket->readings()
-            ->forProfile($this->socket->profile_id)
-            ->where('reading_time', '>=', now()->subDays($days))
-            ->orderBy('reading_time')
-            ->get()
-            ->groupBy(function ($reading) {
-                return $reading->reading_time->format('Y-m-d');
-            });
-
-        $labels = [];
-        $data = [];
-
-        foreach ($readings as $date => $group) {
-            $labels[] = $date;
-            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
-        }
-
-        return [$labels, $data];
+        $result = $this->energyService->calculateEnergyByDay($this->socket->profile, $days);
+        return [$result['labels'], $result['data']];
     }
 
     protected function getDataByMonth()
     {
-        $readings = $this->socket->readings()
-            ->forProfile($this->socket->profile_id)
-            ->orderBy('reading_time')
-            ->get()
-            ->groupBy(function ($reading) {
-                return $reading->reading_time->format('Y-m');
-            });
-
-        $labels = [];
-        $data = [];
-
-        foreach ($readings as $month => $group) {
-            $labels[] = $month;
-            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
-        }
-
-        return [$labels, $data];
+        $result = $this->energyService->calculateEnergyByMonth($this->socket->profile);
+        return [$result['labels'], $result['data']];
     }
 
 
