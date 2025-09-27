@@ -14,7 +14,7 @@
                 {{ number_format($socket->powerConsumption ?? 0, 2) }} kWh
             </h3>
             <p class="text-sm text-gray-500">
-                Power Consumption
+                Energy Consumption
                 <span class="block mt-1 text-xs text-gray-400">
                     Total energy consumed over time, measured in kilowatt-hours (kWh).
                 </span>

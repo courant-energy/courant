@@ -36,7 +36,7 @@ class Reading extends Model
 
     public function getComputedEnergyAttribute()
     {
-        return $this->power * $this->reading_time->diffInHours();
+        return $this->power * $this->reading_time->diffInHours() / 1000; // kWh
     }
 
     protected static function booted()

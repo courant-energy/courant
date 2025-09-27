@@ -87,17 +87,16 @@ class Socket extends Model
     {
         // Calculate the total power consumption for the current profile based on power (W) readings
         /**
-         * Query:
-         * where profile_id = current profile
-         * group by hour
-         * average power per hour
-         * sum all avg power per hour
-         * divide by 1000 to get kWh
+         * Correct energy calculation:
+         * 1. Group readings by hour
+         * 2. Calculate average power per hour
+         * 3. Convert watts to kilowatts (divide by 1000)
+         * 4. Multiply by time duration (1 hour for each hourly group)
+         * 5. Sum all hourly energy consumption values
+         * Energy (kWh) = Power (kW) × Time (hours)
          */
 
-        
-
-        return DB::table('readings')
+        $hourlyData = DB::table('readings')
             ->where('socket_id', $this->id)
             ->where('profile_id', $this->profile_id)
             ->select(
@@ -105,8 +104,12 @@ class Socket extends Model
                 DB::raw('AVG(power) as avg_power')
             )
             ->groupBy(DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H")'))
-            ->get()
-            ->sum('avg_power') / 1000; // Convert W to kWh
+            ->get();
+
+        // Calculate energy consumption: (avg_power_watts / 1000) * 1_hour for each hour
+        return $hourlyData->sum(function ($hourData) {
+            return ($hourData->avg_power / 1000) * 1; // Convert W to kW and multiply by 1 hour
+        });
     }
 
     /**

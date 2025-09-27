@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
+
 class EnergyCalculationService
 {
     /**
@@ -14,7 +16,7 @@ class EnergyCalculationService
 
     /**
      * Calculate the energy consumption for a given profile.
-     * Uses the same calculation method as PowerConsumption widget.
+     * Uses proper energy calculation: Energy (kWh) = Power (kW) × Time (hours)
      *
      * @param  \App\Models\Profile  $profile
      * @param  string  $startDate  Start date/time string (e.g., 'YYYY-MM-DD HH:MM:SS')
@@ -23,27 +25,32 @@ class EnergyCalculationService
      */
     public function calculateEnergyConsumption($profile, $startDate, $endDate)
     {
-        $readings = $profile->readings()
-            ->whereBetween('reading_time', [$startDate, $endDate])
+        // Use the same calculation method as Socket model
+        $hourlyData = DB::table('readings')
             ->where('profile_id', $profile->id)
-            ->orderBy('reading_time', 'asc')
+            ->whereBetween('reading_time', [$startDate, $endDate])
+            ->select(
+                DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H") as hour'),
+                DB::raw('AVG(power) as avg_power')
+            )
+            ->groupBy(DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H")'))
             ->get();
 
-        if ($readings->isEmpty()) {
+        if ($hourlyData->isEmpty()) {
             return 0.0; // No data points available
         }
 
-        // Calculate total energy consumption using the same method as PowerConsumption widget
-        // Sum all power values and convert from watts to kWh
-        $totalPowerWatts = $readings->sum('power');
-        $totalKwh = round($totalPowerWatts / 1000, 2);
+        // Calculate energy consumption: (avg_power_watts / 1000) * 1_hour for each hour
+        $totalKwh = $hourlyData->sum(function ($hourData) {
+            return ($hourData->avg_power / 1000) * 1; // Convert W to kW and multiply by 1 hour
+        });
 
-        return $totalKwh;
+        return round($totalKwh, 2);
     }
 
     /**
      * Calculate energy consumption by minute intervals (last hour).
-     * Matches PowerConsumption widget's getDataByMinute method.
+     * Uses proper energy calculation: Energy (kWh) = Power (kW) × Time (hours)
      *
      * @param  \App\Models\Profile  $profile
      * @return array ['labels' => [], 'data' => []]
@@ -63,7 +70,9 @@ class EnergyCalculationService
 
         foreach ($readings as $time => $group) {
             $labels[] = $time;
-            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
+            // Calculate energy: average power * time (1 minute = 1/60 hour)
+            $avgPower = $group->avg('power');
+            $data[] = round(($avgPower / 1000) * (1/60), 4); // Convert W to kW, multiply by 1/60 hour
         }
 
         return ['labels' => $labels, 'data' => $data];
@@ -71,7 +80,7 @@ class EnergyCalculationService
 
     /**
      * Calculate energy consumption by hour intervals (today).
-     * Matches PowerConsumption widget's getDataByHour method.
+     * Uses proper energy calculation: Energy (kWh) = Power (kW) × Time (hours)
      *
      * @param  \App\Models\Profile  $profile
      * @return array ['labels' => [], 'data' => []]
@@ -91,7 +100,9 @@ class EnergyCalculationService
 
         foreach ($readings as $time => $group) {
             $labels[] = $time;
-            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
+            // Calculate energy: average power * time (1 hour)
+            $avgPower = $group->avg('power');
+            $data[] = round(($avgPower / 1000) * 1, 2); // Convert W to kW, multiply by 1 hour
         }
 
         return ['labels' => $labels, 'data' => $data];
@@ -99,7 +110,7 @@ class EnergyCalculationService
 
     /**
      * Calculate energy consumption by day intervals.
-     * Matches PowerConsumption widget's getDataByDay method.
+     * Uses proper energy calculation: Energy (kWh) = Power (kW) × Time (hours)
      *
      * @param  \App\Models\Profile  $profile
      * @param  int  $days  Number of days to look back
@@ -107,20 +118,32 @@ class EnergyCalculationService
      */
     public function calculateEnergyByDay($profile, int $days = 7)
     {
-        $readings = $profile->readings()
-            ->where('reading_time', '>=', now()->subDays($days))
-            ->orderBy('reading_time')
+        $startDate = now()->subDays($days)->startOfDay();
+        $endDate = now()->endOfDay();
+        
+        // Use hourly aggregation for proper energy calculation
+        $dailyData = DB::table('readings')
+            ->where('profile_id', $profile->id)
+            ->whereBetween('reading_time', [$startDate, $endDate])
+            ->select(
+                DB::raw('DATE(reading_time) as date'),
+                DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H") as hour'),
+                DB::raw('AVG(power) as avg_power')
+            )
+            ->groupBy(DB::raw('DATE(reading_time)'), DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H")'))
             ->get()
-            ->groupBy(function ($reading) {
-                return $reading->reading_time->format('Y-m-d');
-            });
+            ->groupBy('date');
 
         $labels = [];
         $data = [];
 
-        foreach ($readings as $date => $group) {
+        foreach ($dailyData as $date => $hourlyReadings) {
             $labels[] = $date;
-            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
+            // Sum energy consumption for all hours in this day
+            $dayEnergy = $hourlyReadings->sum(function ($hourData) {
+                return ($hourData->avg_power / 1000) * 1; // kW * 1 hour
+            });
+            $data[] = round($dayEnergy, 2);
         }
 
         return ['labels' => $labels, 'data' => $data];
@@ -128,26 +151,35 @@ class EnergyCalculationService
 
     /**
      * Calculate energy consumption by month intervals (all time).
-     * Matches PowerConsumption widget's getDataByMonth method.
+     * Uses proper energy calculation: Energy (kWh) = Power (kW) × Time (hours)
      *
      * @param  \App\Models\Profile  $profile
      * @return array ['labels' => [], 'data' => []]
      */
     public function calculateEnergyByMonth($profile)
     {
-        $readings = $profile->readings()
-            ->orderBy('reading_time')
+        // Use hourly aggregation for proper energy calculation
+        $monthlyData = DB::table('readings')
+            ->where('profile_id', $profile->id)
+            ->select(
+                DB::raw('DATE_FORMAT(reading_time, "%Y-%m") as month'),
+                DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H") as hour'),
+                DB::raw('AVG(power) as avg_power')
+            )
+            ->groupBy(DB::raw('DATE_FORMAT(reading_time, "%Y-%m")'), DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H")'))
             ->get()
-            ->groupBy(function ($reading) {
-                return $reading->reading_time->format('Y-m');
-            });
+            ->groupBy('month');
 
         $labels = [];
         $data = [];
 
-        foreach ($readings as $month => $group) {
+        foreach ($monthlyData as $month => $hourlyReadings) {
             $labels[] = $month;
-            $data[] = round($group->sum('power') / 1000, 2); // Convert to kWh
+            // Sum energy consumption for all hours in this month
+            $monthEnergy = $hourlyReadings->sum(function ($hourData) {
+                return ($hourData->avg_power / 1000) * 1; // kW * 1 hour
+            });
+            $data[] = round($monthEnergy, 2);
         }
 
         return ['labels' => $labels, 'data' => $data];
