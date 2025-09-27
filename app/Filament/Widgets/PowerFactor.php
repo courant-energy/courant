@@ -216,4 +216,6 @@ class PowerFactor extends ChartWidget
     {
         return 'line';
     }
+
+
 }

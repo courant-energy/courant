@@ -31,6 +31,32 @@ class PowerReadings extends Page implements HasForms
 
     public bool $hasSelectedDevice = false;
     public IotDevice $device;
+    
+    // Filter management per socket
+    public array $socketFilters = [];
+    
+    public function getFilterOptions(): array
+    {
+        return [
+            'hour' => 'Last hour',
+            'today' => 'Today', 
+            'week' => 'Last week',
+            'month' => 'Last month',
+            'all' => 'All time',
+        ];
+    }
+    
+    public function getSocketFilter($socketId): string
+    {
+        return $this->socketFilters[$socketId] ?? 'hour';
+    }
+    
+    public function setSocketFilter($socketId, $filter)
+    {
+        $this->socketFilters[$socketId] = $filter;
+        // Refresh the specific socket's data availability
+        $this->dispatch('socketFilterChanged', ['socketId' => $socketId, 'filter' => $filter]);
+    }
 
     public function form(Form $form): Form
     {
@@ -99,5 +125,39 @@ class PowerReadings extends Page implements HasForms
             ->title('Data loaded')
             ->success()
             ->send();
+    }
+
+    /**
+     * Check if socket has readings data for the specified filter
+     */
+    public function hasSocketData($socket, $filter = null): bool
+    {
+        if (!$socket || !$socket->profile_id) {
+            return false;
+        }
+
+        $filter = $filter ?? $this->getSocketFilter($socket->id);
+        $query = $socket->readings()->forProfile($socket->profile_id);
+        
+        // Apply time filtering based on socket's filter
+        switch ($filter) {
+            case 'hour':
+                $query->where('reading_time', '>=', now()->subHour());
+                break;
+            case 'today':
+                $query->where('reading_time', '>=', now()->subDay());
+                break;
+            case 'week':
+                $query->where('reading_time', '>=', now()->subDays(7));
+                break;
+            case 'month':
+                $query->where('reading_time', '>=', now()->subDays(30));
+                break;
+            case 'all':
+                // No time filtering for 'all'
+                break;
+        }
+
+        return $query->exists();
     }
 }

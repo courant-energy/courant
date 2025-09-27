@@ -184,4 +184,6 @@ class Power extends ChartWidget
     {
         return 'line';
     }
+
+
 }

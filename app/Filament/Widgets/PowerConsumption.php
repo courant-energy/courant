@@ -151,6 +151,8 @@ class PowerConsumption extends ChartWidget
     }
 
 
+
+
     protected function getOptions(): array
     {
         return [
