@@ -13,6 +13,14 @@ class EditSocket extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+
+            Actions\Action::make('activeProfile')
+                ->hidden(fn () => ! $this->record->profile)
+                ->color('gray')
+                ->label($this->record->profile ? 'Profile: '.$this->record->profile->name : 'No Profile Assigned')
+                ->icon('heroicon-o-identification')
+                ->url(fn () => route('filament.app.resources.profiles.edit', $this->record->profile)),
+
         ];
     }
 }

@@ -14,6 +14,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DeviceStatsWidget extends BaseWidget implements HasForms
 {
@@ -45,7 +46,7 @@ class DeviceStatsWidget extends BaseWidget implements HasForms
             ->schema([
                 Select::make('selectedProfile')
                     ->label('Filter by Profile')
-                    ->options(Profile::pluck('name', 'id'))
+                    ->options(Profile::where('user_id', Auth::id())->pluck('name', 'id'))
                     ->placeholder('All Profiles')
                     ->live()
                     ->afterStateUpdated(fn() => $this->refreshStats()),
@@ -54,25 +55,30 @@ class DeviceStatsWidget extends BaseWidget implements HasForms
 
     protected function getStats(): array
     {
-        // Total connected devices - without user filtering for now
-        $totalDevices = IotDevice::where('user_id', '=', auth()->id())
+        $userId = Auth::id();
+        
+        // Total connected devices - filter by authenticated user
+        $totalDevices = IotDevice::where('user_id', $userId)
             ->count();
 
-        // Online devices (seen in the last 15 minutes)
-        $onlineDevices = IotDevice::where('last_seen_at', '>=', now()->subMinutes(15))
-            ->where('user_id', '=', auth()->id())
+        // Online devices (seen in the last 15 minutes) - filter by authenticated user
+        $onlineDevices = IotDevice::where('user_id', $userId)
+            ->where('last_seen_at', '>=', now()->subMinutes(15))
             ->where('status', 'online')
             ->count();
 
-        // Calculate energy consumption using the service
+        // Calculate energy consumption using the service - following the same logic as EnergyCalculationService
         $todayStart = Carbon::today()->format('Y-m-d H:i:s');
         $todayEnd = Carbon::today()->endOfDay()->format('Y-m-d H:i:s');
         $todayEnergy = 0;
 
         // If specific profile is selected, calculate for just that profile
         if ($this->selectedProfile) {
-            $profile = Profile::find($this->selectedProfile);
+            $profile = Profile::where('user_id', $userId)
+                ->find($this->selectedProfile);
+            
             if ($profile) {
+                // Use the same calculation method as the service
                 $todayEnergy = $this->energyCalculationService->calculateEnergyConsumption(
                     $profile,
                     $todayStart,
@@ -80,10 +86,12 @@ class DeviceStatsWidget extends BaseWidget implements HasForms
                 );
             }
         } else {
-            // Calculate for all profiles
-            $profiles = Profile::whereHas('sockets')
-            ->where('user_id', '=', auth()->id())
-            ->get();
+            // Calculate for all profiles with sockets belonging to authenticated user
+            // This follows the same pattern as the service: iterate through profiles and sum energy
+            $profiles = Profile::where('user_id', $userId)
+                ->whereHas('sockets')
+                ->get();
+                
             foreach ($profiles as $profile) {
                 $todayEnergy += $this->energyCalculationService->calculateEnergyConsumption(
                     $profile,
@@ -92,6 +100,9 @@ class DeviceStatsWidget extends BaseWidget implements HasForms
                 );
             }
         }
+
+        // Round to 2 decimal places to match the service's rounding behavior
+        $todayEnergy = round($todayEnergy, 2);
 
         return [
             Stat::make('Connected Devices', $totalDevices)

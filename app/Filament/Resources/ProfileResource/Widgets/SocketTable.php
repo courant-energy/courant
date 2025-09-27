@@ -3,19 +3,19 @@
 namespace App\Filament\Resources\ProfileResource\Widgets;
 
 use App\Models\Profile;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
 use App\Models\Socket;
 use Filament\Support\Enums\FontWeight;
+use Filament\Tables;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget as BaseWidget;
 
 class SocketTable extends BaseWidget
 {
-
     public Profile $record;
 
-    protected int|string|array $columnSpan = "full";
+    protected int|string|array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
@@ -38,6 +38,12 @@ class SocketTable extends BaseWidget
                 }
             )
             ->paginated(false)
+            ->actions([
+                ViewAction::make()
+                    ->label('View Socket')
+                    ->url(fn (Socket $record): string => route('filament.app.resources.sockets.edit', $record)),
+            ]
+            )
             // ->contentGrid([
             //     'default' => 2
             // ])
@@ -46,17 +52,17 @@ class SocketTable extends BaseWidget
                     Tables\Columns\TextColumn::make('iotDevice.name')
                         ->label('IoT Device Name')
                         ->weight(FontWeight::Bold),
-                        // ->searchable(),
+                    // ->searchable(),
                     Tables\Columns\TextColumn::make('iotDevice.device_uuid')
                         ->label('Device UUID')
                         ->color('gray')
                         ->size(TextColumnSize::ExtraSmall)
                         ->weight(FontWeight::ExtraLight),
-                        // ->searchable(),
+                    // ->searchable(),
                     Tables\Columns\TextColumn::make('name')
-                        ->label('Socket Name')
-                        // ->searchable(),
-                ])
+                        ->label('Socket Name'),
+                    // ->searchable(),
+                ]),
             ]);
     }
 }
