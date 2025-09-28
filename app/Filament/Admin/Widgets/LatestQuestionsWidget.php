@@ -33,12 +33,11 @@ class LatestQuestionsWidget extends BaseWidget
                 
             TextColumn::make('user.name')
                 ->label('User')
-                ->searchable(),
+                ,
                 
             TextColumn::make('subject')
                 ->label('Subject')
-                ->limit(50)
-                ->searchable(),
+                ->limit(50),
                 
             TextColumn::make('status')
                 ->badge()

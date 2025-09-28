@@ -200,6 +200,7 @@ class QuestionResource extends Resource
 
 
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])
