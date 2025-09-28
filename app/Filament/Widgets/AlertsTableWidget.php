@@ -17,6 +17,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Support\Enums\ActionSize;
 
 class AlertsTableWidget extends BaseWidget implements HasTable
 {
@@ -62,16 +63,13 @@ class AlertsTableWidget extends BaseWidget implements HasTable
 
                     \Filament\Tables\Columns\Layout\Stack::make([
 
-                        TextColumn::make('readable_type')
-                            ->weight(FontWeight::Bold)
-                            ->label('Type'),
-
+                       
                         TextColumn::make('message')
                             ->label('Message')
                             ->weight(FontWeight::Light)
                             ->color(Color::Gray)
                             ->size(TextColumnSize::ExtraSmall)
-                            ->limit(50)
+                            ->limit(200)
                             ->tooltip(function (TextColumn $column): ?string {
                                 $state = $column->getState();
                                 if (strlen($state) <= 20) {
@@ -89,7 +87,7 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                             'warning' => 'warning',
                             'danger' => 'critical',
                         ]),
-                ]),
+                ])->from('md'),
 
             ])
             ->filters([
@@ -158,7 +156,10 @@ class AlertsTableWidget extends BaseWidget implements HasTable
 
                         ]),
 
-                ]),
+                ])
+                ->label('Actions')
+                ->size(ActionSize::Small)
+                ->button(),
             ]);
     }
 
