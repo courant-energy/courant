@@ -28,7 +28,7 @@ class PowerFactor extends ChartWidget
         ];
     }
 
-    protected function getDataByMinute()
+    protected function getDataBy5Minutes(): array
     {
         $readings = Reading::select(
             \DB::raw('DATE_FORMAT(reading_time, "%H:%i") as minute'),
@@ -41,6 +41,7 @@ class PowerFactor extends ChartWidget
             ->where('socket_id', $this->socket->id)
             ->where('profile_id', $this->socket->profile_id)
             ->where('reading_time', '>=', now()->subHour())
+            ->whereRaw('MINUTE(reading_time) % 5 = 0')
             ->groupBy('minute')
             ->orderBy('minute')
             ->get();
@@ -207,7 +208,7 @@ class PowerFactor extends ChartWidget
 
         switch ($currentFilter) {
             case 'hour':
-                [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData] = $this->getDataByMinute();
+                [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData] = $this->getDataBy5Minutes();
                 break;
             case 'today':
                 [$labels, $powerFactorData, $currentAvgData, $currentMaxData, $pfAvgData] = $this->getDataByHour();

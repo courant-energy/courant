@@ -8,7 +8,6 @@ use App\Services\EnergyCalculationService;
 class PowerConsumption extends ChartWidget
 {
     protected static ?string $heading = 'Energy Consumption (kWh)';
-    protected static ?string $pollingInterval = '10s';
     public $socket;
     public ?string $filter = 'hour'; // default filter
     protected EnergyCalculationService $energyService;
@@ -72,7 +71,7 @@ class PowerConsumption extends ChartWidget
 
     protected function getDataByMinute()
     {
-        $result = $this->energyService->calculateEnergyByMinute($this->socket->profile);
+        $result = $this->energyService->calculateEnergyBy5Minutes($this->socket->profile);
         return [$result['labels'], $result['data']];
     }
 
@@ -107,7 +106,7 @@ class PowerConsumption extends ChartWidget
             'scales' => [
 
                 'y' => [
-                    'beginAtZero' => false,
+                    'beginAtZero' => true,
                     'title' => [
                         'display' => true,
                         'text' => 'Energy (kWh)'

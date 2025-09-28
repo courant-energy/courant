@@ -78,6 +78,41 @@ class EnergyCalculationService
         return ['labels' => $labels, 'data' => $data];
     }
 
+    public function calculateEnergyBy5Minutes($profile)
+    {
+        $readings = $profile->readings()
+            ->where('reading_time', '>=', now()->subHour())
+            ->orderBy('reading_time')
+            ->get()
+            ->groupBy(function ($reading) {
+                return $reading->reading_time->format('H:i');
+            });
+
+        $labels = [];
+        $data = [];
+
+        // Group readings into 5-minute intervals
+        $intervals = [];
+        foreach ($readings as $time => $group) {
+            $minute = (int)substr($time, 3, 2);
+            $intervalKey = floor($minute / 5) * 5;
+            $intervalLabel = substr($time, 0, 3) . str_pad($intervalKey, 2, '0', STR_PAD_LEFT);
+            if (!isset($intervals[$intervalLabel])) {
+                $intervals[$intervalLabel] = [];
+            }
+            $intervals[$intervalLabel] = array_merge($intervals[$intervalLabel], $group->all());
+        }
+
+        foreach ($intervals as $interval => $group) {
+            $labels[] = $interval;
+            // Calculate energy: average power * time (5 minutes = 5/60 hour)
+            $avgPower = collect($group)->avg('power');
+            $data[] = round(($avgPower / 1000) * (5/60), 4); // Convert W to kW, multiply by 5/60 hour
+        }
+
+        return ['labels' => $labels, 'data' => $data];
+    }
+
     /**
      * Calculate energy consumption by hour intervals (today).
      * Uses proper energy calculation: Energy (kWh) = Power (kW) × Time (hours)
@@ -102,7 +137,7 @@ class EnergyCalculationService
             $labels[] = $time;
             // Calculate energy: average power * time (1 hour)
             $avgPower = $group->avg('power');
-            $data[] = round(($avgPower / 1000) * 1, 2); // Convert W to kW, multiply by 1 hour
+            $data[] = round(($avgPower / 1000) * 1, 4); // Convert W to kW, multiply by 1 hour
         }
 
         return ['labels' => $labels, 'data' => $data];
@@ -143,7 +178,7 @@ class EnergyCalculationService
             $dayEnergy = $hourlyReadings->sum(function ($hourData) {
                 return ($hourData->avg_power / 1000) * 1; // kW * 1 hour
             });
-            $data[] = round($dayEnergy, 2);
+            $data[] = round($dayEnergy, 4);
         }
 
         return ['labels' => $labels, 'data' => $data];
