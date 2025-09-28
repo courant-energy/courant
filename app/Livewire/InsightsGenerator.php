@@ -15,7 +15,7 @@ class InsightsGenerator extends Component
     public $error = null;
     public $generation_in_progress = false;
     public $cooldown_minutes_remaining = 0;
-    public $max_attempts = 100; // Maximum attempts allowed within the time window
+    public $max_attempts = 5; // Maximum attempts allowed within the time window
     public $decay_minutes = 20; // Time window in minutes
     public $cache_duration_hours = 24; // Cache insights for 24 hours
     public $hasFreshData = false; // Track if data was just generated
