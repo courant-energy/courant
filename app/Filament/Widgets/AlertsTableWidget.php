@@ -3,35 +3,28 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Alert;
+use Filament\Infolists;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\FontWeight;
+use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Filament\Tables;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Infolists;
 
 class AlertsTableWidget extends BaseWidget implements HasTable
 {
     use InteractsWithTable;
 
-
     protected int|string|array $columnSpan = 'full';
 
     protected static ?int $sort = 2;
-
-
 
     public function table(Table $table): Table
     {
@@ -39,6 +32,7 @@ class AlertsTableWidget extends BaseWidget implements HasTable
             // ->paginated(false)
             ->query(
                 Alert::query()
+                    ->where('resolved', false)
                     ->whereHas('iotDevice', function (Builder $query) {
                         $query->where('user_id', auth()->id());
                     })
@@ -83,6 +77,7 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                                 if (strlen($state) <= 20) {
                                     return null;
                                 }
+
                                 return $state;
                             }),
                     ]),
@@ -104,11 +99,19 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                         'high' => 'High',
                         'medium' => 'Medium',
                         'low' => 'Low',
-                    ])
-                    
+                    ]),
+
             ])
             ->actions([
                 ActionGroup::make([
+                    Action::make('resolved')
+                        ->label('Resolved')
+                        ->action(function (Alert $record) {
+                            $record->update(['resolved' => true]);
+                        })
+                        ->color('success')
+                        ->icon('heroicon-o-check'),
+
                     Action::make('dismiss')
                         ->label('Dismiss')
                         ->action(function (Alert $record) {
@@ -151,11 +154,11 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                                     'danger' => 'critical',
                                 ]),
                             Infolists\Components\TextEntry::make('message')
-                                ->label('Message')
+                                ->label('Message'),
 
-                        ])
+                        ]),
 
-                ])
+                ]),
             ]);
     }
 
