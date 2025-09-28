@@ -17,6 +17,7 @@ class Power extends ChartWidget
 
     public $socket;
 
+    protected static bool $isDiscovered = false;
     protected function getFilters(): ?array
     {
         return [
