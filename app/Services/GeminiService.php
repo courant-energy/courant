@@ -644,7 +644,7 @@ class GeminiService
                 "Instead of: 'Voltage fluctuation detected with 15% variance from nominal'\n\n" .
                 "Write: 'Your equipment is experiencing unstable power supply, which could damage your devices and increase electricity bills by up to 15%.'\n\n" .
                 "Instead of: 'Power consumption exceeds threshold by 200W'\n\n" .
-                "Write: 'One of your devices is using 200 watts more electricity than expected, costing you approximately $30 extra per month.'\n\n" .
+                "Write: 'One of your devices is using 200 watts more electricity than expected, costing you approximately PHP 30 extra per month.'\n\n" .
                 "Instead of: 'Alert triggered at 2024-09-27 14:32:15'\n\n" .
                 "Write: 'We detected an issue yesterday afternoon around 2:30 PM'\n\n" .
                 "Instead of: 'Trend observed from 2024-09-20 00:00:00 to 2024-09-27 23:59:59'\n\n" .
