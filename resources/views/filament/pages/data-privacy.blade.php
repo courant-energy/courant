@@ -21,7 +21,6 @@
                         <li>Access is restricted to authorized personnel only</li>
                         <li>Regular security audits and monitoring</li>
                         <li>Compliance with data protection regulations</li>
-                        <li>Secure data centers with physical security measures</li>
                     </ul>
 
                     <h3 class="text-lg font-semibold mb-3">Your Data Rights</h3>
@@ -78,7 +77,6 @@
                             <ul class="list-disc pl-5 space-y-1 text-sm">
                                 <li>Support tickets and questions</li>
                                 <li>System notifications</li>
-                                <li>Communication history</li>
                                 <li>Feedback and responses</li>
                             </ul>
                         </div>
@@ -87,7 +85,6 @@
                             <h4 class="font-semibold mb-2">System Data:</h4>
                             <ul class="list-disc pl-5 space-y-1 text-sm">
                                 <li>Usage logs and analytics</li>
-                                <li>Security audit logs</li>
                                 <li>System alerts and events</li>
                                 <li>Backup and recovery data</li>
                             </ul>
