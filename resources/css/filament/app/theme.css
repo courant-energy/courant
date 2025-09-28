@@ -21,3 +21,7 @@
     --primary-950: var(--yellow-950);
 
 }
+
+.fi-in-entry-wrp{
+    overflow-x: auto;
+}

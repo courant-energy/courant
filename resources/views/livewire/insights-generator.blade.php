@@ -81,7 +81,7 @@
                     <x-filament::badge color="info" class="text-xs">
                         <div class="flex items-center">
                             <x-filament::icon icon="heroicon-o-clock" class="w-3 h-3 mr-1" />
-                            Cached insights (refreshed within 24 hours)
+                            Cached insights
                         </div>
                     </x-filament::badge>
                 </div>
