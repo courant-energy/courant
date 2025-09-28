@@ -41,7 +41,7 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                 // ->take(5)
             )
             ->heading('Recent Alerts')
-            ->description('Recent alerts from devices and profiles.')
+            ->description('Smart Alerts from your devices. Our AI learns and gets better at spotting things the more you use your device. Occasionally, you might get a false notification.')
             ->columns([
                 \Filament\Tables\Columns\Layout\Split::make([
                     \Filament\Tables\Columns\Layout\Stack::make([
@@ -103,7 +103,7 @@ class AlertsTableWidget extends BaseWidget implements HasTable
             ->actions([
                 ActionGroup::make([
                     Action::make('resolved')
-                        ->label('Resolved')
+                        ->label('Resolve Alert')
                         ->action(function (Alert $record) {
                             $record->update(['resolved' => true]);
                         })
@@ -111,7 +111,7 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                         ->icon('heroicon-o-check'),
 
                     Action::make('dismiss')
-                        ->label('Dismiss')
+                        ->label('Dismiss Alert')
                         ->action(function (Alert $record) {
                             $record->delete();
                         })
@@ -120,7 +120,7 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                         ->modalDescription('Dismissing an alert will remove it from our system and will affect the AI insights.')
                         ->icon('heroicon-o-x-mark'),
                     Action::make('falseAlert')
-                        ->label('False Alert')
+                        ->label('Discard Error Data')
                         ->action(function (Alert $record) {
                             // delete reading if reading_id is not null
                             if ($record->reading_id) {
@@ -129,7 +129,7 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                             $record->delete();
                         })
                         ->color('danger')
-                        ->icon('heroicon-o-flag')
+                        ->icon('heroicon-o-trash')
                         ->requiresConfirmation()
                         ->modalDescription('Do you think this alert is a false alert? We will delete the alert and the reading if it exists. This will affect the AI insights.'),
                     ViewAction::make()
