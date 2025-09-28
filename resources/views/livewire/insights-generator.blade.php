@@ -1,9 +1,9 @@
 <x-filament::section
     wire:key="insights-section-{{ md5(serialize($insights) . $isLoading . $error . $hasFreshData . ($lastUpdated ?? '')) }}">
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
         <x-filament::section.heading>AI-Powered Insights</x-filament::section.heading>
 
-        <div class="flex items-center gap-4">
+        <div class="flex flex-col md:flex-row mt-4 md:items-center gap-4">
             @if ($cooldown_minutes_remaining > 0)
                 <x-filament::badge color="warning">
                     <span class="font-medium">Cooldown:</span> {{ $cooldown_minutes_remaining }} min remaining
@@ -14,18 +14,20 @@
                 </x-filament::badge>
             @endif
 
-            @if (count($insights) > 0)
-                <x-filament::button wire:click="clearCache" icon="heroicon-o-trash" color="gray" size="sm">
-                    Clear Cache
+         
+                @if (count($insights) > 0)
+                    <x-filament::button wire:click="clearCache" icon="heroicon-o-trash" color="gray" size="sm">
+                        Clear Cache
+                    </x-filament::button>
+                @endif
+    
+                <x-filament::button wire:disabled="!$canGenerateInsights || $cooldown_minutes_remaining > 0"
+                    wire:click="generateInsights" icon="heroicon-o-bolt" color="primary">
+    
+                    Generate Insights
+    
                 </x-filament::button>
-            @endif
-
-            <x-filament::button wire:disabled="!$canGenerateInsights || $cooldown_minutes_remaining > 0"
-                wire:click="generateInsights" icon="heroicon-o-bolt" color="primary">
-
-                Generate Insights
-
-            </x-filament::button>
+          
         </div>
     </div>
 
