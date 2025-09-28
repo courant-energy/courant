@@ -8,6 +8,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Filament\Forms;
+use Filament\Tables\Columns\Layout\Split;
 
 class SubmittedQueryTable extends BaseWidget
 {
@@ -28,38 +29,45 @@ class SubmittedQueryTable extends BaseWidget
                     ->latest()
             )
             ->columns([
-                TextColumn::make('ticket_id')
-                    ->label('Ticket ID')
-                    ->sortable()
-                    ->searchable()
-                    ->copyable()
-                    ->icon('heroicon-o-ticket'),
-                TextColumn::make('subject')
-                    ->label('Subject')
-                    ->sortable()
-                    ->limit(50)
-                    ->searchable(),
-                TextColumn::make('status')
-                    ->label('Status')
-                    ->color(function ($record) {
-                        return match ($record->status) {
-                            'pending' => 'warning',
-                            'resolved' => 'success',
-                            'rejected' => 'danger',
-                        };
-                    })
-                    ->badge()
-                    ->icon(function ($record) {
-                        return match ($record->status) {
-                            'pending' => 'heroicon-o-clock',
-                            'resolved' => 'heroicon-o-check-circle',
-                            'rejected' => 'heroicon-o-x-circle',
-                        };
-                    }),
-                TextColumn::make('created_at')
-                    ->label('Created At')
-                    ->dateTime()
-                    ->sortable()
+                Split::make([
+
+                    TextColumn::make('ticket_id')
+                        ->label('Ticket ID')
+                        ->sortable()
+                        ->searchable()
+                        ->copyable()
+                        ->icon('heroicon-o-ticket'),
+                    TextColumn::make('subject')
+                        ->label('Subject')
+                        ->sortable()
+                        ->limit(50)
+                        ->searchable(),
+                    TextColumn::make('created_at')
+                        ->label('Created At')
+                        ->dateTime()
+                        ->color('gray')
+                        ->size('xs')
+                        ->sortable(),
+                    TextColumn::make('status')
+                        ->label('Status')
+                        ->color(function ($record) {
+                            return match ($record->status) {
+                                'pending' => 'warning',
+                                'resolved' => 'success',
+                                'rejected' => 'danger',
+                            };
+                        })
+                        ->badge()
+                        ->icon(function ($record) {
+                            return match ($record->status) {
+                                'pending' => 'heroicon-o-clock',
+                                'resolved' => 'heroicon-o-check-circle',
+                                'rejected' => 'heroicon-o-x-circle',
+                            };
+                        }),
+                   
+                ])
+                ->from('md'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
