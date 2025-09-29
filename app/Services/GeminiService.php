@@ -822,7 +822,7 @@ class GeminiService
 
             // Add more detailed error logging
             Log::error('GeminiService::generateInsights API response not valid JSON', [
-                'content_preview' => substr($content, 0, 1000),
+                'content' => $content,
                 'content_length' => strlen($content),
                 'json_error' => json_last_error_msg(),
                 'content_starts_with' => substr(trim($content), 0, 50),
