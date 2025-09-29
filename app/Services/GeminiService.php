@@ -820,8 +820,13 @@ class GeminiService
                 return $insights;
             }
 
+            // Add more detailed error logging
             Log::error('GeminiService::generateInsights API response not valid JSON', [
-                'content_preview' => substr($content, 0, 500)
+                'content_preview' => substr($content, 0, 1000),
+                'content_length' => strlen($content),
+                'json_error' => json_last_error_msg(),
+                'content_starts_with' => substr(trim($content), 0, 50),
+                'content_ends_with' => substr(trim($content), -50)
             ]);
             return ['error' => 'The API response was not in the expected JSON format.'];
         } catch (\Exception $e) {
@@ -859,7 +864,18 @@ class GeminiService
      */
     private function isJson(string $string)
     {
-        json_decode($string);
-        return json_last_error() === JSON_ERROR_NONE;
+        // Trim whitespace that might cause issues
+        $string = trim($string);
+        
+        // Check if string is empty
+        if (empty($string)) {
+            return false;
+        }
+        
+        // Attempt to decode
+        $result = json_decode($string);
+        
+        // Check for JSON errors and ensure we got a result
+        return json_last_error() === JSON_ERROR_NONE && $result !== null;
     }
 }
