@@ -93,6 +93,8 @@
                     <div class="flex items-center mb-2">
                         @if ($insight['insight_type'] === 'Energy Wastage')
                             <x-filament::badge color="warning">Energy Wastage</x-filament::badge>
+                        @elseif($insight['insight_type'] === 'Operational Failure')
+                            <x-filament::badge color="danger">Operational Failure</x-filament::badge>
                         @elseif($insight['insight_type'] === 'Anomaly Detection')
                             <x-filament::badge color="danger">Anomaly Detection</x-filament::badge>
                         @elseif($insight['insight_type'] === 'Predictive Maintenance')

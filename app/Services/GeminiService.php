@@ -600,10 +600,15 @@ class GeminiService
             // Create prompt text
             $promptText = "Analyze the provided power readings data, integrating device profiles and alert information, to provide actionable insights. The goal is to optimize power consumption, predict equipment failures, and improve energy efficiency for MSMEs.\n\n" .
                 "Specifically:\n\n" .
-                "Identify instances of energy wastage.\n\n" .
+                "Identify instances of energy wastage and operational failures.\n\n" .
                 "Compare actual power consumption (from the Reading table) with expected power consumption (from the Profile table).\n\n" .
-                "Quantify the wastage (in Watts or kWh) and express it as a percentage of expected consumption.\n\n" .
-                "Suggest potential causes for the wastage, limited to: 'Inefficient equipment operation', 'Aging equipment', 'Incorrect device settings', or 'Other'.\n\n" .
+                "IMPORTANT: Apply conditional logic for wastage analysis:\n\n" .
+                "- IF actual power consumption is greater than 0.5 W AND less than expected power consumption, THEN generate an 'Energy Wastage' insight.\n\n" .
+                "- IF actual power consumption is 0.5 W or less AND expected power consumption is greater than 0.5 W, THEN generate an 'Operational Failure' insight instead of 'Energy Wastage'.\n\n" .
+                "- Zero or near-zero consumption (≤0.5 W) indicates device disconnection, power failure, or operational issues - NOT energy wastage.\n\n" .
+                "For Energy Wastage insights: Quantify the wastage (in Watts or kWh) and express it as a percentage of expected consumption.\n\n" .
+                "For Energy Wastage insights: Suggest potential causes limited to: 'Inefficient equipment operation', 'Aging equipment', 'Incorrect device settings', or 'Other'.\n\n" .
+                "For Operational Failure insights: Suggest potential causes limited to: 'Device unplugged or disconnected', 'Power supply failure', 'Device malfunction', 'Incorrect wiring', or 'Other'.\n\n" .
                 "Detect anomalies in power consumption.\n\n" .
                 "Analyze voltage, current, and power data (from the Reading table) for fluctuations, surges, and brownouts.\n\n" .
                 "Correlate detected anomalies with alerts (from the Alert table) by matching socket_id and timestamps (within a 5-minute window).\n\n" .
@@ -614,7 +619,8 @@ class GeminiService
                 "Predict failures only if the trend shows a sustained increase (for max threshold) or decrease (for min threshold) over at least 3 consecutive readings.\n\n" .
                 "Provide recommendations.\n\n" .
                 "Base recommendations on the analysis in steps 1-3.\n\n" .
-                "Limit recommendations to: 'Adjust device settings', 'Schedule maintenance', 'Implement energy-saving measures', 'Investigate wiring', 'Replace equipment', or 'Other'.\n\n" .
+                "For Energy Wastage insights: Limit recommendations to: 'Adjust device settings', 'Schedule maintenance', 'Implement energy-saving measures', 'Investigate wiring', 'Replace equipment', or 'Other'.\n\n" .
+                "For Operational Failure insights: Prioritize recommendations like: 'Check device connection', 'Verify power supply', 'Inspect wiring and outlets', 'Test device functionality', or 'Contact technical support'.\n\n" .
                 "Assess alert system effectiveness.\n\n" .
                 "Analyze the Alert table.\n\n" .
                 "Identify patterns in type, severity, and resolved status.\n\n" .
@@ -639,12 +645,14 @@ class GeminiService
                 "The JSON should contain ONLY the labels and data types as specified in the example structure.\n\n" .
                 "Do not include any descriptive text or explanations within the JSON data itself.\n\n" .
                 "Use the aliases and names instead of the data ids.\n\n" .
-                "The insight_type should be one of the following: 'Energy Wastage', 'Anomaly Detection', 'Predictive Maintenance', or 'Alert System Effectiveness'.\n\n" .
+                "The insight_type should be one of the following: 'Energy Wastage', 'Operational Failure', 'Anomaly Detection', 'Predictive Maintenance', or 'Alert System Effectiveness'.\n\n" .
                 "Example of user-friendly descriptions:\n\n" .
                 "Instead of: 'Voltage fluctuation detected with 15% variance from nominal'\n\n" .
                 "Write: 'Your equipment is experiencing unstable power supply, which could damage your devices and increase electricity bills by up to 15%.'\n\n" .
                 "Instead of: 'Power consumption exceeds threshold by 200W'\n\n" .
                 "Write: 'One of your devices is using 200 watts more electricity than expected, costing you approximately PHP 30 extra per month.'\n\n" .
+                "For Operational Failure: Instead of 'Device consuming 0W against expected 66W'\n\n" .
+                "Write: 'Your charger appears to be disconnected or not working properly - it should be using around 66 watts but is currently drawing no power.'\n\n" .
                 "Instead of: 'Alert triggered at 2024-09-27 14:32:15'\n\n" .
                 "Write: 'We detected an issue yesterday afternoon around 2:30 PM'\n\n" .
                 "Instead of: 'Trend observed from 2024-09-20 00:00:00 to 2024-09-27 23:59:59'\n\n" .
@@ -662,7 +670,7 @@ class GeminiService
                                 'insight_id' => ['type' => 'integer'],
                                 'insight_type' => [
                                     'type' => 'string',
-                                    'enum' => ['Energy Wastage', 'Anomaly Detection', 'Predictive Maintenance', 'Alert System Effectiveness']
+                                    'enum' => ['Energy Wastage', 'Operational Failure', 'Anomaly Detection', 'Predictive Maintenance', 'Alert System Effectiveness']
                                 ],
                                 'description' => ['type' => 'string'],
                                 'supporting_data' => [
