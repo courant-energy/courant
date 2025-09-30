@@ -198,6 +198,33 @@
                             <div class="text-center">
                                 <div
                                     class="flex items-center justify-center w-12 h-12 mx-auto mb-3 bg-black rounded-full">
+                                
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="text-white size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5" />
+                                    </svg>
+
+                                </div>
+                                <h3 class="font-semibold text-gray-900">Management</h3>
+                                <p class="text-sm text-gray-600">Project Leadership</p>
+                            </div>
+                            <div class="text-center">
+                                <div
+                                    class="flex items-center justify-center w-12 h-12 mx-auto mb-3 bg-black rounded-full">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <h3 class="font-semibold text-gray-900">Research</h3>
+                                <p class="text-sm text-gray-600">Strategic Analysis</p>
+                            </div>
+                            <div class="text-center">
+                                <div
+                                    class="flex items-center justify-center w-12 h-12 mx-auto mb-3 bg-black rounded-full">
                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -220,32 +247,8 @@
                                 <h3 class="font-semibold text-gray-900">Design</h3>
                                 <p class="text-sm text-gray-600">Brand & UX</p>
                             </div>
-                            <div class="text-center">
-                                <div
-                                    class="flex items-center justify-center w-12 h-12 mx-auto mb-3 bg-black rounded-full">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <h3 class="font-semibold text-gray-900">Research</h3>
-                                <p class="text-sm text-gray-600">Strategic Analysis</p>
-                            </div>
-                            <div class="text-center">
-                                <div
-                                    class="flex items-center justify-center w-12 h-12 mx-auto mb-3 bg-black rounded-full">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <h3 class="font-semibold text-gray-900">Management</h3>
-                                <p class="text-sm text-gray-600">Project Leadership</p>
-                            </div>
+
+
                         </div>
                     </div>
                 </div>
