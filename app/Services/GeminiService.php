@@ -604,15 +604,28 @@ class GeminiService
                 "Compare actual power consumption (from the Reading table) with expected power consumption (from the Profile table).\n\n" .
                 "IMPORTANT: Apply conditional logic for wastage analysis:\n\n" .
                 "- IF actual power consumption is greater than 0.5 W AND less than expected power consumption, THEN generate an 'Energy Wastage' insight.\n\n" .
-                "- IF actual power consumption is 0.5 W or less AND expected power consumption is greater than 0.5 W, THEN generate an 'Operational Failure' insight instead of 'Energy Wastage'.\n\n" .
-                "- Zero or near-zero consumption (≤0.5 W) indicates device disconnection, power failure, or operational issues - NOT energy wastage.\n\n" .
+                "- IF actual power consumption is 0.5 W or less AND expected power consumption is greater than 0.5 W, THEN:\n\n" .
+                "    APPLY DEVICE CONTEXT FILTER USING THE DEVICE NAME FROM THE IOT DEVICES TABLE:\n\n" .
+                "    - IF the device name contains keywords like 'Charger', 'Phone Charger', 'Laptop Charger', 'Power Bank' or similar charging devices, AND the power consumption has been ≤0.5 W for less than 4 hours, THEN DO NOT GENERATE an 'Operational Failure' insight (as charging devices are expected to show 0W when not charging).\n\n" .
+                "    - IF the device name contains keywords like 'Refrigerator', 'Fridge', 'Air Conditioner', 'AC Unit', 'Cooling System' or similar refrigeration/HVAC devices, AND the 0W reading duration is less than 90 minutes, THEN DO NOT GENERATE an 'Operational Failure' insight (as these devices cycle on and off normally).\n\n" .
+                "    - IF the device name contains keywords like 'Server', 'POS Terminal', 'Computer', 'Router', 'Modem', 'Security System' or similar always-on devices, THEN ALWAYS GENERATE an 'Operational Failure' insight regardless of duration (as these should be on 24/7 or during business hours).\n\n" .
+                "    - IF the device name contains keywords like 'Microwave', 'Power Tool', 'Printer', 'Coffee Machine' (intermittent use devices), AND there's no pattern of recent high power usage followed by abrupt drop to 0W, THEN DO NOT GENERATE an 'Operational Failure' insight (as 0W is their normal idle state).\n\n" .
+                "    - OTHERWISE (for all other devices, or if power loss is prolonged beyond the thresholds above), THEN GENERATE an 'Operational Failure' insight.\n\n" .
+                "- Zero or near-zero consumption (≤0.5 W) analysis must consider device type context to avoid false positives.\n\n" .
                 "For Energy Wastage insights: Quantify the wastage (in Watts or kWh) and express it as a percentage of expected consumption.\n\n" .
                 "For Energy Wastage insights: Suggest potential causes limited to: 'Inefficient equipment operation', 'Aging equipment', 'Incorrect device settings', or 'Other'.\n\n" .
                 "For Operational Failure insights: Suggest potential causes limited to: 'Device unplugged or disconnected', 'Power supply failure', 'Device malfunction', 'Incorrect wiring', or 'Other'.\n\n" .
+                "GUIDANCE FOR OPERATIONAL FAILURE (DEVICE CONTEXT):\n\n" .
+                "- Chargers (Phone Charger, Laptop Charger, Power Bank): It is normal for a charger to show 0W when not charging a device. Only classify as 'Operational Failure' if the 0W reading persists for more than 4 hours during expected use times (business hours for office chargers, evening hours for home chargers) or if the charger typically has a non-zero standby power profile (>0.5W).\n\n" .
+                "- Refrigeration/AC Units (Refrigerator, Fridge, Air Conditioner, AC Unit, Cooling System): These devices cycle on and off naturally, resulting in periodic 0W readings. Only classify as 'Operational Failure' if the off-cycle duration exceeds 90 minutes continuously, which may indicate a malfunction or power loss.\n\n" .
+                "- Always-On Devices (Server, POS Terminal, Computer, Router, Modem, Security System): These devices are expected to be on 24/7 or during all business hours. Any sustained 0W reading during the expected operation window should ALWAYS be classified as 'Operational Failure', regardless of duration.\n\n" .
+                "- Intermittent Use Devices (Microwave, Power Tool, Printer, Coffee Machine): A 0W reading is the default idle state for these devices. Only classify as 'Operational Failure' if a low or zero power reading is recorded immediately after a period of high power usage, suggesting an abrupt disconnection or failure while actively in use.\n\n" .
+                "- Unknown Device Types: If the device name doesn't clearly indicate the device type, err on the side of caution and generate 'Operational Failure' insights for sustained 0W readings (>2 hours) to ensure critical issues aren't missed.\n\n" .
                 "Detect anomalies in power consumption.\n\n" .
                 "Analyze voltage, current, and power data (from the Reading table) for fluctuations, surges, and brownouts.\n\n" .
                 "Correlate detected anomalies with alerts (from the Alert table) by matching socket_id and timestamps (within a 5-minute window).\n\n" .
                 "For each anomaly, classify the type as: 'Voltage fluctuation', 'Power surge', 'Brownout', or 'Other'.\n\n" .
+                "When referencing alerts, translate the technical alert type from the Alert table into user-friendly language. Explain what the alert means in practical terms rather than using the technical alert type name.\n\n" .
                 "Predict potential equipment failures.\n\n" .
                 "Analyze trends in power, voltage, and current over time (using reading_time from the Reading table).\n\n" .
                 "Use max_power_threshold and min_power_threshold (from the Profile table) to identify readings exceeding safe limits.\n\n" .
@@ -629,6 +642,8 @@ class GeminiService
                 "Provide clear explanations for each insight that are easy to understand by non-technical users.\n\n" .
                 "Write descriptions in plain language, avoiding technical jargon and complex terminology.\n\n" .
                 "Use everyday language that business owners and facility managers can easily understand.\n\n" .
+                "NEVER use technical alert type names, system codes, or database field names in user-facing descriptions.\n\n" .
+                "Convert all technical terms to business-friendly language that explains the real-world impact.\n\n" .
                 "Include specific numbers, percentages, and monetary impact where possible to make insights concrete.\n\n" .
                 "Focus on the business impact and what it means for the user's operations and costs.\n\n" .
                 "Start descriptions with action-oriented language like 'Your equipment is using...', 'We detected...', 'Your system shows...'.\n\n" .
@@ -640,23 +655,42 @@ class GeminiService
                 "Prioritize insights as 'High', 'Medium', or 'Low' based on potential impact on cost, equipment, and operations.\n\n" .
                 "Filtering\n\n" .
                 "Use the IotDevice table to filter data by device_uuid. If no device_uuid is provided, analyze all devices.\n\n" .
+                "IMPORTANT: When analyzing readings and generating insights, always reference the device name from the IotDevice table to apply appropriate device-specific logic for operational failure detection. Match readings to devices using socket_id relationships.\n\n" .
                 "Output Structure\n\n" .
                 "The response MUST be valid JSON.\n\n" .
                 "The JSON should contain ONLY the labels and data types as specified in the example structure.\n\n" .
                 "Do not include any descriptive text or explanations within the JSON data itself.\n\n" .
                 "Use the aliases and names instead of the data ids.\n\n" .
                 "The insight_type should be one of the following: 'Energy Wastage', 'Operational Failure', 'Anomaly Detection', 'Predictive Maintenance', or 'Alert System Effectiveness'.\n\n" .
+                "In the supporting_data array, ALWAYS include both socket_id and device_name for each affected device to provide proper context for the insight.\n\n" .
                 "Example of user-friendly descriptions:\n\n" .
                 "Instead of: 'Voltage fluctuation detected with 15% variance from nominal'\n\n" .
                 "Write: 'Your equipment is experiencing unstable power supply, which could damage your devices and increase electricity bills by up to 15%.'\n\n" .
                 "Instead of: 'Power consumption exceeds threshold by 200W'\n\n" .
                 "Write: 'One of your devices is using 200 watts more electricity than expected, costing you approximately PHP 30 extra per month.'\n\n" .
-                "For Operational Failure: Instead of 'Device consuming 0W against expected 66W'\n\n" .
-                "Write: 'Your charger appears to be disconnected or not working properly - it should be using around 66 watts but is currently drawing no power.'\n\n" .
+                "For Operational Failure (Device Context Aware): Instead of 'Device consuming 0W against expected 66W'\n\n" .
+                "Write for Chargers: 'Your phone charger has been drawing no power for several hours during typical usage time - it may be disconnected or malfunctioning.'\n\n" .
+                "Write for Servers/POS: 'Your POS terminal is showing no power consumption when it should be running - this could indicate a power failure or device malfunction that needs immediate attention.'\n\n" .
+                "Write for Refrigeration: 'Your refrigerator has been off for over 2 hours, which is longer than normal - this could indicate a power issue or equipment failure that may spoil stored items.'\n\n" .
                 "Instead of: 'Alert triggered at 2024-09-27 14:32:15'\n\n" .
                 "Write: 'We detected an issue yesterday afternoon around 2:30 PM'\n\n" .
+                "For Alert Information: Instead of 'We detected an anomaly yesterday afternoon around 3:38 PM on Energy Analytics Device - Garage. The alert type is anomaly_lstm_power_high. We recommend you check the device.'\n\n" .
+                "Write: 'We detected abnormally high power usage yesterday afternoon around 3:38 PM on your Energy Analytics Device in the Garage. This could indicate equipment malfunction or inefficiency that may increase your electricity costs.'\n\n" .
                 "Instead of: 'Trend observed from 2024-09-20 00:00:00 to 2024-09-27 23:59:59'\n\n" .
-                "Write: 'Over the past week, we noticed a pattern in your energy usage'";
+                "Write: 'Over the past week, we noticed a pattern in your energy usage'\n\n" .
+                "CRITICAL: Convert technical alert types to user-friendly language:\n\n" .
+                "- Instead of: 'anomaly_lstm_power_high' → Write: 'abnormally high power usage'\n\n" .
+                "- Instead of: 'anomaly_lstm_power_low' → Write: 'unusually low power consumption'\n\n" .
+                "- Instead of: 'anomaly_lstm_voltage_high' → Write: 'voltage levels higher than normal'\n\n" .
+                "- Instead of: 'anomaly_lstm_voltage_low' → Write: 'voltage drops below safe levels'\n\n" .
+                "- Instead of: 'anomaly_lstm_current_high' → Write: 'electrical current spikes'\n\n" .
+                "- Instead of: 'anomaly_lstm_current_low' → Write: 'electrical current below expected levels'\n\n" .
+                "- Instead of: 'threshold_exceeded' → Write: 'power usage exceeded safe limits'\n\n" .
+                "- Instead of: 'voltage_fluctuation' → Write: 'unstable power supply'\n\n" .
+                "- Instead of: 'power_surge' → Write: 'sudden power spike'\n\n" .
+                "- Instead of: 'brownout' → Write: 'power dip or brownout condition'\n\n" .
+                "- Instead of: 'device_offline' → Write: 'device connection lost'\n\n" .
+                "NEVER include technical alert type names like 'anomaly_lstm_power_high' in user descriptions. Always translate them to plain English that explains what the issue means for the user's equipment and operations.";
 
             // Define response schema
             $responseSchema = [
