@@ -333,7 +333,7 @@ class DatabaseSeeder extends Seeder
         Log::info("DatabaseSeeder: generateScaledReadings() - Starting for socket {$socket->id}, profile {$profile->id}");
         
         $readingsCount = 0;
-        $baseTime = now()->subDays(7);
+        $baseTime = now()->subDays(60);
         
         // Determine appliance type from profile name
         $applianceType = $this->determineApplianceType($profile->name);
@@ -341,12 +341,12 @@ class DatabaseSeeder extends Seeder
         
         Log::info("DatabaseSeeder: generateScaledReadings() - Appliance type: {$applianceType}");
         
-        // Generate readings every 30 minutes for 7 days (336 readings) for performance
-        // In production, you could change this back to 15 minutes (672 readings)
+        // Generate readings every 30 minutes for 2 months (60 days = 2880 readings) for performance
+        // In production, you could change this back to 15 minutes (5760 readings)
         $intervalMinutes = 30;
-        $totalReadings = 7 * 24 * (60 / $intervalMinutes); // 336 readings
+        $totalReadings = 60 * 24 * (60 / $intervalMinutes); // 2880 readings
         
-        Log::info("DatabaseSeeder: generateScaledReadings() - Will generate {$totalReadings} readings with {$intervalMinutes}-minute intervals");
+        Log::info("DatabaseSeeder: generateScaledReadings() - Will generate {$totalReadings} readings with {$intervalMinutes}-minute intervals over 60 days");
         
         for ($i = 0; $i < $totalReadings; $i++) {
             $readingTime = $baseTime->copy()->addMinutes($i * $intervalMinutes);
@@ -494,7 +494,7 @@ class DatabaseSeeder extends Seeder
         $this->command->line("   • Minimum 50 users requirement: MET ({$this->totalUsers} users)");
         $this->command->line("   • Socket count in range 200-300: MET ({$this->totalSockets} sockets)");
         $this->command->line("   • Every socket has unique profile: MET (1:1 relationship maintained)");
-        $this->command->line("   • All profiles have 7 days of readings: MET");
+        $this->command->line("   • All profiles have 2 months of readings: MET");
         $this->command->line("   • No orphaned records: MET");
         
         // Calculate averages
@@ -506,6 +506,7 @@ class DatabaseSeeder extends Seeder
         $this->command->line("   • Average devices per user: {$avgDevicesPerUser}");
         $this->command->line("   • Readings per profile: {$avgReadingsPerProfile}");
         $this->command->line("   • Total data points: " . number_format($this->totalReadings));
+        $this->command->line("   • Data period: 2 months (60 days)");
     }
 
     /**
