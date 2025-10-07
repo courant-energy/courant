@@ -83,7 +83,7 @@
       "name": "82 Inch LED TV",
       "min_power_threshold": "228",
       "max_power_threshold": "295",
-      "expected_power": "261.50"
+      "expected_power": "261"
     },
     {
       "name": "9\" disc sander",
@@ -95,7 +95,7 @@
       "name": "Air Cooler",
       "min_power_threshold": "65",
       "max_power_threshold": "80",
-      "expected_power": "72.50"
+      "expected_power": "72"
     },
     {
       "name": "Air Fryer",
@@ -113,7 +113,7 @@
       "name": "Air Purifier",
       "min_power_threshold": "25",
       "max_power_threshold": "30",
-      "expected_power": "27.50"
+      "expected_power": "27"
     },
     {
       "name": "Amazon Echo",
@@ -125,7 +125,7 @@
       "name": "Amazon Echo Dot",
       "min_power_threshold": "2",
       "max_power_threshold": "3",
-      "expected_power": "2.50"
+      "expected_power": "2"
     },
     {
       "name": "Amazon Echo Show",
@@ -143,7 +143,7 @@
       "name": "Apple TV",
       "min_power_threshold": "3",
       "max_power_threshold": "6",
-      "expected_power": "4.50"
+      "expected_power": "4"
     },
     {
       "name": "Aquarium Heater",
@@ -203,7 +203,7 @@
       "name": "Clock radio",
       "min_power_threshold": "1",
       "max_power_threshold": "2",
-      "expected_power": "1.50"
+      "expected_power": "1"
     },
     {
       "name": "Clothes Dryer",
@@ -221,7 +221,7 @@
       "name": "Computer Monitor",
       "min_power_threshold": "25",
       "max_power_threshold": "30",
-      "expected_power": "27.50"
+      "expected_power": "27"
     },
     {
       "name": "Cooker Hood",
@@ -287,7 +287,7 @@
       "name": "Desk Lamp",
       "min_power_threshold": "40",
       "max_power_threshold": "65",
-      "expected_power": "52.50"
+      "expected_power": "52"
     },
     {
       "name": "Desktop Computer",
@@ -371,7 +371,7 @@
       "name": "Electric Shaver",
       "min_power_threshold": "15",
       "max_power_threshold": "20",
-      "expected_power": "17.50"
+      "expected_power": "17"
     },
     {
       "name": "Electric Stove",
@@ -407,7 +407,7 @@
       "name": "Essential Oil Diffuser",
       "min_power_threshold": "10",
       "max_power_threshold": "25",
-      "expected_power": "17.50"
+      "expected_power": "17"
     },
     {
       "name": "EV Car Charger",
@@ -443,7 +443,7 @@
       "name": "Fluorescent Lamp",
       "min_power_threshold": "28",
       "max_power_threshold": "45",
-      "expected_power": "36.50"
+      "expected_power": "36"
     },
     {
       "name": "Food Blender",
@@ -581,7 +581,7 @@
       "name": "Humidifier",
       "min_power_threshold": "35",
       "max_power_threshold": "40",
-      "expected_power": "37.50"
+      "expected_power": "37"
     },
     {
       "name": "iMac",
@@ -653,13 +653,13 @@
       "name": "LED Light Bulb",
       "min_power_threshold": "7",
       "max_power_threshold": "10",
-      "expected_power": "8.50"
+      "expected_power": "8"
     },
     {
       "name": "LG Soundbar",
       "min_power_threshold": "23",
       "max_power_threshold": "30",
-      "expected_power": "26.50"
+      "expected_power": "26"
     },
     {
       "name": "Mi Box",
@@ -677,7 +677,7 @@
       "name": "Mini Fridge Freezer",
       "min_power_threshold": "50",
       "max_power_threshold": "75",
-      "expected_power": "62.50"
+      "expected_power": "62"
     },
     {
       "name": "Night Light",
@@ -689,7 +689,7 @@
       "name": "Nintendo Switch AC Adapter",
       "min_power_threshold": "7",
       "max_power_threshold": "40",
-      "expected_power": "23.50"
+      "expected_power": "23"
     },
     {
       "name": "OLED TV",
@@ -731,19 +731,19 @@
       "name": "Philips Hue Smart Bulb",
       "min_power_threshold": "8",
       "max_power_threshold": "9",
-      "expected_power": "8.50"
+      "expected_power": "8"
     },
     {
       "name": "Phone Charger",
       "min_power_threshold": "4",
       "max_power_threshold": "7",
-      "expected_power": "5.50"
+      "expected_power": "5"
     },
     {
       "name": "Playstation 4",
       "min_power_threshold": "85",
       "max_power_threshold": "90",
-      "expected_power": "87.50"
+      "expected_power": "87"
     },
     {
       "name": "Playstation 5",
@@ -797,7 +797,7 @@
       "name": "Ring Spotlight Cam Wired",
       "min_power_threshold": "4",
       "max_power_threshold": "25",
-      "expected_power": "14.50"
+      "expected_power": "14"
     },
     {
       "name": "Robot Vacuum Base Station",
@@ -827,7 +827,7 @@
       "name": "Set Top Box",
       "min_power_threshold": "27",
       "max_power_threshold": "30",
-      "expected_power": "28.50"
+      "expected_power": "28"
     },
     {
       "name": "Sewing Machine",
@@ -863,7 +863,7 @@
       "name": "Smoke Detector",
       "min_power_threshold": "0",
       "max_power_threshold": "1",
-      "expected_power": "0.50"
+      "expected_power": "0"
     },
     {
       "name": "Soldering Iron",
@@ -893,7 +893,7 @@
       "name": "Straightening Iron",
       "min_power_threshold": "75",
       "max_power_threshold": "300",
-      "expected_power": "187.50"
+      "expected_power": "187"
     },
     {
       "name": "Strimmer",
@@ -911,25 +911,25 @@
       "name": "Table Fan",
       "min_power_threshold": "10",
       "max_power_threshold": "25",
-      "expected_power": "17.50"
+      "expected_power": "17"
     },
     {
       "name": "Table Top Fridge",
       "min_power_threshold": "10",
       "max_power_threshold": "15",
-      "expected_power": "12.50"
+      "expected_power": "12"
     },
     {
       "name": "Tablet Charger",
       "min_power_threshold": "10",
       "max_power_threshold": "15",
-      "expected_power": "12.50"
+      "expected_power": "12"
     },
     {
       "name": "Tablet Computer",
       "min_power_threshold": "5",
       "max_power_threshold": "10",
-      "expected_power": "7.50"
+      "expected_power": "7"
     },
     {
       "name": "Toaster",
@@ -977,7 +977,7 @@
       "name": "Wall Fan",
       "min_power_threshold": "45",
       "max_power_threshold": "60",
-      "expected_power": "52.50"
+      "expected_power": "52"
     },
     {
       "name": "Washing Machine",
@@ -1007,7 +1007,7 @@
       "name": "WiFi Booster",
       "min_power_threshold": "1",
       "max_power_threshold": "2",
-      "expected_power": "1.50"
+      "expected_power": "1"
     },
     {
       "name": "WiFi Router",
