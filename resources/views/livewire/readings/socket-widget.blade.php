@@ -21,7 +21,7 @@
                     </svg>
                 </button>
                 <div class="hidden absolute z-10 p-2 mt-1 text-xs text-white bg-gray-800 rounded shadow-lg max-w-xs">
-                    Total energy consumed over time, measured in kilowatt-hours (kWh).
+                    Total energy consumed over time, measured in kilowatt-hours (kWh). Also known as Power Consumption.
                 </div>
             </div>
         </div>
