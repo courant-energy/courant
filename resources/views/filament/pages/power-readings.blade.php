@@ -41,11 +41,12 @@
                         </x-slot>
                         <x-slot name="description">
                             {{ $socket->name }}
-                            @if (!$socket->profile)
-                                <span class="block mt-1 text-xs text-amber-500">
+                            <span class="block mt-1 text-xs text-amber-500">
+                                    @if (!$socket->profile)
                                     No profile assigned. Power thresholds and expected values unavailable.
+                                    @endif
+⠀
                                 </span>
-                            @endif
                         </x-slot>
                         @livewire('readings.socket-widget', ['socket' => $socket], key('stats-' . $socket->id))
                     </x-filament::section>
@@ -53,7 +54,7 @@
                     <div class="grid grid-cols-1 gap-4" style="margin-top: 2rem;">
 
                         <div class="flex flex-col gap-4" x-data="{ activeTab: 'energy-consumption' }">
-
+                            @if($socket->profile && $socket->readings)
                             {{-- Chart Type Tabs --}}
                             <x-filament::tabs>
                                 <x-filament::tabs.item alpine-active="activeTab === 'energy-consumption'"
@@ -70,7 +71,8 @@
                                 </x-filament::tabs.item>
                             </x-filament::tabs>
 
-
+                          
+                                
                             {{-- Per-Socket Time Range Filter --}}
                             <x-filament::section>
                                 <x-slot name="heading">
@@ -109,7 +111,7 @@
                                 :class="!{{ $this->hasSocketData($socket) ? 'true' : 'false' }} ? 'hidden' : ''">
                                 @livewire(App\Filament\Widgets\PowerFactor::class, ['socket' => $socket, 'filter' => $this->getSocketFilter($socket->id)], key('power-factor-' . $socket->id . '-' . $this->getSocketFilter($socket->id)))
                             </div>
-
+                            
                             {{-- Empty State for All Charts --}}
                             <div
                                 :class="{{ $this->hasSocketData($socket) ? 'true' : 'false' }} ? 'hidden' :
@@ -128,6 +130,7 @@
                                     Refresh Data
                                 </x-filament::button>
                             </div>
+                            @endif
                         </div>
                     </div>
                 </div>
