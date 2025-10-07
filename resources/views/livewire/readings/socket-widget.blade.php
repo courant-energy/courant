@@ -1,5 +1,4 @@
 <div wire:poll.5s>
-    @if($socket)
     {{-- stats --}}
     <div class="grid grid-cols-1 gap-4 my-4 md:grid-cols-3">
         <h2 class="text-lg font-semibold md:col-span-3">Status</h2>
@@ -34,11 +33,7 @@
             @php
                 $textColorClass = 'text-gray-900 dark:text-gray-400'; // Default color
 
-                if ($socket->profile && $socket->profile->expected_power !== null && 
-                    $socket->profile->max_power_threshold !== null && 
-                    $socket->profile->min_power_threshold !== null && 
-                    $socket->currentPower !== null) {
-                    
+                if ($socket->profile) {
                     $deviation = 0.05; // 5% deviation allowed
                     $lowerGreen = $socket->profile->expected_power * (1 - $deviation);
                     $upperGreen = $socket->profile->expected_power * (1 + $deviation);
@@ -76,21 +71,18 @@
             @php
                 // Power Factor color coding
                 $pfTextColorClass = 'text-gray-900'; // Default color
-                $currentPowerFactor = $socket->currentPowerFactor ?? 0;
 
-                if ($socket->currentPowerFactor !== null) {
-                    if ($socket->currentPowerFactor < 0.8) {
-                        $pfTextColorClass = 'text-red-600'; // Bad power factor (<80%)
-                    } elseif ($socket->currentPowerFactor >= 0.9) {
-                        $pfTextColorClass = 'text-green-600'; // Good power factor (≥90%)
-                    } else {
-                        $pfTextColorClass = 'text-yellow-500'; // Acceptable power factor (80%-89%)
-                    }
+                if ($socket->currentPowerFactor < 0.8) {
+                    $pfTextColorClass = 'text-red-600'; // Bad power factor (<80%)
+                } elseif ($socket->currentPowerFactor >= 0.9) {
+                    $pfTextColorClass = 'text-green-600'; // Good power factor (≥90%)
+                } else {
+                    $pfTextColorClass = 'text-yellow-500'; // Acceptable power factor (80%-89%)
                 }
             @endphp
 
             <h3 class="text-xl font-semibold {{ $pfTextColorClass }}">
-                {{ number_format($currentPowerFactor * 100, 1) }} %
+                {{ $socket->currentPowerFactor * 100 }} %
             </h3>
             <div class="flex items-center justify-between">
                 <p class="text-sm text-gray-500">Power Factor</p>
@@ -107,16 +99,4 @@
     </div>
 
     {{-- line graph --}}
-    @else
-    <div class="flex flex-col items-center justify-center py-8 text-center">
-        <x-filament::icon icon="heroicon-o-exclamation-triangle" 
-            class="w-12 h-12 mb-4 text-gray-400 dark:text-gray-500" />
-        <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
-            No Socket Available
-        </h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400">
-            Socket data is not available or could not be loaded.
-        </p>
-    </div>
-    @endif
 </div>
