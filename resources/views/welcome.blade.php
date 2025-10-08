@@ -14,6 +14,8 @@
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
+    @include('components.site-settings')
+
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -316,15 +318,39 @@
     <!-- Footer -->
     <footer class="py-10 bg-white border-t border-gray-200">
         <div class="container px-6 mx-auto">
-            <div class="flex flex-col items-center justify-between md:flex-row">
+            <div class="flex flex-col md:items-center justify-between md:flex-row">
                 <div class="mb-6 md:mb-0">
                     <img src="/logo.svg" alt="Courant Logo" class="w-auto h-8">
                     <p class="mt-2 text-sm text-gray-600">© 2025 Courant Energy Solutions. All rights reserved.</p>
                 </div>
-                <div class="flex space-x-6">
-                    <a href="#" class="text-gray-600 hover:text-gray-900">Privacy</a>
-                    <a href="#" class="text-gray-600 hover:text-gray-900">Terms</a>
-                    <a href="#" class="text-gray-600 hover:text-gray-900">Contact</a>
+                
+                <div class="flex flex-col gap-4 md:flex-row">
+
+                    <!-- Navigation Links -->
+                    <div class="flex flex-col space-y-4">
+                        <a href="#" class="text-gray-600 hover:text-gray-900">Privacy</a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900">Terms</a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900">Contact</a>
+                    </div>
+
+                    <!-- Social Media Links -->
+                    @if(setting('site_social'))
+                        <div class="flex flex-col space-y-4">
+                            @foreach(setting('site_social') as $social)
+                                <a href="{{ $social['link'] }}" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   class="text-gray-600 hover:text-gray-900 transition-colors"
+                                   title="{{ ucfirst($social['vendor']) }}">
+                                    <span class="sr-only">{{ ucfirst($social['vendor']) }}</span>
+                                    <!-- You can add specific icons based on vendor here -->
+                                    {{ $social['vendor']  }}
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                    
+                    
                 </div>
             </div>
         </div>
