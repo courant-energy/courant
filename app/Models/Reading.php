@@ -53,10 +53,10 @@ class Reading extends Model
 
             // Trigger anomaly detection
             if ($reading->profile_id) {
-                \Log::info('Triggering anomaly detection for reading', [
-                    'reading_id' => $reading->id,
-                    'profile_id' => $reading->profile_id
-                ]);
+                // \Log::info('Triggering anomaly detection for reading', [
+                //     'reading_id' => $reading->id,
+                //     'profile_id' => $reading->profile_id
+                // ]);
                 try {
                     $anomalyService = app(AnomalyService::class);
                     $anomalyService->processReadingForAnomalyDetection($reading);

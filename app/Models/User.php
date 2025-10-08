@@ -136,7 +136,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
                     $device->sockets()->delete();
                     
                     // Delete any downtime events
-                    DB::table('downtime_events')->where('device_id', $device->id)->delete();
+                    DB::table('downtime_events')->where('iot_device_id', $device->id)->delete();
                     
                     $device->delete();
                 });

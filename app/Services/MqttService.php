@@ -61,11 +61,11 @@ class MqttService
             ]);
             
             $reading->save();
-            \Log::debug('Reading stored', [
-                'device' => $data['device_id'], 
-                'socket' => $data['socket_id'],
-                'power' => $data['power']
-            ]);
+            // \Log::debug('Reading stored', [
+            //     'device' => $data['device_id'], 
+            //     'socket' => $data['socket_id'],
+            //     'power' => $data['power']
+            // ]);
         } catch (\Exception $e) {
             \Log::error('Failed to store reading', [
                 'error' => $e->getMessage(),

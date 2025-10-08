@@ -40,10 +40,10 @@ class AnomalyService
      */
     public function processReadingForAnomalyDetection(Reading $reading)
     {
-        \Log::info('Processing reading for anomaly detection', [
-            'reading_id' => $reading->id,
-            'profile_id' => $reading->profile_id
-        ]);
+        // \Log::info('Processing reading for anomaly detection', [
+        //     'reading_id' => $reading->id,
+        //     'profile_id' => $reading->profile_id
+        // ]);
         // Get the profile associated with the reading
         $profile = $reading->profile_id ? Profile::find($reading->profile_id) : null;
 
@@ -53,7 +53,7 @@ class AnomalyService
         }
 
         if($profile->anomaly_detection_enabled == false) {
-            Log::info('Anomaly detection is disabled for this profile', ['profile_id' => $profile->id]);
+            // Log::info('Anomaly detection is disabled for this profile', ['profile_id' => $profile->id]);
             return;
         }
 
@@ -131,12 +131,12 @@ class AnomalyService
         // Check if an anomaly is detected (anything other than "within_prediction")
         if ($response['overall_status'] !== 'within_prediction') {
 
-            Log::info('LSTM anomaly detected', [
-                'interpretation' => $response['interpretation'],
-                'overall_status' => $response['overall_status'],
-                'reading_id' => $reading->id,
-                'profile_id' => $profile->id
-            ]);
+            // Log::info('LSTM anomaly detected', [
+            //     'interpretation' => $response['interpretation'],
+            //     'overall_status' => $response['overall_status'],
+            //     'reading_id' => $reading->id,
+            //     'profile_id' => $profile->id
+            // ]);
 
             // Extract significant deviations from both old and new format for compatibility
             $significantDeviations = $response['interpretation']['significant_deviations_summary'] ?? [];
