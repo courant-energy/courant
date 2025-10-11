@@ -44,6 +44,7 @@ class Registration extends BaseRegister
     {
         return TextInput::make('first_name')
             ->label('First Name')
+            ->regex('/^[a-zA-Z0-9\-]+$/')
             ->required()
             ->maxLength(255)
             ->autofocus();
@@ -52,6 +53,7 @@ class Registration extends BaseRegister
     {
         return TextInput::make('last_name')
             ->label('Last Name')
+            ->regex('/^[a-zA-Z0-9\-]+$/')
             ->required()
             ->maxLength(255)
             ->autofocus();
