@@ -34,6 +34,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
         'email',
         'password',
         'is_onboarded',
+        'archived_at',
     ];
 
     /**
@@ -57,6 +58,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_onboarded' => 'boolean',
+            'archived_at' => 'datetime',
         ];
     }
 
@@ -67,6 +69,12 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
 
     public function canAccessPanel(Panel $panel): bool
     {
+        // First check if the user is archived (soft-deleted).
+        if ($this->archived_at !== null) {
+            return false; // Prevent login for archived users
+        }
+
+        // Add other authorization logic here (e.g., check for 'is_admin' or roles)
         return true;
     }
 
@@ -98,6 +106,30 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
     public function profiles()
     {
         return $this->hasMany(Profile::class);
+    }
+
+    /**
+     * Check if the user is archived
+     */
+    public function isArchived(): bool
+    {
+        return $this->archived_at !== null;
+    }
+
+    /**
+     * Archive the user
+     */
+    public function archive(): bool
+    {
+        return $this->update(['archived_at' => now()]);
+    }
+
+    /**
+     * Unarchive the user
+     */
+    public function unarchive(): bool
+    {
+        return $this->update(['archived_at' => null]);
     }
 
     /**

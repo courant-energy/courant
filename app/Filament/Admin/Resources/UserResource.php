@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Carbon;
 
 class UserResource extends Resource
 {
@@ -49,22 +50,22 @@ class UserResource extends Resource
                             ->maxLength(255)
                             ->placeholder('Company Name'),
                     ]),
-                Forms\Components\Section::make('Password')
-                    ->schema([
-                        Forms\Components\TextInput::make('password')
-                            ->password()
-                            ->revealable()
-                            ->dehydrated(fn ($state) => filled($state))
-                            ->required(fn (string $operation): bool => $operation === 'create')
-                            ->minLength(8)
-                            ->same('password_confirmation'),
-                        Forms\Components\TextInput::make('password_confirmation')
-                            ->password()
-                            ->revealable()
-                            ->required(fn (string $operation): bool => $operation === 'create')
-                            ->minLength(8)
-                            ->dehydrated(false),
-                    ]),
+                // Forms\Components\Section::make('Password')
+                //     ->schema([
+                //         Forms\Components\TextInput::make('password')
+                //             ->password()
+                //             ->revealable()
+                //             ->dehydrated(fn ($state) => filled($state))
+                //             ->required(fn (string $operation): bool => $operation === 'create')
+                //             ->minLength(8)
+                //             ->same('password_confirmation'),
+                //         Forms\Components\TextInput::make('password_confirmation')
+                //             ->password()
+                //             ->revealable()
+                //             ->required(fn (string $operation): bool => $operation === 'create')
+                //             ->minLength(8)
+                //             ->dehydrated(false),
+                //     ]),
             ]);
     }
 
@@ -88,6 +89,14 @@ class UserResource extends Resource
                     ->color(fn ($state) => $state ? 'success' : 'warning')
                     ->label('Verified')
                     ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No'),
+                Tables\Columns\TextColumn::make('archived_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable()
+                    ->badge()
+                    ->color(fn ($state) => $state ? 'danger' : 'success')
+                    ->label('Status')
+                    ->formatStateUsing(fn ($state) => $state ? 'Archived' : 'Active'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -98,13 +107,51 @@ class UserResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
                 Tables\Filters\Filter::make('unverified')
                     ->query(fn (Builder $query): Builder => $query->whereNull('email_verified_at')),
+                Tables\Filters\Filter::make('active')
+                    ->query(fn (Builder $query): Builder => $query->whereNull('archived_at'))
+                    ->default(),
+                Tables\Filters\Filter::make('archived')
+                    ->query(fn (Builder $query): Builder => $query->whereNotNull('archived_at')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('archive')
+                    ->label('Archive User')
+                    ->icon('heroicon-o-archive-box')
+                    ->requiresConfirmation()
+                    ->color('warning')
+                    ->hidden(fn (User $record): bool => $record->isArchived())
+                    ->action(function (User $record) {
+                        $record->archive();
+                    })
+                    ->successNotificationTitle('User archived successfully'),
+                Tables\Actions\Action::make('unarchive')
+                    ->label('Restore User')
+                    ->icon('heroicon-o-archive-box-x-mark')
+                    ->requiresConfirmation()
+                    ->color('success')
+                    ->visible(fn (User $record): bool => $record->isArchived())
+                    ->action(function (User $record) {
+                        $record->unarchive();
+                    })
+                    ->successNotificationTitle('User restored successfully'),
                 // Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('archive')
+                        ->label('Archive Selected')
+                        ->icon('heroicon-o-archive-box')
+                        ->requiresConfirmation()
+                        ->color('warning')
+                        ->action(function ($records) {
+                            $records->each(function (User $record) {
+                                if (!$record->isArchived()) {
+                                    $record->archive();
+                                }
+                            });
+                        })
+                        ->successNotificationTitle('Selected users archived successfully'),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
