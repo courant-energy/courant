@@ -83,8 +83,9 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                         ->badge()
                         ->label('Severity')
                         ->colors([
-                            'secondary' => 'info',
-                            'warning' => 'warning',
+                            'secondary' => 'low',
+                            'info' => 'medium',
+                            'warning' => 'high',
                             'danger' => 'critical',
                         ]),
                 ])->from('md'),
