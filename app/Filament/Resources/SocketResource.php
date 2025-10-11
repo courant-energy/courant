@@ -140,6 +140,9 @@ class SocketResource extends Resource
                         ->color(fn($state) => $state === '' ? 'danger' : null),
                     Tables\Columns\ToggleColumn::make('state')
                         ->label('Power State')
+                        ->tooltip('Toggle the power state of the socket')
+                        ->onIcon('heroicon-o-bolt')
+                        ->offIcon('heroicon-o-bolt-slash')
                 ]),
             ])
             ->filters([
