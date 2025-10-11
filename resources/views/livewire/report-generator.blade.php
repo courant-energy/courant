@@ -382,6 +382,27 @@
                 reportChart.destroy();
             }
 
+            // Get unit suffix based on report type
+            const getUnitSuffix = () => {
+                switch (reportType) {
+                    case 'energy_consumption': return ' kWh';
+                    case 'cost_analysis': return ' PHP';
+                    case 'anomaly': return ' anomalies';
+                    case 'equipment_usage': return '%';
+                    default: return '';
+                }
+            };
+
+            const getYAxisLabel = () => {
+                switch (reportType) {
+                    case 'energy_consumption': return 'Energy Consumption (kWh)';
+                    case 'cost_analysis': return 'Cost (PHP)';
+                    case 'anomaly': return 'Number of Anomalies';
+                    case 'equipment_usage': return 'Percentage (%)';
+                    default: return '';
+                }
+            };
+
             // Configure chart based on report and chart type
             const chartConfig = {
                 type: $wire.chartType,
@@ -400,11 +421,46 @@
                         tooltip: {
                             enabled: true,
                             mode: 'index',
-                            intersect: false
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        const value = context.parsed.y.toFixed(2);
+                                        
+                                        // Add unit suffix based on report type, but check if already present
+                                        switch (reportType) {
+                                            case 'energy_consumption':
+                                                label += label.includes('kWh') ? value : value + ' kWh';
+                                                break;
+                                            case 'cost_analysis':
+                                                label += (label.includes('PHP') || label.includes('₱')) ? value : '₱' + value;
+                                                break;
+                                            case 'anomaly':
+                                                label += value;
+                                                break;
+                                            case 'equipment_usage':
+                                                label += value + '%';
+                                                break;
+                                            default:
+                                                label += value;
+                                        }
+                                    }
+                                    return label;
+                                }
+                            }
                         }
                     },
                     scales: {
                         x: {
+                            title: {
+                                display: true,
+                                text: reportType === 'equipment_usage' ? 'Equipment Profile' : 'Time Period',
+                                color: document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151'
+                            },
                             ticks: {
                                 color: document.documentElement.classList.contains('dark') ? '#e5e7eb' :
                                     '#374151'
@@ -416,9 +472,29 @@
                         },
                         y: {
                             beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: getYAxisLabel(),
+                                color: document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151'
+                            },
                             ticks: {
                                 color: document.documentElement.classList.contains('dark') ? '#e5e7eb' :
-                                    '#374151'
+                                    '#374151',
+                                callback: function(value) {
+                                    // Format Y-axis labels with units
+                                    switch (reportType) {
+                                        case 'energy_consumption':
+                                            return value.toFixed(1) + ' kWh';
+                                        case 'cost_analysis':
+                                            return '₱' + value.toFixed(2);
+                                        case 'anomaly':
+                                            return value;
+                                        case 'equipment_usage':
+                                            return value + '%';
+                                        default:
+                                            return value;
+                                    }
+                                }
                             },
                             grid: {
                                 color: document.documentElement.classList.contains('dark') ?

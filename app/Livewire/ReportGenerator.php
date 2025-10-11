@@ -287,12 +287,29 @@ class ReportGenerator extends Component
     {
         switch ($this->reportType) {
             case 'energy_consumption':
-            case 'cost_analysis':
+                $originalLabel = $this->reportData['datasets'][0]['label'];
+                $labelWithUnit = str_contains($originalLabel, 'kWh') ? $originalLabel : $originalLabel . ' (kWh)';
                 return [
                     'labels' => $this->reportData['labels'],
                     'datasets' => [
                         [
-                            'label' => $this->reportData['datasets'][0]['label'],
+                            'label' => $labelWithUnit,
+                            'data' => $this->reportData['datasets'][0]['data'],
+                            'backgroundColor' => 'rgba(59, 130, 246, 0.5)',
+                            'borderColor' => 'rgb(59, 130, 246)',
+                            'borderWidth' => 1
+                        ]
+                    ]
+                ];
+                
+            case 'cost_analysis':
+                $originalLabel = $this->reportData['datasets'][0]['label'];
+                $labelWithUnit = str_contains($originalLabel, 'PHP') || str_contains($originalLabel, '₱') ? $originalLabel : $originalLabel . ' (PHP)';
+                return [
+                    'labels' => $this->reportData['labels'],
+                    'datasets' => [
+                        [
+                            'label' => $labelWithUnit,
                             'data' => $this->reportData['datasets'][0]['data'],
                             'backgroundColor' => 'rgba(59, 130, 246, 0.5)',
                             'borderColor' => 'rgb(59, 130, 246)',
@@ -328,14 +345,14 @@ class ReportGenerator extends Component
                         'labels' => $profileNames,
                         'datasets' => [
                             [
-                                'label' => 'Uptime %',
+                                'label' => 'Uptime',
                                 'data' => $uptimeData,
                                 'backgroundColor' => 'rgba(16, 185, 129, 0.5)',
                                 'borderColor' => 'rgb(16, 185, 129)',
                                 'borderWidth' => 1
                             ],
                             [
-                                'label' => 'Downtime %',
+                                'label' => 'Downtime',
                                 'data' => $downtimeData,
                                 'backgroundColor' => 'rgba(239, 68, 68, 0.5)',
                                 'borderColor' => 'rgb(239, 68, 68)',

@@ -13,9 +13,9 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             border-bottom: 1px solid #ddd;
-            padding-bottom: 15px;
+            padding-bottom: 10px;
         }
         .logo {
             max-height: 50px;
@@ -26,6 +26,18 @@
             color: #333;
             margin-bottom: 5px;
             font-weight: bold;
+        }
+        h3 {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 5;
+            font-weight: bold;
+        }
+        p{
+            margin: 5px 0;
+            font-size: 12px;
+            color: #666;
+            
         }
         .meta {
             font-size: 12px;
@@ -44,19 +56,19 @@
         }
         .summary {
             margin: 20px 0;
-            padding: 15px;
+            padding: 5px;
             background-color: #f9f9f9;
             border-radius: 5px;
         }
         .summary-title {
             font-weight: bold;
             font-size: 16px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         .summary-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
+            gap: 5px;
         }
         .summary-item {
             margin-bottom: 10px;
@@ -76,7 +88,7 @@
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 2px;
             text-align: left;
         }
         th {
@@ -87,7 +99,7 @@
             background-color: #f9f9f9;
         }
         .footer {
-            margin-top: 30px;
+            margin-top: 10px;
             font-size: 10px;
             color: #666;
             text-align: center;
@@ -104,9 +116,9 @@
         <img src="{{ public_path('logo.svg') }}" alt="Logo" class="logo">
         <h1>{{ $title }}</h1>
         <div class="meta" style="text-align: left;">
-            <p>{{ $companyName }}</p>
-            <p>Period: {{ $reportPeriod }}</p>
-            <p>Device: {{ $profileName }}</p>
+           {{ $companyName }}<br/>
+           Period: {{ $reportPeriod }}<br/>
+           Device: {{ $profileName }}<br/>
            
         </div>
     </div>
