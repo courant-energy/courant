@@ -328,9 +328,9 @@
 
                     <!-- Navigation Links -->
                     <div class="flex flex-col space-y-4">
-                        <a href="#" class="text-gray-600 hover:text-gray-900">Privacy</a>
-                        <a href="#" class="text-gray-600 hover:text-gray-900">Terms</a>
-                        <a href="#" class="text-gray-600 hover:text-gray-900">Contact</a>
+                        <a href="{{ route('privacy') }}" class="text-gray-600 hover:text-gray-900">Privacy</a>
+                        <a href="{{ route('terms') }}" class="text-gray-600 hover:text-gray-900">Terms</a>
+                        <a href="{{ route('contact') }}" class="text-gray-600 hover:text-gray-900">Contact</a>
                     </div>
 
                     <!-- Social Media Links -->

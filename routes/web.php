@@ -13,6 +13,15 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
+Route::view('terms', 'terms')
+    ->name('terms');
+
+Route::view('privacy', 'privacy')
+    ->name('privacy');
+
+Route::view('contact', 'contact')
+    ->name('contact');
+
 Route::get('login', function () {
     return redirect()->route('filament.app.auth.login');
 })->name('login');

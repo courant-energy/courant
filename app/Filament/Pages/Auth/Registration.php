@@ -32,7 +32,7 @@ class Registration extends BaseRegister
                 ViewField::make('legend')
                     ->view('filament.customs.legend'),
                 ViewField::make('terms')
-                    ->view('terms'),
+                    ->view('terms_small'),
             ]);
     }
 
