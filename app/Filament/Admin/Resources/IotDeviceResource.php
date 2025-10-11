@@ -72,6 +72,13 @@ class IotDeviceResource extends Resource
                     ->size(TextColumnSize::ExtraSmall)
                     ->weight(FontWeight::ExtraLight)
                     ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Registered')
+                    ->color('gray')
+                    ->size(TextColumnSize::ExtraSmall)
+                    ->weight(FontWeight::ExtraLight)
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
                 //
