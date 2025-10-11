@@ -690,6 +690,7 @@ class GeminiService
                 "- Instead of: 'power_surge' → Write: 'sudden power spike'\n\n" .
                 "- Instead of: 'brownout' → Write: 'power dip or brownout condition'\n\n" .
                 "- Instead of: 'device_offline' → Write: 'device connection lost'\n\n" .
+                "LIMIT TO 5 INSIGHTS ONLY'\n\n" .
                 "NEVER include technical alert type names like 'anomaly_lstm_power_high' in user descriptions. Always translate them to plain English that explains what the issue means for the user's equipment and operations.";
 
             // Define response schema

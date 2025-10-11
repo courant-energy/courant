@@ -37,12 +37,14 @@
             <x-filament::card class="dark:border-gray-700">
                 <div class="mb-4">
                     @if($record->image_url)
-                        <img src="{{ $record->image_url }}" alt="{{ $record->name }}"
-                            class="w-full aspect-square object-cover rounded-lg">
-                    @else
-                        <div class="w-full aspect-square bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                            
+                        {{-- The container div sets the 16:9 aspect ratio and clips the image --}}
+                        <div class="w-full aspect-video rounded-lg overflow-hidden">
+                            <img src="{{ $record->image_url }}" alt="{{ $record->name }}"
+                                class="w-full h-full object-cover">
                         </div>
+                    @else
+                        {{-- This placeholder is already styled correctly --}}
+                        <div class="w-full aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
                     @endif
                 </div>
                 <h2 class="text font-bold mb-2 dark:text-white">{{ $record->name }}</h2>

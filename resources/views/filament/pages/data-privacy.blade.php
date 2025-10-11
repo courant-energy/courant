@@ -10,7 +10,6 @@
                     <ul class="list-disc pl-6 space-y-2 mb-6">
                         <li><strong>Account Information:</strong> Your name, email address, company name, and profile picture</li>
                         <li><strong>IoT Device Data:</strong> Device configurations, energy readings, power consumption data</li>
-                        <li><strong>Usage Analytics:</strong> How you interact with our platform for service improvement</li>
                         <li><strong>Support Data:</strong> Questions and support tickets you submit</li>
                         <li><strong>System Logs:</strong> Technical logs for troubleshooting and security purposes</li>
                     </ul>
