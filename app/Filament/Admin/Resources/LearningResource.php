@@ -76,6 +76,8 @@ class LearningResource extends Resource
                         Forms\Components\FileUpload::make('cover_image')
                             ->image()
                             ->label('Cover Image')
+                            ->helperText('Recommended size: 1200x600px. Max size: 5MB.')
+                            ->maxSize(5120)
                             ->columnSpanFull(),
                             
                         Forms\Components\RichEditor::make('content')
@@ -235,6 +237,19 @@ class LearningResource extends Resource
             //
         ];
     }
+
+    protected function getCreatedNotificationTitle($record): ?string
+    {
+        switch ($record->status) {
+            case 'published':
+                return 'Learning Resource Published Successfully';
+            case 'archived':
+                return 'Learning Resource Archived Successfully';
+            default:
+                return 'Learning Resource Created Successfully';
+        }
+    }
+
 
     public static function getPages(): array
     {

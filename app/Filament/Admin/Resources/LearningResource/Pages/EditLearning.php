@@ -16,4 +16,18 @@ class EditLearning extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function getSavedNotificationTitle(): ?string
+    {
+        switch ($this->record->status) {
+            case 'published':
+                return 'Learning Resource Published Successfully';
+            case 'archived':
+                return 'Learning Resource Archived Successfully';
+            case 'draft':
+                return 'Learning Resource Saved as Draft Successfully';
+            default:
+                return 'Learning Resource Updated Successfully';
+        }
+    }
 }

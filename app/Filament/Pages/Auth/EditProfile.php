@@ -18,6 +18,8 @@ class EditProfile extends BaseEditProfile
             ->schema([
                 FileUpload::make('profile')
                     ->avatar()
+                    ->helperText('Maximum file size: 5MB')
+                    ->maxSize(5120) // 5MB in KB
                     ->image()
                     ->imageEditor(),
 

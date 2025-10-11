@@ -80,7 +80,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
 
     public function  getFilamentAvatarUrl(): ?string
     {
-        return $this->profile ? Storage::url($this->profile) : null;
+        return $this->profile ? Storage::disk(env('FILESYSTEM_DISK'))->url($this->profile) : 'https://ui-avatars.com/api/?name=' . urlencode($this->first_name . ' ' . $this->last_name) . '&color=FFFFFF&background=09090b';
     }
 
     public function iotDevices()
