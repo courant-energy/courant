@@ -44,8 +44,10 @@ class RegisterIotDevice extends Page implements HasForms
                 Components\Section::make('IoT Device Information')
                     ->schema([
                         Components\TextInput::make('name')
+                            ->placeholder("e.g., Living Room Sensor")
                             ->helperText('An alias for the IoT device. This name will be displayed in the dashboard.'),
                         Components\TextInput::make('device_uuid')
+                            ->placeholder("e.g., ESP-XXXXXX")
                             ->helperText('The UUID is a unique identifier for the IoT device. It can be found on the device itself.')
                             ->label('UUID'),
                         Components\TextInput::make('password')
