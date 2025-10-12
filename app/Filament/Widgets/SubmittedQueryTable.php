@@ -86,6 +86,11 @@ class SubmittedQueryTable extends BaseWidget
                                 'rejected' => 'danger',
                                 default => 'gray',
                             }),
+                        \Filament\Infolists\Components\TextEntry::make('rejection_reason')
+                            ->label('Rejection Reason')
+                            ->visible(fn($record) => $record->status === 'rejected' && !empty($record->rejection_reason))
+                            ->color('danger')
+                            ->icon('heroicon-o-x-circle'),
                         \Filament\Infolists\Components\TextEntry::make('created_at')
                             ->dateTime(),
                     ])

@@ -13,6 +13,7 @@ class Question extends Model
         'body',
         'status',
         'ticket_id',
+        'rejection_reason',
     ];
 
     protected static function boot()
@@ -41,13 +42,17 @@ class Question extends Model
             );
     }
 
-    public function markAsRejected()
+    public function markAsRejected($rejectionReason = null)
     {
-        $this->update(['status' => 'rejected']);
+        $this->update([
+            'status' => 'rejected',
+            'rejection_reason' => $rejectionReason
+        ]);
 
         Notification::make()
-            ->title('Ticket'. $this->ticket_id.' marked as rejected.')
-            ->success()
+            ->title('Ticket '. $this->ticket_id.' has been rejected')
+            ->body($rejectionReason ? 'Reason: ' . $rejectionReason : 'No reason provided')
+            ->danger()
             ->sendToDatabase(
                 $this->user,
             );
@@ -55,7 +60,10 @@ class Question extends Model
 
     public function markAsPending()
     {
-        $this->update(['status' => 'pending']);
+        $this->update([
+            'status' => 'pending',
+            'rejection_reason' => null
+        ]);
     }
 
     public function isResolved()

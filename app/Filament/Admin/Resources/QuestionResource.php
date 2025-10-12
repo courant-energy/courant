@@ -19,6 +19,7 @@ use Filament\Infolists\Components\Actions\Action;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Contracts\View\View;
+use Filament\Forms\Components\Textarea;
 
 class QuestionResource extends Resource
 {
@@ -123,6 +124,12 @@ class QuestionResource extends Resource
                             ))
                             // ->html()
                             ->icon('heroicon-o-document-text'),
+
+                        Infolists\Components\TextEntry::make('rejection_reason')
+                            ->label('Rejection Reason')
+                            ->visible(fn($record) => $record->status === 'rejected' && !empty($record->rejection_reason))
+                            ->color('danger')
+                            ->icon('heroicon-o-x-circle'),
                     ]),
 
 
@@ -192,6 +199,13 @@ class QuestionResource extends Resource
                             'rejected' => 'heroicon-o-x-circle',
                         };
                     }),
+                TextColumn::make('rejection_reason')
+                    ->label('Rejection Reason')
+                    ->limit(50)
+                    ->toggleable()
+                    ->color('danger')
+                    ->icon('heroicon-o-x-circle')
+                    ->placeholder('—'),
                 TextColumn::make('created_at')
                     ->label('Submitted At')
                     ->dateTime('F j, Y, g:i a')
@@ -206,6 +220,47 @@ class QuestionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                
+                Tables\Actions\Action::make('resolve')
+                    ->label('Resolve')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Resolve Question')
+                    ->modalDescription('Are you sure you want to mark this question as resolved?')
+                    ->action(fn($record) => $record->markAsResolved())
+                    ->visible(fn($record) => $record->status === 'pending')
+                    ->successNotificationTitle('Question marked as resolved'),
+
+                Tables\Actions\Action::make('reject')
+                    ->label('Reject')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->form([
+                        Textarea::make('rejection_reason')
+                            ->label('Rejection Reason')
+                            ->required()
+                            ->placeholder('Please provide a reason for rejecting this question...')
+                            ->rows(4)
+                    ])
+                    ->modalHeading('Reject Question')
+                    ->modalDescription('Please provide a reason for rejecting this question.')
+                    ->action(function ($record, array $data) {
+                        $record->markAsRejected($data['rejection_reason']);
+                    })
+                    ->visible(fn($record) => $record->status === 'pending')
+                    ->successNotificationTitle('Question marked as rejected'),
+
+                Tables\Actions\Action::make('reopen')
+                    ->label('Reopen')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Reopen Question')
+                    ->modalDescription('Are you sure you want to reopen this question?')
+                    ->action(fn($record) => $record->markAsPending())
+                    ->visible(fn($record) => in_array($record->status, ['resolved', 'rejected']))
+                    ->successNotificationTitle('Question reopened'),
 
             ])
             ->bulkActions([]);
