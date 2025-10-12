@@ -14,6 +14,11 @@
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
+    <!-- Calendly link widget begin -->
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+
+
     @include('components.site-settings')
 
     <!-- Styles -->
@@ -200,7 +205,7 @@
                             <div class="text-center">
                                 <div
                                     class="flex items-center justify-center w-12 h-12 mx-auto mb-3 bg-black rounded-full">
-                                
+
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="text-white size-6">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -269,9 +274,13 @@
                 <a href="{{ route('filament.app.auth.register') }}"
                     class="px-8 py-4 font-semibold text-black transition bg-white rounded-sm hover:bg-gray-100">Start
                     Your Free Trial</a>
-                <a href="#"
+                <a href=""
+                    onclick="Calendly.initPopupWidget({url: 'https://calendly.com/edmer-is-dev/15min'});return false;"
                     class="px-8 py-4 font-semibold text-white transition border border-white rounded-sm hover:bg-white hover:text-black">Schedule
                     a Demo</a>
+
+
+
             </div>
 
             <div class="grid grid-cols-2 gap-8 mt-16 md:grid-cols-4">
@@ -323,7 +332,7 @@
                     <img src="/logo.svg" alt="Courant Logo" class="w-auto h-8">
                     <p class="mt-2 text-sm text-gray-600">© 2025 Courant Energy Solutions. All rights reserved.</p>
                 </div>
-                
+
                 <div class="flex flex-col gap-4 md:flex-row">
 
                     <!-- Navigation Links -->
@@ -334,23 +343,21 @@
                     </div>
 
                     <!-- Social Media Links -->
-                    @if(setting('site_social'))
+                    @if (setting('site_social'))
                         <div class="flex flex-col space-y-4">
-                            @foreach(setting('site_social') as $social)
-                                <a href="{{ $social['link'] }}" 
-                                   target="_blank" 
-                                   rel="noopener noreferrer"
-                                   class="text-gray-600 hover:text-gray-900 transition-colors"
-                                   title="{{ ucfirst($social['vendor']) }}">
+                            @foreach (setting('site_social') as $social)
+                                <a href="{{ $social['link'] }}" target="_blank" rel="noopener noreferrer"
+                                    class="text-gray-600 hover:text-gray-900 transition-colors"
+                                    title="{{ ucfirst($social['vendor']) }}">
                                     <span class="sr-only">{{ ucfirst($social['vendor']) }}</span>
                                     <!-- You can add specific icons based on vendor here -->
-                                    {{ $social['vendor']  }}
+                                    {{ $social['vendor'] }}
                                 </a>
                             @endforeach
                         </div>
                     @endif
-                    
-                    
+
+
                 </div>
             </div>
         </div>

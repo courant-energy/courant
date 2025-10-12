@@ -137,10 +137,7 @@
                                     class="px-6 py-2 text-center text-white transition bg-black rounded-md hover:bg-gray-800">
                                     Start Free Trial
                                 </a>
-                                <a href="#"
-                                    class="px-6 py-2 text-center text-black transition border border-gray-300 rounded-md hover:bg-gray-100">
-                                    Schedule Demo
-                                </a>
+                               
                             </div>
                         </div>
                     </div>
@@ -148,25 +145,52 @@
                     <!-- Contact Form -->
                     <div class="p-8 bg-white border border-gray-200 rounded-lg">
                         <h3 class="mb-6 text-2xl font-bold">Send us a Message</h3>
-                        <form class="space-y-6" action="https://formspree.io/f/meorrbpa" method="POST">
+                        
+                        <!-- Success Message -->
+                        <div id="success-message" class="hidden p-4 mb-6 text-green-800 bg-green-100 border border-green-300 rounded-md">
+                            <div class="flex flex-col items-start">
+                                <div class="flex items-center mb-2">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <strong>Thank you!</strong>
+                                </div>
+                                 Your message has been sent successfully. We'll get back to you soon.
+                            </div>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="error-message" class="hidden p-4 mb-6 text-red-800 bg-red-100 border border-red-300 rounded-md">
+                            <div class="flex flex-col items-start">
+                                <div class="flex items-center mb-2">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <strong>Error!</strong>
+                                </div>
+                                <span id="error-text">There was an error sending your message. Please try again.</span>
+                            </div>
+                        </div>
+
+                        <form id="contact-form" class="space-y-6" action="https://formspree.io/f/meorrbpa" method="POST">
                             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                 <div>
                                     <label for="first_name" class="block text-sm font-medium text-gray-700">First
                                         Name</label>
-                                    <input type="text" name="first_name" id="first_name"
+                                    <input type="text" name="first_name" id="first_name" required
                                         class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black">
                                 </div>
                                 <div>
                                     <label for="last_name" class="block text-sm font-medium text-gray-700">Last
                                         Name</label>
-                                    <input type="text" name="last_name" id="last_name"
+                                    <input type="text" name="last_name" id="last_name" required
                                         class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black">
                                 </div>
                             </div>
 
                             <div>
                                 <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                                <input type="email" name="email" id="email"
+                                <input type="email" name="email" id="email" required
                                     class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black">
                             </div>
 
@@ -186,7 +210,7 @@
 
                             <div>
                                 <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
-                                <select name="subject" id="subject"
+                                <select name="subject" id="subject" required
                                     class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black">
                                     <option value="">Select a subject</option>
                                     <option value="general">General Inquiry</option>
@@ -200,15 +224,22 @@
 
                             <div>
                                 <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
-                                <textarea name="message" id="message" rows="4"
+                                <textarea name="message" id="message" rows="4" required
                                     class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                                     placeholder="Tell us about your energy management needs..."></textarea>
                             </div>
 
                             <div>
-                                <button type="submit"
-                                    class="w-full px-6 py-3 font-medium text-white transition duration-200 bg-black rounded-md hover:bg-gray-800">
-                                    Send Message
+                                <button type="submit" id="submit-button"
+                                    class="w-full px-6 py-3 font-medium text-white transition duration-200 bg-black rounded-md hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <span id="submit-text">Send Message</span>
+                                    <span id="submit-loading" class="hidden">
+                                        <svg class="inline w-4 h-4 mr-2 animate-spin" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Sending...
+                                    </span>
                                 </button>
                             </div>
                         </form>
@@ -256,6 +287,87 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const submitButton = document.getElementById('submit-button');
+            const submitText = document.getElementById('submit-text');
+            const submitLoading = document.getElementById('submit-loading');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            
+            // Hide any previous messages
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+            
+            // Show loading state
+            submitButton.disabled = true;
+            submitText.classList.add('hidden');
+            submitLoading.classList.remove('hidden');
+            
+            try {
+                const formData = new FormData(form);
+                
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    // Success - show success message and reset form
+                    successMessage.classList.remove('hidden');
+                    form.reset();
+                    
+                    // Scroll to success message
+                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    
+                    // Auto-hide success message after 10 seconds
+                    setTimeout(() => {
+                        successMessage.classList.add('hidden');
+                    }, 10000);
+                } else {
+                    // Handle Formspree errors
+                    const data = await response.json();
+                    if (data.errors) {
+                        // Show specific validation errors
+                        const errorMessages = Object.values(data.errors).flat();
+                        errorText.textContent = errorMessages.join(', ');
+                    } else {
+                        errorText.textContent = 'There was an error sending your message. Please try again.';
+                    }
+                    errorMessage.classList.remove('hidden');
+                    errorMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            } catch (error) {
+                // Network or other errors
+                errorText.textContent = 'There was a problem connecting to the server. Please check your internet connection and try again.';
+                errorMessage.classList.remove('hidden');
+                errorMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } finally {
+                // Reset button state
+                submitButton.disabled = false;
+                submitText.classList.remove('hidden');
+                submitLoading.classList.add('hidden');
+            }
+        });
+
+        // Auto-hide error messages after 10 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorMessage = document.getElementById('error-message');
+            if (!errorMessage.classList.contains('hidden')) {
+                setTimeout(() => {
+                    errorMessage.classList.add('hidden');
+                }, 10000);
+            }
+        });
+    </script>
 </body>
 
 </html>
