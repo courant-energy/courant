@@ -16,6 +16,8 @@ class SubmittedQueryTable extends BaseWidget
 
     protected static ?string $heading = 'Submitted Questions';
 
+    protected $listeners = ['refresh-submitted-queries' => '$refresh'];
+
 
     public function table(Table $table): Table
     {

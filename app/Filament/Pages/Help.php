@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Question;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -40,10 +41,39 @@ class Help extends Page implements HasForms
                     ->aside()
                     ->description('Need help? Submit your question here and our support team will get back to you as soon as possible. Please provide specific details about your issue to help us assist you more effectively.')
                     ->schema([
+                        Select::make('subject_category')
+                            ->label('Subject Category')
+                            ->options([
+                                // 'Billing Inquiry' => 'Billing Inquiry',
+                                'Technical Support' => 'Technical Support', 
+                                'Account Issue' => 'Account Issue',
+                                'Device Configuration' => 'Device Configuration',
+                                'Energy Monitoring' => 'Energy Monitoring',
+                                'App Navigation' => 'App Navigation',
+                                'Data Export' => 'Data Export',
+                                'Notifications' => 'Notifications',
+                                'Security & Privacy' => 'Security & Privacy',
+                                'Other' => 'Other (Custom Subject)',
+                            ])
+                            ->placeholder('Select a category or choose "Other" for custom subject')
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state === 'Other') {
+                                    $set('subject', '');
+                                } else {
+                                    $set('subject', $state ?? '');
+                                }
+                            }),
                         TextInput::make('subject')
                             ->minLength(5)
                             ->maxLength(255)
-                            ->required(),
+                            ->required()
+                            ->reactive()
+                            ->disabled(fn (callable $get) => !$get('subject_category') || ($get('subject_category') && $get('subject_category') !== 'Other'))
+                            ->helperText(fn (callable $get) => $get('subject_category') === 'Other' 
+                                ? 'Please enter your custom subject' 
+                                : ($get('subject_category') ? 'Subject auto-filled from category selection' : 'Please select a category above first')
+                            ),
                         RichEditor::make('body')
                             ->minLength(10)
                             ->maxLength(5000)
@@ -59,6 +89,7 @@ class Help extends Page implements HasForms
     public function mount(): void
     {
         $this->form->fill([
+            'subject_category' => '',
             'subject' => '',
             'body' => '',
         ]);
@@ -79,8 +110,12 @@ class Help extends Page implements HasForms
             ->send();
 
         $this->form->fill([
+            'subject_category' => '',
             'subject' => '',
             'body' => '',
         ]);
+
+        // Refresh the table widget
+        $this->dispatch('refresh-submitted-queries');
     }
 }
