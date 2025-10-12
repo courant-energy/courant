@@ -3,23 +3,20 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\QuestionResource\Pages;
-use App\Filament\Admin\Resources\QuestionResource\RelationManagers;
 use App\Models\Question;
 use Filament\Forms;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
 use Filament\Infolists;
+use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Contracts\View\View;
-use Filament\Forms\Components\Textarea;
 
 class QuestionResource extends Resource
 {
@@ -45,7 +42,7 @@ class QuestionResource extends Resource
                             ->minLength(10)
                             ->maxLength(5000)
                             ->required(),
-                    ])
+                    ]),
             ]);
     }
 
@@ -69,7 +66,7 @@ class QuestionResource extends Resource
                             ->suffixAction(
                                 Action::make('send-email')
                                     ->label('Send Email')
-                                    ->url(fn($record) => 'mailto:' . $record->user->email)
+                                    ->url(fn ($record) => 'mailto:'.$record->user->email)
                                     ->icon('heroicon-o-envelope')
                             )
                             ->icon('heroicon-o-at-symbol'),
@@ -112,13 +109,13 @@ class QuestionResource extends Resource
                         Infolists\Components\TextEntry::make('subject')
                             ->label('Subject')
                             // ->limit(50)
-                            ->tooltip(fn($state) => $state)
+                            ->tooltip(fn ($state) => $state)
                             ->weight(FontWeight::Bold)
                             ->icon('heroicon-o-chat-bubble-left-ellipsis'),
 
                         Infolists\Components\TextEntry::make('body')
                             ->label('Body')
-                            ->formatStateUsing(fn(string $state): View => view(
+                            ->formatStateUsing(fn (string $state): View => view(
                                 'filament.infolists.components.question-detail',
                                 ['state' => $state]
                             ))
@@ -127,14 +124,12 @@ class QuestionResource extends Resource
 
                         Infolists\Components\TextEntry::make('rejection_reason')
                             ->label('Rejection Reason')
-                            ->visible(fn($record) => $record->status === 'rejected' && !empty($record->rejection_reason))
+                            ->visible(fn ($record) => $record->status === 'rejected' && ! empty($record->rejection_reason))
                             ->color('danger')
                             ->icon('heroicon-o-x-circle'),
                     ]),
 
-
-
-                Infolists\Components\Section::make("Timestamps")
+                Infolists\Components\Section::make('Timestamps')
                     ->description('information about when the question was created and last updated.')
                     ->aside()
                     ->columnSpanFull()
@@ -149,7 +144,6 @@ class QuestionResource extends Resource
                             ->icon('heroicon-o-clock'),
                     ]),
 
-
             ])
             ->columns(2);
     }
@@ -161,7 +155,7 @@ class QuestionResource extends Resource
                 ImageColumn::make('user.profile')
                     ->getStateUsing(function ($record) {
                         // Use the profile if it exists, otherwise fallback to a default avatar
-                        return $record->user->profile ?? "https://ui-avatars.com/api/?name=" . urlencode($record->user->name) . "&color=7F9CF5&background=EBF4FF";
+                        return $record->user->profile ?? 'https://ui-avatars.com/api/?name='.urlencode($record->user->name).'&color=7F9CF5&background=EBF4FF';
                     })
                     ->label('')
                     ->grow(false)
@@ -210,8 +204,7 @@ class QuestionResource extends Resource
                     ->label('Submitted At')
                     ->dateTime('F j, Y, g:i a')
                     ->sortable()
-                    ->toggleable()
-
+                    ->toggleable(),
 
             ])
             ->defaultSort('created_at', 'desc')
@@ -219,48 +212,50 @@ class QuestionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                
-                Tables\Actions\Action::make('resolve')
-                    ->label('Resolve')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalHeading('Resolve Question')
-                    ->modalDescription('Are you sure you want to mark this question as resolved?')
-                    ->action(fn($record) => $record->markAsResolved())
-                    ->visible(fn($record) => $record->status === 'pending')
-                    ->successNotificationTitle('Question marked as resolved'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
 
-                Tables\Actions\Action::make('reject')
-                    ->label('Reject')
-                    ->icon('heroicon-o-x-circle')
-                    ->color('danger')
-                    ->form([
-                        Textarea::make('rejection_reason')
-                            ->label('Rejection Reason')
-                            ->required()
-                            ->placeholder('Please provide a reason for rejecting this question...')
-                            ->rows(4)
-                    ])
-                    ->modalHeading('Reject Question')
-                    ->modalDescription('Please provide a reason for rejecting this question.')
-                    ->action(function ($record, array $data) {
-                        $record->markAsRejected($data['rejection_reason']);
-                    })
-                    ->visible(fn($record) => $record->status === 'pending')
-                    ->successNotificationTitle('Question marked as rejected'),
+                    Tables\Actions\Action::make('resolve')
+                        ->label('Resolve')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Resolve Question')
+                        ->modalDescription('Are you sure you want to mark this question as resolved?')
+                        ->action(fn ($record) => $record->markAsResolved())
+                        ->visible(fn ($record) => $record->status === 'pending')
+                        ->successNotificationTitle('Question marked as resolved'),
 
-                Tables\Actions\Action::make('reopen')
-                    ->label('Reopen')
-                    ->icon('heroicon-o-arrow-path')
-                    ->color('warning')
-                    ->requiresConfirmation()
-                    ->modalHeading('Reopen Question')
-                    ->modalDescription('Are you sure you want to reopen this question?')
-                    ->action(fn($record) => $record->markAsPending())
-                    ->visible(fn($record) => in_array($record->status, ['resolved', 'rejected']))
-                    ->successNotificationTitle('Question reopened'),
+                    Tables\Actions\Action::make('reject')
+                        ->label('Reject')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->form([
+                            Textarea::make('rejection_reason')
+                                ->label('Rejection Reason')
+                                ->required()
+                                ->placeholder('Please provide a reason for rejecting this question...')
+                                ->rows(4),
+                        ])
+                        ->modalHeading('Reject Question')
+                        ->modalDescription('Please provide a reason for rejecting this question.')
+                        ->action(function ($record, array $data) {
+                            $record->markAsRejected($data['rejection_reason']);
+                        })
+                        ->visible(fn ($record) => $record->status === 'pending')
+                        ->successNotificationTitle('Question marked as rejected'),
+
+                    Tables\Actions\Action::make('reopen')
+                        ->label('Reopen')
+                        ->icon('heroicon-o-arrow-path')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Reopen Question')
+                        ->modalDescription('Are you sure you want to reopen this question?')
+                        ->action(fn ($record) => $record->markAsPending())
+                        ->visible(fn ($record) => in_array($record->status, ['resolved', 'rejected']))
+                        ->successNotificationTitle('Question reopened'),
+                ]),
 
             ])
             ->bulkActions([]);
