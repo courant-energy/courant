@@ -54,6 +54,7 @@ class LearningResource extends Resource
                                 'tip' => 'Quick Tip',
                                 'infographic' => 'Infographic',
                                 'video' => 'Video',
+                                'best-practice' => 'Best Practice',
                             ])
                             ->required()
                             ->label('Resource Type')
