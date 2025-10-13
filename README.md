@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Courant Logo](public/images/logo.png)
+![Courant Logo](public/logo.svg)
 
 **Smart IoT Power Management & Predictive Maintenance System**
 
