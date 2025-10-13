@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use App\Notifications\AnomalyAlert;
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 class Alert extends Model
@@ -28,7 +27,7 @@ class Alert extends Model
     protected $casts = [
         'data' => 'array',
         'resolved' => 'boolean',
-        'resolved_at' => 'datetime'
+        'resolved_at' => 'datetime',
     ];
 
     public function iotDevice()
@@ -50,7 +49,6 @@ class Alert extends Model
     {
         return $this->belongsTo(Reading::class);
     }
-
 
     /**
      * Scope for unresolved alerts
@@ -100,7 +98,7 @@ class Alert extends Model
         $this->update([
             'resolved' => true,
             'resolved_at' => Carbon::now(),
-            'resolution_notes' => $notes
+            'resolution_notes' => $notes,
         ]);
 
         return $this;
@@ -169,12 +167,12 @@ class Alert extends Model
             if ($existingAlert) {
                 Log::info('Similar alert already exists, not creating a new one', [
                     'existing_alert' => $existingAlert->toArray(),
-                    'new_alert' => $alert->toArray()
+                    'new_alert' => $alert->toArray(),
                 ]);
+
                 return false; // Prevent the new alert from being created
             }
         });
-
 
         static::created(function ($alert) {
             // find the device and socket then turn off the socket
@@ -196,15 +194,16 @@ class Alert extends Model
             $deviceName = $device->name ?? $device->device_uuid;
             $socketName = $socket ? "Socket #{$socket->assigned_id}" : 'Unknown Socket';
 
-            if (!$socket->profile->notify_on_anomaly) {
+            if (! $socket->profile->notify_on_anomaly) {
                 Log::info('Notifications are disabled for this profile');
+
                 return;
             }
 
             if (in_array('app', $socket->profile->notification_channels)) {
                 $notification = Notification::make()
                     ->title("{$severity} Alert: {$type}")
-                    ->body($alert->severity === 'critical' 
+                    ->body($alert->severity === 'critical'
                         ? "A critical alert has been detected for device '{$deviceName}' on {$socketName}. The socket has been automatically turned off for safety. Please check the device status."
                         : "A {$alert->severity} level alert has been detected for device '{$deviceName}' on {$socketName}. Please monitor the device's performance.")
                     ->icon('heroicon-o-exclamation-triangle')
@@ -224,7 +223,6 @@ class Alert extends Model
                         $notification->info();
                         break;
                 }
-
 
                 $notification
                     ->sendToDatabase(User::find($device->user_id));

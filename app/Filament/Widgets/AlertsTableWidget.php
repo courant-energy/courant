@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\Alert;
 use Filament\Infolists;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
@@ -17,7 +18,6 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Support\Enums\ActionSize;
 
 class AlertsTableWidget extends BaseWidget implements HasTable
 {
@@ -63,7 +63,6 @@ class AlertsTableWidget extends BaseWidget implements HasTable
 
                     \Filament\Tables\Columns\Layout\Stack::make([
 
-                       
                         TextColumn::make('message')
                             ->label('Message')
                             ->weight(FontWeight::Light)
@@ -158,9 +157,9 @@ class AlertsTableWidget extends BaseWidget implements HasTable
                         ]),
 
                 ])
-                ->label('Actions')
-                ->size(ActionSize::Small)
-                ->button(),
+                    ->label('Actions')
+                    ->size(ActionSize::Small)
+                    ->button(),
             ]);
     }
 

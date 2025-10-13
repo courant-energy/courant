@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SocketResource\Pages;
-use App\Filament\Resources\SocketResource\RelationManagers;
 use App\Models\Socket;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
@@ -14,7 +13,6 @@ use Filament\Tables;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SocketResource extends Resource
 {
@@ -75,7 +73,7 @@ class SocketResource extends Resource
                         Forms\Components\Toggle::make('state')
                             ->label('Power State')
                             ->helperText('Remotely control the power state of the socket')
-                            ->required()
+                            ->required(),
                     ]),
             ]);
     }
@@ -99,7 +97,7 @@ class SocketResource extends Resource
             ->emptyStateActions([
                 Tables\Actions\Action::make('register')
                     ->label('Link your IoT Device')
-                    ->url(fn() => route('filament.app.resources.iot-devices.create'))
+                    ->url(fn () => route('filament.app.resources.iot-devices.create')),
 
             ])
             ->recordUrl(null)
@@ -124,25 +122,25 @@ class SocketResource extends Resource
                         ->prefix('Socket ID: '),
                     Tables\Columns\TextColumn::make('profile.name')
                         ->badge()
-                        ->icon(fn($state) => $state === 'No Profile Selected' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
+                        ->icon(fn ($state) => $state === 'No Profile Selected' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
                         ->label('Profile Name')
                         ->default('No Profile Selected')
                         ->searchable()
                         ->sortable()
-                        ->color(fn($state) => $state === 'No Profile Selected' ? 'danger' : null),
+                        ->color(fn ($state) => $state === 'No Profile Selected' ? 'danger' : null),
                     Tables\Columns\TextColumn::make('profile.location')
                         ->label('Location')
                         ->default('No Location Set')
                         ->badge()
                         ->searchable()
                         ->sortable()
-                        ->icon(fn($state) => $state === 'No Location Set' ? 'heroicon-o-x-circle' : 'heroicon-o-map-pin')
-                        ->color(fn($state) => $state === '' ? 'danger' : null),
+                        ->icon(fn ($state) => $state === 'No Location Set' ? 'heroicon-o-x-circle' : 'heroicon-o-map-pin')
+                        ->color(fn ($state) => $state === '' ? 'danger' : null),
                     Tables\Columns\ToggleColumn::make('state')
                         ->label('Power State')
                         ->tooltip('Toggle the power state of the socket')
                         ->onIcon('heroicon-o-bolt')
-                        ->offIcon('heroicon-o-bolt-slash')
+                        ->offIcon('heroicon-o-bolt-slash'),
                 ]),
             ])
             ->filters([
@@ -150,8 +148,7 @@ class SocketResource extends Resource
                     ->relationship(
                         'iotDevice',
                         'name',
-                        fn(Builder $query) =>
-                        $query->where('user_id', auth()->id())
+                        fn (Builder $query) => $query->where('user_id', auth()->id())
 
                     )
                     ->label('IoT Device')

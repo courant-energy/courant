@@ -1,8 +1,6 @@
 <?php
 
 use App\Http\Controllers\ConfigController;
-use App\Models\User;
-use App\Services\GeminiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -11,4 +9,3 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/config', [ConfigController::class, 'getConfig']);
-

@@ -7,7 +7,9 @@ use Livewire\Component;
 class EnergyUsageGraph extends Component
 {
     public $socket;
+
     public $data;
+
     public $labels;
 
     public function mount($socket)

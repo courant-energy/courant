@@ -4,16 +4,14 @@ namespace App\Filament\Widgets;
 
 use App\Models\IotDevice;
 use App\Models\Profile;
-use App\Models\Reading;
 use App\Services\EnergyCalculationService;
 use Carbon\Carbon;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Illuminate\Support\Facades\DB;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Auth;
 
 class DeviceStatsWidget extends BaseWidget implements HasForms
@@ -49,14 +47,14 @@ class DeviceStatsWidget extends BaseWidget implements HasForms
                     ->options(Profile::where('user_id', Auth::id())->pluck('name', 'id'))
                     ->placeholder('All Profiles')
                     ->live()
-                    ->afterStateUpdated(fn() => $this->refreshStats()),
+                    ->afterStateUpdated(fn () => $this->refreshStats()),
             ]);
     }
 
     protected function getStats(): array
     {
         $userId = Auth::id();
-        
+
         // Total connected devices - filter by authenticated user
         $totalDevices = IotDevice::where('user_id', $userId)
             ->count();
@@ -76,7 +74,7 @@ class DeviceStatsWidget extends BaseWidget implements HasForms
         if ($this->selectedProfile) {
             $profile = Profile::where('user_id', $userId)
                 ->find($this->selectedProfile);
-            
+
             if ($profile) {
                 // Use the same calculation method as the service
                 $todayEnergy = $this->energyCalculationService->calculateEnergyConsumption(
@@ -91,7 +89,7 @@ class DeviceStatsWidget extends BaseWidget implements HasForms
             $profiles = Profile::where('user_id', $userId)
                 ->whereHas('sockets')
                 ->get();
-                
+
             foreach ($profiles as $profile) {
                 $todayEnergy += $this->energyCalculationService->calculateEnergyConsumption(
                     $profile,
@@ -115,7 +113,7 @@ class DeviceStatsWidget extends BaseWidget implements HasForms
                 ->descriptionIcon('heroicon-o-signal')
                 ->color('success'),
 
-            Stat::make('Energy Consumption', number_format($todayEnergy, 2) . ' kWh')
+            Stat::make('Energy Consumption', number_format($todayEnergy, 2).' kWh')
                 ->description($this->selectedProfile
                     ? 'Today for selected profile'
                     : 'Today across all profiles')

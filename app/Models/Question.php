@@ -21,7 +21,7 @@ class Question extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->ticket_id = 'TICKET-' . strtoupper(uniqid());
+            $model->ticket_id = 'TICKET-'.strtoupper(uniqid());
         });
     }
 
@@ -35,7 +35,7 @@ class Question extends Model
         $this->update(['status' => 'resolved']);
 
         Notification::make()
-            ->title('Ticket ['. $this->ticket_id.'] marked as resolved.')
+            ->title('Ticket ['.$this->ticket_id.'] marked as resolved.')
             ->success()
             ->sendToDatabase(
                 $this->user,
@@ -46,12 +46,12 @@ class Question extends Model
     {
         $this->update([
             'status' => 'rejected',
-            'rejection_reason' => $rejectionReason
+            'rejection_reason' => $rejectionReason,
         ]);
 
         Notification::make()
-            ->title('Ticket '. $this->ticket_id.' has been rejected')
-            ->body($rejectionReason ? 'Reason: ' . $rejectionReason : 'No reason provided')
+            ->title('Ticket '.$this->ticket_id.' has been rejected')
+            ->body($rejectionReason ? 'Reason: '.$rejectionReason : 'No reason provided')
             ->danger()
             ->sendToDatabase(
                 $this->user,
@@ -62,7 +62,7 @@ class Question extends Model
     {
         $this->update([
             'status' => 'pending',
-            'rejection_reason' => null
+            'rejection_reason' => null,
         ]);
     }
 

@@ -30,7 +30,7 @@ return new class extends Migration
                 'data',
                 'severity',
                 'resolved_at',
-                'resolution_notes'
+                'resolution_notes',
             ]);
         });
     }

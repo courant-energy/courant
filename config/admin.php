@@ -13,6 +13,6 @@ return [
     'email_whitelist' => [
         'test@example.com',
         'edmerpizarra@gmail.com',
-        'support@courant.energy'
+        'support@courant.energy',
     ],
 ];

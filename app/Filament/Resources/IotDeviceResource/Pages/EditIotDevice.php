@@ -26,7 +26,7 @@ class EditIotDevice extends EditRecord
                         ->title('IoT Device Unlinked')
                         ->body('The IoT device has been unlinked from your account.')
                         ->send();
-                    
+
                     return redirect()->route('filament.app.resources.iot-devices.index');
                 })
                 ->label('Remove device')
@@ -34,5 +34,4 @@ class EditIotDevice extends EditRecord
                 ->modalDescription('Are you sure you want to unlink this IoT device? This will remove the device from your account and reset its password to factory default. This action cannot be undone.'),
         ];
     }
-
 }

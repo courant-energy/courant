@@ -5,16 +5,15 @@ namespace App\Filament\Resources\IotDeviceResource\Pages;
 use App\Filament\Resources\IotDeviceResource;
 use App\Models\IotDevice;
 use App\Services\IotDeviceService;
+use Filament\Forms\Components;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Forms\Components;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 
 class RegisterIotDevice extends Page implements HasForms
 {
-
     use InteractsWithForms;
 
     public ?array $data = [];
@@ -44,10 +43,10 @@ class RegisterIotDevice extends Page implements HasForms
                 Components\Section::make('IoT Device Information')
                     ->schema([
                         Components\TextInput::make('name')
-                            ->placeholder("e.g., Living Room Sensor")
+                            ->placeholder('e.g., Living Room Sensor')
                             ->helperText('An alias for the IoT device. This name will be displayed in the dashboard.'),
                         Components\TextInput::make('device_uuid')
-                            ->placeholder("e.g., ESP-XXXXXX")
+                            ->placeholder('e.g., ESP-XXXXXX')
                             ->helperText('The UUID is a unique identifier for the IoT device. It can be found on the device itself.')
                             ->label('UUID'),
                         Components\TextInput::make('password')
@@ -79,13 +78,14 @@ class RegisterIotDevice extends Page implements HasForms
             ->first();
 
         // Check if the device exists
-        if (!$device) {
+        if (! $device) {
             \Log::error('Device not found', ['device_uuid' => $this->data['device_uuid'], 'user_id' => auth()->id()]);
             Notification::make()
                 ->danger()
                 ->title('Registration Failed')
                 ->body('Device not found. The device with the UUID provided was not found. Please check the UUID and try again.')
                 ->send();
+
             return;
         }
 
@@ -97,9 +97,9 @@ class RegisterIotDevice extends Page implements HasForms
                 ->title('Registration Failed')
                 ->body('Incorrect password. The password provided does not match the password for the device. Please check the password and try again.')
                 ->send();
+
             return;
         }
-
 
         try {
             // Update the device
@@ -112,7 +112,7 @@ class RegisterIotDevice extends Page implements HasForms
             \Log::error('Failed to register device', [
                 'device_uuid' => $this->data['device_uuid'],
                 'user_id' => auth()->id(),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             Notification::make()
@@ -123,7 +123,7 @@ class RegisterIotDevice extends Page implements HasForms
 
             return;
         }
-        
+
         // Notify the user
         \Log::info('Device registered', ['device_uuid' => $this->data['device_uuid'], 'user_id' => auth()->id()]);
         Notification::make()
@@ -131,7 +131,7 @@ class RegisterIotDevice extends Page implements HasForms
             ->title('Registration Successful')
             ->body('The device has been successfully registered.')
             ->send();
-    
+
         // TODO: Add an email notification to the user
 
         $this->redirect(route('filament.app.resources.iot-devices.index'));

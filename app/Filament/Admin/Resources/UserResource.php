@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\UserResource\Pages;
-use App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,15 +10,13 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Carbon;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
-    
+
     protected static ?string $navigationLabel = 'Users';
 
     protected static ?string $navigationGroup = 'User Management';
@@ -147,7 +144,7 @@ class UserResource extends Resource
                         ->color('warning')
                         ->action(function ($records) {
                             $records->each(function (User $record) {
-                                if (!$record->isArchived()) {
+                                if (! $record->isArchived()) {
                                     $record->archive();
                                 }
                             });

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\IotDevice;
-use App\Models\Socket;
 use App\Models\Profile;
+use App\Models\Socket;
+use Illuminate\Http\Request;
 
 /**
  * Handles IoT configuration requests.
@@ -15,7 +15,6 @@ class ConfigController extends Controller
     /**
      * Get the configuration for an IoT device.
      *
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function getConfig(Request $request)
@@ -32,7 +31,7 @@ class ConfigController extends Controller
         $device = IotDevice::where('device_uuid', $deviceUuid)->first();
 
         // If device doesn't exist, return 404
-        if (!$device) {
+        if (! $device) {
             return response()->json([
                 'error' => 'Device not found',
                 'device_uuid' => $deviceUuid,
@@ -45,14 +44,14 @@ class ConfigController extends Controller
         // Format the response
         $socketConfigs = $sockets->map(function ($socket) {
             // If socket has no profile, set default values: max_power 3000 and is_on true
-            if (!$socket->profile) {
+            if (! $socket->profile) {
                 return [
                     'assigned_id' => $socket->assigned_id,
                     'maximum_power' => 3000,
                     'is_on' => true,
                 ];
             }
-            
+
             // Get maximum power from the associated profile or default to 0
             $maxPower = $socket->profile->max_power_threshold ?? 0;
 

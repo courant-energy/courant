@@ -23,7 +23,7 @@ class Profile extends Model
         'turn_off_time',
         'schedule_days',
         'last_turn_on_applied',
-        'last_turn_off_applied'
+        'last_turn_off_applied',
     ];
 
     protected $casts = [
@@ -63,11 +63,12 @@ class Profile extends Model
     public static function getAppliancePresets()
     {
         $jsonPath = resource_path('json/appliances.json');
-        if (!file_exists($jsonPath)) {
+        if (! file_exists($jsonPath)) {
             return [];
         }
-        
+
         $appliances = json_decode(file_get_contents($jsonPath), true);
+
         return $appliances['appliances'] ?? [];
     }
 
@@ -84,8 +85,8 @@ class Profile extends Model
     /**
      * Check if a reading is outside the configured thresholds for this profile
      *
-     * @param Reading $reading The reading to check
-     * @return boolean|array False if within thresholds, or array of detected anomalies
+     * @param  Reading  $reading  The reading to check
+     * @return bool|array False if within thresholds, or array of detected anomalies
      */
     public function isOutsideThresholds(Reading $reading)
     {
@@ -96,13 +97,13 @@ class Profile extends Model
             $anomalies['power_high'] = [
                 'value' => $reading->power,
                 'threshold' => $this->max_power_threshold,
-                'percentage' => round(($reading->power - $this->max_power_threshold) / $this->max_power_threshold * 100, 1)
+                'percentage' => round(($reading->power - $this->max_power_threshold) / $this->max_power_threshold * 100, 1),
             ];
         } elseif ($reading->power < $this->min_power_threshold && $reading->power > 0) {
             $anomalies['power_low'] = [
                 'value' => $reading->power,
                 'threshold' => $this->min_power_threshold,
-                'percentage' => round(($this->min_power_threshold - $reading->power) / $this->min_power_threshold * 100, 1)
+                'percentage' => round(($this->min_power_threshold - $reading->power) / $this->min_power_threshold * 100, 1),
             ];
         }
 
@@ -111,13 +112,13 @@ class Profile extends Model
             $anomalies['voltage_high'] = [
                 'value' => $reading->voltage,
                 'threshold' => $this->voltage_threshold_high,
-                'percentage' => round(($reading->voltage - $this->voltage_threshold_high) / $this->voltage_threshold_high * 100, 1)
+                'percentage' => round(($reading->voltage - $this->voltage_threshold_high) / $this->voltage_threshold_high * 100, 1),
             ];
         } elseif ($this->voltage_threshold_low && $reading->voltage < $this->voltage_threshold_low) {
             $anomalies['voltage_low'] = [
                 'value' => $reading->voltage,
                 'threshold' => $this->voltage_threshold_low,
-                'percentage' => round(($this->voltage_threshold_low - $reading->voltage) / $this->voltage_threshold_low * 100, 1)
+                'percentage' => round(($this->voltage_threshold_low - $reading->voltage) / $this->voltage_threshold_low * 100, 1),
             ];
         }
 
@@ -130,7 +131,7 @@ class Profile extends Model
             $anomalies['power_factor_low'] = [
                 'value' => $reading->power_factor,
                 'threshold' => $this->power_factor_threshold,
-                'percentage' => round(($this->power_factor_threshold - $reading->power_factor) / $this->power_factor_threshold * 100, 1)
+                'percentage' => round(($this->power_factor_threshold - $reading->power_factor) / $this->power_factor_threshold * 100, 1),
             ];
         }
 
@@ -143,7 +144,7 @@ class Profile extends Model
             $anomalies['current_high'] = [
                 'value' => $reading->current,
                 'threshold' => $this->current_threshold_high,
-                'percentage' => round(($reading->current - $this->current_threshold_high) / $this->current_threshold_high * 100, 1)
+                'percentage' => round(($reading->current - $this->current_threshold_high) / $this->current_threshold_high * 100, 1),
             ];
         }
 
@@ -153,7 +154,7 @@ class Profile extends Model
     /**
      * Get the severity level based on alert sensitivity and deviation percentage
      *
-     * @param float $deviationPercentage The percentage deviation from threshold
+     * @param  float  $deviationPercentage  The percentage deviation from threshold
      * @return string The severity level (info, warning, critical)
      */
     public function getSeverityLevel($deviationPercentage)
@@ -186,12 +187,10 @@ class Profile extends Model
 
     /**
      * Return collection of readings in hourly intervals averaged
-     * 
-     * @param Carbon $start Start date in Y-m-d H:i:s format
-     * @param Carbon $end End date in Y-m-d H:i:s format
-     * 
+     *
+     * @param  Carbon  $start  Start date in Y-m-d H:i:s format
+     * @param  Carbon  $end  End date in Y-m-d H:i:s format
      * @return Collection
-     * 
      */
     public function getReadingAverageInHours($start, $end)
     {
@@ -204,7 +203,7 @@ class Profile extends Model
                 DB::raw('AVG(power_factor) as avg_power_factor'),
                 DB::raw('AVG(frequency) as avg_frequency'),
                 DB::raw('SUM(energy) as total_energy'),
-                DB::raw('COUNT(*) as reading_count')
+                DB::raw('COUNT(*) as reading_count'),
             ])
             ->whereBetween('reading_time', [$start, $end])
             ->groupBy(DB::raw('DATE_FORMAT(reading_time, "%Y-%m-%d %H:00:00")'))
@@ -219,7 +218,7 @@ class Profile extends Model
      */
     public function shouldBeOn()
     {
-        if (!$this->scheduling_enabled || !$this->turn_on_time || !$this->turn_off_time) {
+        if (! $this->scheduling_enabled || ! $this->turn_on_time || ! $this->turn_off_time) {
             return false;
         }
 
@@ -228,7 +227,7 @@ class Profile extends Model
         $currentDay = strtolower($now->format('l'));
 
         // Check if today is in the scheduled days
-        if ($this->schedule_days && !in_array($currentDay, $this->schedule_days)) {
+        if ($this->schedule_days && ! in_array($currentDay, $this->schedule_days)) {
             return false;
         }
 
@@ -247,13 +246,13 @@ class Profile extends Model
 
     /**
      * Check if we need to apply a turn ON schedule now
-     * 
-     * @param int $toleranceMinutes How many minutes after scheduled time to still allow application
+     *
+     * @param  int  $toleranceMinutes  How many minutes after scheduled time to still allow application
      * @return bool
      */
     public function shouldApplyTurnOn($toleranceMinutes = 5)
     {
-        if (!$this->scheduling_enabled || !$this->turn_on_time) {
+        if (! $this->scheduling_enabled || ! $this->turn_on_time) {
             return false;
         }
 
@@ -261,17 +260,17 @@ class Profile extends Model
         $currentDay = strtolower($now->format('l'));
 
         // Check if today is in the scheduled days
-        if ($this->schedule_days && !in_array($currentDay, $this->schedule_days)) {
+        if ($this->schedule_days && ! in_array($currentDay, $this->schedule_days)) {
             return false;
         }
 
         // Calculate today's turn on time
         $todayTurnOn = $now->copy()->setTimeFromTimeString($this->turn_on_time->format('H:i:s'));
-        
+
         // Check if we're within the tolerance window after the scheduled time
         $isWithinWindow = $now >= $todayTurnOn && $now <= $todayTurnOn->copy()->addMinutes($toleranceMinutes);
-        
-        if (!$isWithinWindow) {
+
+        if (! $isWithinWindow) {
             return false;
         }
 
@@ -285,13 +284,13 @@ class Profile extends Model
 
     /**
      * Check if we need to apply a turn OFF schedule now
-     * 
-     * @param int $toleranceMinutes How many minutes after scheduled time to still allow application
+     *
+     * @param  int  $toleranceMinutes  How many minutes after scheduled time to still allow application
      * @return bool
      */
     public function shouldApplyTurnOff($toleranceMinutes = 5)
     {
-        if (!$this->scheduling_enabled || !$this->turn_off_time) {
+        if (! $this->scheduling_enabled || ! $this->turn_off_time) {
             return false;
         }
 
@@ -305,24 +304,24 @@ class Profile extends Model
             // Check if we should turn off on the previous day's schedule
             $yesterday = $now->copy()->subDay();
             $yesterdayDay = strtolower($yesterday->format('l'));
-            
-            if ($this->schedule_days && !in_array($yesterdayDay, $this->schedule_days)) {
+
+            if ($this->schedule_days && ! in_array($yesterdayDay, $this->schedule_days)) {
                 return false;
             }
         } else {
             // Normal schedule - check today
-            if ($this->schedule_days && !in_array($currentDay, $this->schedule_days)) {
+            if ($this->schedule_days && ! in_array($currentDay, $this->schedule_days)) {
                 return false;
             }
         }
 
         // Calculate today's turn off time
         $todayTurnOff = $now->copy()->setTimeFromTimeString($this->turn_off_time->format('H:i:s'));
-        
+
         // Check if we're within the tolerance window after the scheduled time
         $isWithinWindow = $now >= $todayTurnOff && $now <= $todayTurnOff->copy()->addMinutes($toleranceMinutes);
-        
-        if (!$isWithinWindow) {
+
+        if (! $isWithinWindow) {
             return false;
         }
 
@@ -342,7 +341,7 @@ class Profile extends Model
      */
     public function applySchedule()
     {
-        if (!$this->scheduling_enabled) {
+        if (! $this->scheduling_enabled) {
             return ['updated' => 0, 'action' => 'none', 'reason' => 'scheduling_disabled'];
         }
 
@@ -353,21 +352,21 @@ class Profile extends Model
         if ($this->shouldApplyTurnOn()) {
             $updatedCount = 0;
             foreach ($this->sockets as $socket) {
-                if (!$socket->state) { // Only update if currently OFF
+                if (! $socket->state) { // Only update if currently OFF
                     $socket->update(['state' => true]);
                     $updatedCount++;
                 }
             }
-            
+
             // Mark that we applied the turn on schedule
             $this->update(['last_turn_on_applied' => $now]);
-            
+
             $result = [
                 'updated' => $updatedCount,
                 'action' => 'turn_on',
                 'reason' => 'scheduled_turn_on',
                 'scheduled_time' => $this->turn_on_time->format('H:i'),
-                'applied_at' => $now->format('H:i:s')
+                'applied_at' => $now->format('H:i:s'),
             ];
         }
         // Check if we should apply turn OFF
@@ -379,16 +378,16 @@ class Profile extends Model
                     $updatedCount++;
                 }
             }
-            
+
             // Mark that we applied the turn off schedule
             $this->update(['last_turn_off_applied' => $now]);
-            
+
             $result = [
                 'updated' => $updatedCount,
                 'action' => 'turn_off',
                 'reason' => 'scheduled_turn_off',
                 'scheduled_time' => $this->turn_off_time->format('H:i'),
-                'applied_at' => $now->format('H:i:s')
+                'applied_at' => $now->format('H:i:s'),
             ];
         }
 
@@ -402,7 +401,7 @@ class Profile extends Model
      */
     public function getNextScheduleChange()
     {
-        if (!$this->scheduling_enabled || !$this->turn_on_time || !$this->turn_off_time) {
+        if (! $this->scheduling_enabled || ! $this->turn_on_time || ! $this->turn_off_time) {
             return null;
         }
 
@@ -437,7 +436,7 @@ class Profile extends Model
                 // Currently in "on" period, next change is turn off
                 $nextChange = $now->copy()->setTimeFromTimeString($turnOffTime);
                 $nextAction = 'turn_off';
-            } else if ($currentTime < $turnOnTime) {
+            } elseif ($currentTime < $turnOnTime) {
                 // Before turn on time today
                 $nextChange = $now->copy()->setTimeFromTimeString($turnOnTime);
                 $nextAction = 'turn_on';
@@ -451,9 +450,7 @@ class Profile extends Model
         return [
             'time' => $nextChange,
             'action' => $nextAction,
-            'human_readable' => $nextChange->diffForHumans()
+            'human_readable' => $nextChange->diffForHumans(),
         ];
     }
-
-    
 }

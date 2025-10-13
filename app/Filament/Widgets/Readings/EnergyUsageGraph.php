@@ -2,23 +2,30 @@
 
 namespace App\Filament\Widgets\Readings;
 
-use Filament\Widgets\ChartWidget;
+use App\Services\EnergyCalculationService;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Collection;
-use App\Services\EnergyCalculationService;
 use Illuminate\Support\Facades\Log;
 
 class EnergyUsageGraph extends ChartWidget
 {
     protected static ?string $heading = 'Chart';
+
     public $socket;
+
     protected $data;
+
     protected $labels;
+
     public ?string $filter = 'past_hour';
+
     protected static ?string $pollingInterval = '5s';
+
     // colspanfull
     protected int|string|array $columnSpan = 2;
+
     protected EnergyCalculationService $energyCalculationService;
 
     public function __construct()
@@ -40,7 +47,7 @@ class EnergyUsageGraph extends ChartWidget
         // Get the profile from the socket
         $profile = $this->socket->profile;
 
-        if (!$profile) {
+        if (! $profile) {
             // If no profile is associated with the socket, return empty data
             return [
                 'datasets' => [
@@ -249,7 +256,7 @@ class EnergyUsageGraph extends ChartWidget
             }
 
             // If no reading found for this time point, add a zero placeholder
-            if (!$found) {
+            if (! $found) {
                 $carbonTime = Carbon::createFromFormat($format, $timePoint);
 
                 $filledReadings->push([
@@ -272,7 +279,6 @@ class EnergyUsageGraph extends ChartWidget
             'month' => 'Last month',
         ];
     }
-
 
     protected function getType(): string
     {
@@ -302,8 +308,8 @@ class EnergyUsageGraph extends ChartWidget
                     'beginAtZero' => false,
                     'title' => [
                         'display' => true,
-                        'text' => 'Energy (kWh)'
-                    ]
+                        'text' => 'Energy (kWh)',
+                    ],
                 ],
                 'x' => [
                     'ticks' => [
@@ -315,7 +321,7 @@ class EnergyUsageGraph extends ChartWidget
                     'position' => 'right',
                     'title' => [
                         'display' => true,
-                        'text' => 'Power Factor'
+                        'text' => 'Power Factor',
                     ],
                     'grid' => [
                         'drawOnChartArea' => true,

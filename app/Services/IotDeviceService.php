@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\IotDevice;
-use App\Models\User;
 use App\Models\Socket;
+use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class IotDeviceService
@@ -26,10 +26,6 @@ class IotDeviceService
 
     /**
      * IotDeviceService constructor.
-     *
-     * @param IotDevice $iotDevice
-     * @param User $user
-     * @param Socket $socket
      */
     public function __construct(IotDevice $iotDevice, User $user, Socket $socket)
     {
@@ -41,9 +37,10 @@ class IotDeviceService
     /**
      * Link an IoT device to a user
      *
-     * @param int|string $deviceId
-     * @param int|string $userId
+     * @param  int|string  $deviceId
+     * @param  int|string  $userId
      * @return IotDevice
+     *
      * @throws ModelNotFoundException
      */
     public function linkDeviceToUser($deviceId, $userId)
@@ -58,11 +55,11 @@ class IotDeviceService
             $device->is_active = true; // Set the device as active
             $device->save();
 
-            // generate the sockets 
+            // generate the sockets
             $sockets = $device->socket_count;
             for ($i = 1; $i <= $sockets; $i++) {
                 // Create a new socket for the device
-                $socket = new $this->socket();
+                $socket = new $this->socket;
                 $socket->name = "Socket $i";
                 $socket->iot_device_id = $device->id;
                 $socket->assigned_id = $i; // Assign a unique ID to each socket
@@ -77,8 +74,9 @@ class IotDeviceService
     /**
      * Unlink an IoT device from a user
      *
-     * @param int|string $deviceId
+     * @param  int|string  $deviceId
      * @return IotDevice
+     *
      * @throws ModelNotFoundException
      */
     public function unlinkDevice($deviceId)
@@ -106,7 +104,7 @@ class IotDeviceService
     /**
      * Get all devices for a specific user
      *
-     * @param int|string $userId
+     * @param  int|string  $userId
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getDevicesByUser($userId)

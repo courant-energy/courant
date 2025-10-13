@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\IotDeviceResource\Pages;
-use App\Filament\Resources\IotDeviceResource\RelationManagers;
 use App\Models\IotDevice;
 use App\Services\IotDeviceService;
 use Filament\Forms;
@@ -18,8 +17,6 @@ use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Hash;
 
 class IotDeviceResource extends Resource
 {
@@ -58,8 +55,8 @@ class IotDeviceResource extends Resource
                             ->live(debounce: 500)
                             ->confirmed()
                             ->revealable()
-                            ->dehydrateStateUsing(fn($state) => $state)
-                            ->dehydrated(fn($state) => filled($state))
+                            ->dehydrateStateUsing(fn ($state) => $state)
+                            ->dehydrated(fn ($state) => filled($state))
                             ->rules([
                                 'min:12',
                             ])
@@ -71,7 +68,7 @@ class IotDeviceResource extends Resource
                             ->label('Confirm Password')
                             ->required()
                             ->helperText('Confirm the password for the IoT device')
-                            ->visible(fn(Get $get) => filled($get('password')))
+                            ->visible(fn (Get $get) => filled($get('password')))
                             ->password()
                             ->revealable()
                             ->same('password'),
@@ -112,15 +109,16 @@ class IotDeviceResource extends Resource
                             if (is_null($record->last_seen_at)) {
                                 return 'Offline';
                             }
+
                             return $record->last_seen_at->diffInMinutes() < 15 ? 'Online' : 'Offline';
                         })
                         ->badge()
-                        ->color(fn(string $state): string => match ($state) {
+                        ->color(fn (string $state): string => match ($state) {
                             'Online' => 'success',
                             'Offline' => 'danger',
                             default => 'gray',
                         }),
-                ])
+                ]),
             ])
             ->filters([
                 //

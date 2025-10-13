@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 class Socket extends Model
 {
     protected $fillable = ['name', 'iot_device_id', 'profile_id', 'assigned_id', 'state'];
+
     protected $casts = [
         'state' => 'boolean',
     ];
@@ -95,7 +96,6 @@ class Socket extends Model
          * 5. Sum all hourly energy consumption values
          * Energy (kWh) = Power (kW) × Time (hours)
          */
-
         $hourlyData = DB::table('readings')
             ->where('socket_id', $this->id)
             ->where('profile_id', $this->profile_id)
@@ -129,7 +129,7 @@ class Socket extends Model
      */
     public function getNextScheduleChange()
     {
-        if (!$this->profile || !$this->profile->scheduling_enabled) {
+        if (! $this->profile || ! $this->profile->scheduling_enabled) {
             return null;
         }
 
@@ -138,14 +138,14 @@ class Socket extends Model
 
     /**
      * Get the current scheduled state (what the state should be according to schedule)
-     * Note: This only indicates the theoretical state based on schedule, 
+     * Note: This only indicates the theoretical state based on schedule,
      * not whether a schedule should be applied right now
      *
      * @return bool|null Returns null if no schedule is active
      */
     public function getScheduledState()
     {
-        if (!$this->profile || !$this->profile->scheduling_enabled) {
+        if (! $this->profile || ! $this->profile->scheduling_enabled) {
             return null;
         }
 
@@ -159,15 +159,15 @@ class Socket extends Model
      */
     public function getPendingScheduleAction()
     {
-        if (!$this->profile || !$this->profile->scheduling_enabled) {
+        if (! $this->profile || ! $this->profile->scheduling_enabled) {
             return null;
         }
 
-        if ($this->profile->shouldApplyTurnOn() && !$this->state) {
+        if ($this->profile->shouldApplyTurnOn() && ! $this->state) {
             return [
                 'action' => 'turn_on',
                 'scheduled_time' => $this->profile->turn_on_time->format('H:i'),
-                'reason' => 'Socket is OFF but should be turned ON according to schedule'
+                'reason' => 'Socket is OFF but should be turned ON according to schedule',
             ];
         }
 
@@ -175,7 +175,7 @@ class Socket extends Model
             return [
                 'action' => 'turn_off',
                 'scheduled_time' => $this->profile->turn_off_time->format('H:i'),
-                'reason' => 'Socket is ON but should be turned OFF according to schedule'
+                'reason' => 'Socket is ON but should be turned OFF according to schedule',
             ];
         }
 
@@ -192,13 +192,11 @@ class Socket extends Model
     public function isInSync()
     {
         $scheduledState = $this->getScheduledState();
-        
+
         if ($scheduledState === null) {
             return null; // No schedule active
         }
 
         return $this->state === $scheduledState;
     }
-
-
 }

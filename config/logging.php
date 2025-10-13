@@ -126,7 +126,7 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
-        
+
         'anomalies' => [
             'driver' => 'daily',
             'path' => storage_path('logs/anomalies.log'),
@@ -134,7 +134,7 @@ return [
             'days' => 14,
             'replace_placeholders' => true,
         ],
-        
+
         'predictions' => [
             'driver' => 'daily',
             'path' => storage_path('logs/predictions.log'),

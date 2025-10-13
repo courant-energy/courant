@@ -4,10 +4,8 @@ namespace App\Filament\Pages\Auth;
 
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Pages\Page;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 
 class EditProfile extends BaseEditProfile
@@ -49,6 +47,7 @@ class EditProfile extends BaseEditProfile
             ->maxLength(255)
             ->autofocus();
     }
+
     protected function getLastNameFormComponent(): Component
     {
         return TextInput::make('last_name')
