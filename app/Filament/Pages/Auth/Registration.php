@@ -22,7 +22,8 @@ class Registration extends BaseRegister
                 $this->getCompanyNameFormComponent(),
                 $this->getEmailFormComponent(),
                 $this->getPasswordFormComponent()
-                    ->helperText('Your password must be at least 8 characters long.'),
+                    ->rules(['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'])
+                    ->helperText('Your password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.'),
                 $this->getPasswordConfirmationFormComponent(),
                 ViewField::make('legend')
                     ->view('filament.customs.legend'),
