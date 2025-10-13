@@ -54,7 +54,7 @@ class CheckDeviceStatus extends Command
                 }
             } else {
                 // Device is offline. If there isn't an open downtime event, create one.
-                if (!$openDowntimeEvent) {
+                if (! $openDowntimeEvent) {
                     DowntimeEvent::create([
                         'iot_device_id' => $device->id,
                         'start_time' => $now, // Record when the offline status was detected

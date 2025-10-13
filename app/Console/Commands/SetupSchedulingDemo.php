@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
-use App\Models\Profile;
 use App\Models\IotDevice;
+use App\Models\Profile;
 use App\Models\Socket;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class SetupSchedulingDemo extends Command
@@ -39,8 +39,9 @@ class SetupSchedulingDemo extends Command
 
         // Get or create first user
         $user = User::first();
-        if (!$user) {
+        if (! $user) {
             $this->error('No users found. Please create a user first.');
+
             return;
         }
 
@@ -50,7 +51,7 @@ class SetupSchedulingDemo extends Command
             'device_uuid' => \Illuminate\Support\Str::uuid(),
             'password' => 'demo-password',
             'user_id' => $user->id,
-            'is_active' => true
+            'is_active' => true,
         ]);
 
         // Create demo profile with scheduling
@@ -68,7 +69,7 @@ class SetupSchedulingDemo extends Command
             'notify_on_anomaly' => true,
             'alert_sensitivity' => 'medium',
             'notification_channels' => ['app'],
-            'anomaly_detection_enabled' => true
+            'anomaly_detection_enabled' => true,
         ]);
 
         // Create demo socket linked to profile
@@ -77,7 +78,7 @@ class SetupSchedulingDemo extends Command
             'iot_device_id' => $device->id,
             'profile_id' => $profile->id,
             'assigned_id' => 1,
-            'state' => false
+            'state' => false,
         ]);
 
         // Create another profile for night security lighting
@@ -95,30 +96,30 @@ class SetupSchedulingDemo extends Command
             'notify_on_anomaly' => true,
             'alert_sensitivity' => 'high',
             'notification_channels' => ['app'],
-            'anomaly_detection_enabled' => true
+            'anomaly_detection_enabled' => true,
         ]);
 
         $this->info('Demo data created successfully!');
         $this->newLine();
-        
+
         $this->info('Created profiles:');
         $this->line("1. {$profile->name} - Weekdays 8AM to 6PM");
         $this->line("2. {$nightProfile->name} - Every night 10PM to 6AM");
-        
+
         $this->newLine();
         $this->info('You can now:');
         $this->line('1. Run "php artisan schedules:process --dry-run" to see what would happen');
         $this->line('2. Run "php artisan schedules:process" to apply schedules');
         $this->line('3. View the profiles in the Filament admin panel');
-        
+
         $this->newLine();
         $this->info('Current schedule status:');
-        
+
         foreach ([$profile, $nightProfile] as $p) {
             $shouldBeOn = $p->shouldBeOn();
             $nextChange = $p->getNextScheduleChange();
-            
-            $this->line("- {$p->name}: Should be " . ($shouldBeOn ? 'ON' : 'OFF'));
+
+            $this->line("- {$p->name}: Should be ".($shouldBeOn ? 'ON' : 'OFF'));
             if ($nextChange) {
                 $this->line("  Next change: {$nextChange['action']} at {$nextChange['time']->format('Y-m-d H:i')} ({$nextChange['human_readable']})");
             }

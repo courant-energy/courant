@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -20,8 +19,7 @@ class AnomalyAlert extends Notification
         public $deviceName,
         public $socketName,
         public $message,
-    )    
-    {
+    ) {
         //
     }
 
@@ -42,12 +40,12 @@ class AnomalyAlert extends Notification
     {
         return (new MailMessage)
             ->greeting('Hello!')
-            ->subject('Anomaly Alert: ' . $this->type.' detected on '.$this->deviceName)
+            ->subject('Anomaly Alert: '.$this->type.' detected on '.$this->deviceName)
             ->line('An anomaly has been detected on your device.')
-            ->line('Device: ' . $this->deviceName)
-            ->line('Socket: ' . $this->socketName)
-            ->line('Severity: ' . $this->severity)
-            ->line('Alert Info: ' . $this->message)
+            ->line('Device: '.$this->deviceName)
+            ->line('Socket: '.$this->socketName)
+            ->line('Severity: '.$this->severity)
+            ->line('Alert Info: '.$this->message)
             ->when($this->severity === 'critical', function ($message) {
                 return $message->line('The socket has been turned off to prevent damage.');
             })

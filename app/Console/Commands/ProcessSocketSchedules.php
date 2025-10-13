@@ -27,7 +27,7 @@ class ProcessSocketSchedules extends Command
     public function handle()
     {
         $dryRun = $this->option('dry-run');
-        
+
         if ($dryRun) {
             $this->info('Running in dry-run mode - no changes will be made');
         }
@@ -42,6 +42,7 @@ class ProcessSocketSchedules extends Command
 
         if ($profiles->isEmpty()) {
             $this->info('No profiles with scheduling enabled found.');
+
             return;
         }
 
@@ -51,18 +52,20 @@ class ProcessSocketSchedules extends Command
         foreach ($profiles as $profile) {
             $result = $dryRun ? $this->simulateScheduleApplication($profile) : $profile->applySchedule();
             $socketsCount = $profile->sockets->count();
-            
+
             if ($socketsCount === 0) {
                 $this->line("Profile '{$profile->name}': No sockets linked");
+
                 continue;
             }
 
             if ($result['action'] === 'none') {
                 $this->line("Profile '{$profile->name}': No schedule action needed - {$result['reason']}");
+
                 continue;
             }
 
-            if (!$dryRun) {
+            if (! $dryRun) {
                 $totalUpdated += $result['updated'];
                 $this->info("Profile '{$profile->name}': Applied {$result['action']} schedule - updated {$result['updated']}/{$socketsCount} sockets");
                 $this->line("  Scheduled time: {$result['scheduled_time']}, Applied at: {$result['applied_at']}");
@@ -78,10 +81,10 @@ class ProcessSocketSchedules extends Command
             }
         }
 
-        if (!$dryRun) {
+        if (! $dryRun) {
             $this->info("Completed! Updated {$totalUpdated} sockets across {$totalProfiles} profiles.");
         } else {
-            $this->info("Dry run completed. Use without --dry-run to apply changes.");
+            $this->info('Dry run completed. Use without --dry-run to apply changes.');
         }
     }
 
@@ -91,7 +94,7 @@ class ProcessSocketSchedules extends Command
     private function simulateScheduleApplication(Profile $profile): array
     {
         $result = ['action' => 'none', 'reason' => 'no_schedule_due', 'sockets_to_update' => 0];
-        
+
         // Check if we should apply turn ON
         if ($profile->shouldApplyTurnOn()) {
             $socketsToUpdate = $profile->sockets->where('state', false)->count();
@@ -99,7 +102,7 @@ class ProcessSocketSchedules extends Command
                 'action' => 'turn_on',
                 'reason' => 'scheduled_turn_on',
                 'sockets_to_update' => $socketsToUpdate,
-                'scheduled_time' => $profile->turn_on_time->format('H:i')
+                'scheduled_time' => $profile->turn_on_time->format('H:i'),
             ];
         }
         // Check if we should apply turn OFF
@@ -109,7 +112,7 @@ class ProcessSocketSchedules extends Command
                 'action' => 'turn_off',
                 'reason' => 'scheduled_turn_off',
                 'sockets_to_update' => $socketsToUpdate,
-                'scheduled_time' => $profile->turn_off_time->format('H:i')
+                'scheduled_time' => $profile->turn_off_time->format('H:i'),
             ];
         }
 

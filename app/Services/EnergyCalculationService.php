@@ -20,7 +20,7 @@ class EnergyCalculationService
      *
      * @param  \App\Models\Profile  $profile
      * @param  string  $startDate  Start date/time string (e.g., 'YYYY-MM-DD HH:MM:SS')
-     * @param  string  $endDate    End date/time string (e.g., 'YYYY-MM-DD HH:MM:SS')
+     * @param  string  $endDate  End date/time string (e.g., 'YYYY-MM-DD HH:MM:SS')
      * @return float
      */
     public function calculateEnergyConsumption($profile, $startDate, $endDate)
@@ -72,7 +72,7 @@ class EnergyCalculationService
             $labels[] = $time;
             // Calculate energy: average power * time (1 minute = 1/60 hour)
             $avgPower = $group->avg('power');
-            $data[] = round(($avgPower / 1000) * (1/60), 4); // Convert W to kW, multiply by 1/60 hour
+            $data[] = round(($avgPower / 1000) * (1 / 60), 4); // Convert W to kW, multiply by 1/60 hour
         }
 
         return ['labels' => $labels, 'data' => $data];
@@ -94,10 +94,10 @@ class EnergyCalculationService
         // Group readings into 5-minute intervals
         $intervals = [];
         foreach ($readings as $time => $group) {
-            $minute = (int)substr($time, 3, 2);
+            $minute = (int) substr($time, 3, 2);
             $intervalKey = floor($minute / 5) * 5;
-            $intervalLabel = substr($time, 0, 3) . str_pad($intervalKey, 2, '0', STR_PAD_LEFT);
-            if (!isset($intervals[$intervalLabel])) {
+            $intervalLabel = substr($time, 0, 3).str_pad($intervalKey, 2, '0', STR_PAD_LEFT);
+            if (! isset($intervals[$intervalLabel])) {
                 $intervals[$intervalLabel] = [];
             }
             $intervals[$intervalLabel] = array_merge($intervals[$intervalLabel], $group->all());
@@ -107,7 +107,7 @@ class EnergyCalculationService
             $labels[] = $interval;
             // Calculate energy: average power * time (5 minutes = 5/60 hour)
             $avgPower = collect($group)->avg('power');
-            $data[] = round(($avgPower / 1000) * (5/60), 4); // Convert W to kW, multiply by 5/60 hour
+            $data[] = round(($avgPower / 1000) * (5 / 60), 4); // Convert W to kW, multiply by 5/60 hour
         }
 
         return ['labels' => $labels, 'data' => $data];
@@ -155,7 +155,7 @@ class EnergyCalculationService
     {
         $startDate = now()->subDays($days)->startOfDay();
         $endDate = now()->endOfDay();
-        
+
         // Use hourly aggregation for proper energy calculation
         $dailyData = DB::table('readings')
             ->where('profile_id', $profile->id)

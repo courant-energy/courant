@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\IotDeviceResource\Pages;
-use App\Filament\Admin\Resources\IotDeviceResource\RelationManagers;
 use App\Models\IotDevice;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -13,8 +12,6 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class IotDeviceResource extends Resource
 {
@@ -40,8 +37,8 @@ class IotDeviceResource extends Resource
                     ->label('Password')
                     ->helperText('Enter the password of the IoT device')
                     ->password()
-                    ->dehydrateStateUsing(fn($state) => $state)
-                    ->dehydrated(fn($state) => filled($state))
+                    ->dehydrateStateUsing(fn ($state) => $state)
+                    ->dehydrated(fn ($state) => filled($state))
                     ->live()
                     ->confirmed()
                     ->revealable(),
@@ -50,7 +47,7 @@ class IotDeviceResource extends Resource
                     ->label('Confirm Password')
                     ->required()
                     ->helperText('Confirm the password for the IoT device')
-                    ->visible(fn(Get $get) => filled($get('password')))
+                    ->visible(fn (Get $get) => filled($get('password')))
                     ->password()
                     ->revealable()
                     ->same('password'),

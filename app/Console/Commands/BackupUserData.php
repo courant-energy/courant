@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class BackupUserData extends Command
 {
@@ -28,8 +28,9 @@ class BackupUserData extends Command
         $userId = $this->argument('user_id');
         $user = User::find($userId);
 
-        if (!$user) {
+        if (! $user) {
             $this->error("User with ID {$userId} not found.");
+
             return 1;
         }
 
@@ -47,21 +48,22 @@ class BackupUserData extends Command
                     ->get()
                     ->toArray(),
                 'backup_created_at' => Carbon::now()->toISOString(),
-                'backup_reason' => 'Pre-deletion backup'
+                'backup_reason' => 'Pre-deletion backup',
             ];
 
-            $fileName = "user-backup-{$user->id}-" . Carbon::now()->format('Y-m-d-H-i-s') . '.json';
+            $fileName = "user-backup-{$user->id}-".Carbon::now()->format('Y-m-d-H-i-s').'.json';
             $filePath = "backups/users/{$fileName}";
 
             Storage::disk('local')->put($filePath, json_encode($backupData, JSON_PRETTY_PRINT));
 
             $this->info("Backup created successfully: {$filePath}");
-            $this->info("Backup file size: " . Storage::disk('local')->size($filePath) . " bytes");
+            $this->info('Backup file size: '.Storage::disk('local')->size($filePath).' bytes');
 
             return 0;
 
         } catch (\Exception $e) {
-            $this->error("Failed to create backup: " . $e->getMessage());
+            $this->error('Failed to create backup: '.$e->getMessage());
+
             return 1;
         }
     }

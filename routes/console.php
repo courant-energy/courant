@@ -1,16 +1,11 @@
 <?php
 
 use App\Console\Commands\CheckDeviceStatus;
-use App\Console\Commands\BackupUserData;
-use App\Console\Commands\ProcessSocketSchedules;
 use App\Console\Commands\ProcessBatchAnomalyDetection;
+use App\Console\Commands\ProcessSocketSchedules;
 use App\Jobs\ProcessSocketSchedulesJob;
-use Illuminate\Foundation\Console\ClosureCommand;
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
-
 
 Schedule::command(CheckDeviceStatus::class)
     ->everyMinute()
@@ -62,4 +57,3 @@ Schedule::job(ProcessSocketSchedulesJob::class)
 //     ->onFailure(function () {
 //         Log::error('Socket schedules processing command failed.');
 //     });
-

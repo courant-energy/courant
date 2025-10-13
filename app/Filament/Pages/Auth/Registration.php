@@ -3,16 +3,11 @@
 namespace App\Filament\Pages\Auth;
 
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\View;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
-use Filament\Pages\Page;
 use Filament\Pages\Auth\Register as BaseRegister;
-use Illuminate\Support\Facades\Blade;
 
 class Registration extends BaseRegister
 {
@@ -54,6 +49,7 @@ class Registration extends BaseRegister
             ->maxLength(255)
             ->autofocus();
     }
+
     protected function getLastNameFormComponent(): Component
     {
         return TextInput::make('last_name')

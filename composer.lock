@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a9b52a0b6ab4d97daf174bf88bf195c0",
+    "content-hash": "4fe94d55ce69de34bd29920413528636",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -9689,16 +9689,16 @@
         },
         {
             "name": "laravel/pint",
-            "version": "v1.21.1",
+            "version": "v1.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pint.git",
-                "reference": "c44bffbb2334e90fba560933c45948fa4a3f3e86"
+                "reference": "5016e263f95d97670d71b9a987bd8996ade6d8d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/pint/zipball/c44bffbb2334e90fba560933c45948fa4a3f3e86",
-                "reference": "c44bffbb2334e90fba560933c45948fa4a3f3e86",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/5016e263f95d97670d71b9a987bd8996ade6d8d9",
+                "reference": "5016e263f95d97670d71b9a987bd8996ade6d8d9",
                 "shasum": ""
             },
             "require": {
@@ -9709,12 +9709,12 @@
                 "php": "^8.2.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.70.2",
-                "illuminate/view": "^11.44.1",
-                "larastan/larastan": "^3.1.0",
-                "laravel-zero/framework": "^11.36.1",
+                "friendsofphp/php-cs-fixer": "^3.87.2",
+                "illuminate/view": "^11.46.0",
+                "larastan/larastan": "^3.7.1",
+                "laravel-zero/framework": "^11.45.0",
                 "mockery/mockery": "^1.6.12",
-                "nunomaduro/termwind": "^2.3",
+                "nunomaduro/termwind": "^2.3.1",
                 "pestphp/pest": "^2.36.0"
             },
             "bin": [
@@ -9751,7 +9751,7 @@
                 "issues": "https://github.com/laravel/pint/issues",
                 "source": "https://github.com/laravel/pint"
             },
-            "time": "2025-03-11T03:22:21+00:00"
+            "time": "2025-09-19T02:57:12+00:00"
         },
         {
             "name": "laravel/sail",

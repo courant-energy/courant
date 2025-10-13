@@ -24,6 +24,4 @@ class ShowLearning extends Page
     {
         return $this->record->name ?? 'Learning Resource';
     }
-
-
 }

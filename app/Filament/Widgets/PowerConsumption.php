@@ -2,33 +2,36 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Widgets\ChartWidget;
 use App\Services\EnergyCalculationService;
+use Filament\Widgets\ChartWidget;
 
 class PowerConsumption extends ChartWidget
 {
     protected static ?string $heading = 'Energy Consumption (kWh)';
+
     public $socket;
+
     public ?string $filter = 'hour'; // default filter
+
     protected EnergyCalculationService $energyService;
 
     protected static string $view = 'filament.custom-chart-widget';
 
     public function __construct()
     {
-        $this->energyService = new EnergyCalculationService();
+        $this->energyService = new EnergyCalculationService;
     }
 
     protected function getFilters(): ?array
-{
-    return [
-        'hour' => 'Last hour',
-        'today' => 'Today',
-        'week' => 'Last week',
-        'month' => 'Last month',
-        'all' => 'All time',
-    ];
-}
+    {
+        return [
+            'hour' => 'Last hour',
+            'today' => 'Today',
+            'week' => 'Last week',
+            'month' => 'Last month',
+            'all' => 'All time',
+        ];
+    }
 
     protected function getData(): array
     {
@@ -55,11 +58,11 @@ class PowerConsumption extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Power Consumption (kWh)',
-                    'data' =>  $data,
+                    'data' => $data,
 
                 ],
             ],
-            'labels' => $labels
+            'labels' => $labels,
         ];
     }
 
@@ -68,33 +71,33 @@ class PowerConsumption extends ChartWidget
         return 'bar';
     }
 
-
     protected function getDataByMinute()
     {
         $result = $this->energyService->calculateEnergyBy5Minutes($this->socket->profile);
+
         return [$result['labels'], $result['data']];
     }
 
     protected function getDataByHour()
     {
         $result = $this->energyService->calculateEnergyByHour($this->socket->profile);
+
         return [$result['labels'], $result['data']];
     }
 
     protected function getDataByDay(int $days)
     {
         $result = $this->energyService->calculateEnergyByDay($this->socket->profile, $days);
+
         return [$result['labels'], $result['data']];
     }
 
     protected function getDataByMonth()
     {
         $result = $this->energyService->calculateEnergyByMonth($this->socket->profile);
+
         return [$result['labels'], $result['data']];
     }
-
-
-
 
     protected function getOptions(): array
     {
@@ -109,15 +112,15 @@ class PowerConsumption extends ChartWidget
                     'beginAtZero' => true,
                     'title' => [
                         'display' => true,
-                        'text' => 'Energy (kWh)'
-                    ]
+                        'text' => 'Energy (kWh)',
+                    ],
                 ],
                 'x' => [
                     'ticks' => [
                         'maxTicksLimit' => 10,
                     ],
                 ],
-                
+
             ],
         ];
     }

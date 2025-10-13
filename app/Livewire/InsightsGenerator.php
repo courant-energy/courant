@@ -11,42 +11,51 @@ use Livewire\Component;
 class InsightsGenerator extends Component
 {
     public $isLoading = false;
+
     public $insights = [];
+
     public $error = null;
+
     public $generation_in_progress = false;
+
     public $cooldown_minutes_remaining = 0;
+
     public $max_attempts = 5; // Maximum attempts allowed within the time window
+
     public $decay_minutes = 20; // Time window in minutes
+
     public $cache_duration_hours = 24; // Cache insights for 24 hours
+
     public $hasFreshData = false; // Track if data was just generated
+
     public $lastUpdated = null; // Track when insights were last updated
 
     protected $listeners = ['refreshInsights'];
-    
+
     // Reactive properties to ensure Livewire tracks changes
     protected $rules = [];
-    
+
     // Properties that should trigger re-render when changed
     public function updatedInsights()
     {
         // This will trigger when insights array changes
     }
-    
+
     public function updatedError()
     {
         // This will trigger when error state changes
     }
-    
+
     public function updatedIsLoading()
     {
         // This will trigger when loading state changes
     }
-    
+
     public function updatedHasFreshData()
     {
         // This will trigger when fresh data flag changes
     }
-    
+
     /**
      * Force refresh the component
      */
@@ -69,7 +78,8 @@ class InsightsGenerator extends Component
     private function getCacheKey()
     {
         $user = Auth::user();
-        return 'insights:' . ($user ? $user->id : request()->ip());
+
+        return 'insights:'.($user ? $user->id : request()->ip());
     }
 
     /**
@@ -79,7 +89,7 @@ class InsightsGenerator extends Component
     {
         $cacheKey = $this->getCacheKey();
         $cachedData = Cache::get($cacheKey);
-        
+
         if ($cachedData) {
             $this->insights = $cachedData['insights'] ?? [];
             $this->error = $cachedData['error'] ?? null;
@@ -99,7 +109,7 @@ class InsightsGenerator extends Component
             'error' => $this->error,
             'generated_at' => now()->toDateTimeString(),
         ];
-        
+
         Cache::put($cacheKey, $dataToCache, now()->addHours($this->cache_duration_hours));
     }
 
@@ -123,33 +133,34 @@ class InsightsGenerator extends Component
     {
         // Get the current authenticated user
         $user = Auth::user();
-        
+
         // Create a rate limiter key based on user ID or IP
-        $key = 'generate-insights:' . ($user ? $user->id : request()->ip());
-        
+        $key = 'generate-insights:'.($user ? $user->id : request()->ip());
+
         // Check if the user has exceeded the rate limit
         if (RateLimiter::tooManyAttempts($key, $this->max_attempts)) {
             // Calculate remaining cooldown time
             $this->cooldown_minutes_remaining = ceil(RateLimiter::availableIn($key) / 60);
-            
+
             $this->error = "You've reached the maximum number of insight generations. Please wait {$this->cooldown_minutes_remaining} minutes before trying again.";
+
             return;
         }
-        
+
         $this->isLoading = true;
         $this->generation_in_progress = true;
         $this->error = null;
         $this->insights = [];
         $this->hasFreshData = false;
-        
+
         try {
             // Increment the rate limiter counter for this user
             RateLimiter::hit($key, $this->decay_minutes * 60);
-            
+
             // Call the GeminiService to generate insights
             $geminiService = app(GeminiService::class);
             $response = $geminiService->generateInsights($user, $this->isLoading);
-            
+
             // Check if there was an error
             if (isset($response['error'])) {
                 $this->error = $response['error'];
@@ -162,12 +173,12 @@ class InsightsGenerator extends Component
                 $this->hasFreshData = true; // Mark as fresh data
                 $this->lastUpdated = now()->toDateTimeString();
             }
-            
+
             // Cache the results
             $this->cacheInsights();
-            
+
         } catch (\Exception $e) {
-            $this->error = 'An error occurred while generating insights: ' . $e->getMessage();
+            $this->error = 'An error occurred while generating insights: '.$e->getMessage();
             $this->insights = []; // Clear insights on error
             $this->hasFreshData = false;
             // Cache the error as well
@@ -177,7 +188,7 @@ class InsightsGenerator extends Component
             $this->isLoading = false;
             $this->generation_in_progress = false;
         }
-        
+
         // Dispatch a browser event to ensure UI updates
         $this->dispatch('insights-updated', ['hasInsights' => count($this->insights) > 0]);
     }
@@ -188,7 +199,8 @@ class InsightsGenerator extends Component
     public function getRemainingAttemptsProperty()
     {
         $user = Auth::user();
-        $key = 'generate-insights:' . ($user ? $user->id : request()->ip());
+        $key = 'generate-insights:'.($user ? $user->id : request()->ip());
+
         return $this->max_attempts - RateLimiter::attempts($key);
     }
 
@@ -198,11 +210,11 @@ class InsightsGenerator extends Component
     public function getCanGenerateInsightsProperty()
     {
         $user = Auth::user();
-        $key = 'generate-insights:' . ($user ? $user->id : request()->ip());
-        
-        return !$this->isLoading && 
-               !$this->generation_in_progress && 
-               !RateLimiter::tooManyAttempts($key, $this->max_attempts);
+        $key = 'generate-insights:'.($user ? $user->id : request()->ip());
+
+        return ! $this->isLoading &&
+               ! $this->generation_in_progress &&
+               ! RateLimiter::tooManyAttempts($key, $this->max_attempts);
     }
 
     /**
@@ -210,7 +222,7 @@ class InsightsGenerator extends Component
      */
     public function refreshInsights()
     {
-        if (!$this->generation_in_progress) {
+        if (! $this->generation_in_progress) {
             $this->generateInsights();
         }
     }

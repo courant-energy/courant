@@ -21,10 +21,10 @@ class EditProfile extends EditRecord
     protected function getHeaderWidgets(): array
     {
         return [
-            
+
             SocketTable::make([
                 'record' => $this->record,
-            ])
+            ]),
         ];
     }
 }

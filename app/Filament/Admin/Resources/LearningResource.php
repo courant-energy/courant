@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\LearningResource\Pages;
-use App\Filament\Admin\Resources\LearningResource\RelationManagers;
 use App\Models\Learning;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,7 +10,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
 class LearningResource extends Resource
@@ -36,16 +34,15 @@ class LearningResource extends Resource
                             ->label('Title')
                             ->placeholder('Enter the resource title')
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => 
-                                $operation === 'create' ? $set('slug', Str::slug($state)) : null),
-                            
+                            ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(255)
                             ->unique(table: Learning::class, ignoreRecord: true)
                             ->placeholder('URL-friendly slug')
                             ->helperText('This will be automatically generated from the title, but you can modify it if needed.'),
-                            
+
                         Forms\Components\Select::make('type')
                             ->options([
                                 'article' => 'Article',
@@ -59,7 +56,7 @@ class LearningResource extends Resource
                             ->required()
                             ->label('Resource Type')
                             ->placeholder('Select the type of content'),
-                            
+
                         Forms\Components\Select::make('status')
                             ->options([
                                 'draft' => 'Draft',
@@ -71,7 +68,7 @@ class LearningResource extends Resource
                             ->label('Publication Status'),
                     ])
                     ->columns(2),
-                    
+
                 Forms\Components\Section::make('Content')
                     ->schema([
                         Forms\Components\FileUpload::make('cover_image')
@@ -80,7 +77,7 @@ class LearningResource extends Resource
                             ->helperText('Recommended size: 1200x600px. Max size: 5MB.')
                             ->maxSize(5120)
                             ->columnSpanFull(),
-                            
+
                         Forms\Components\RichEditor::make('content')
                             ->required()
                             ->columnSpanFull()
@@ -191,11 +188,11 @@ class LearningResource extends Resource
                         $indicators = [];
 
                         if ($data['created_from'] ?? null) {
-                            $indicators['created_from'] = 'Created from ' . $data['created_from'];
+                            $indicators['created_from'] = 'Created from '.$data['created_from'];
                         }
 
                         if ($data['created_until'] ?? null) {
-                            $indicators['created_until'] = 'Created until ' . $data['created_until'];
+                            $indicators['created_until'] = 'Created until '.$data['created_until'];
                         }
 
                         return $indicators;
@@ -250,7 +247,6 @@ class LearningResource extends Resource
                 return 'Learning Resource Created Successfully';
         }
     }
-
 
     public static function getPages(): array
     {

@@ -9,7 +9,6 @@ use App\Filament\Widgets\EnergyCostCalculator;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Widgets\AccountWidget;
 
 class Dashboard extends Page
 {
@@ -36,7 +35,7 @@ class Dashboard extends Page
                     ->body('You have successfully completed the onboarding process.')
                     ->send();
             })
-            ->visible(fn(): bool => ! auth()->user()->is_onboarded);
+            ->visible(fn (): bool => ! auth()->user()->is_onboarded);
     }
 
     protected function getFooterWidgets(): array

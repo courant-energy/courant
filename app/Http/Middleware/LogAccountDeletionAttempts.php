@@ -4,9 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 
 class LogAccountDeletionAttempts
 {
@@ -22,7 +22,7 @@ class LogAccountDeletionAttempts
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
                 'timestamp' => now(),
-                'referer' => $request->header('referer')
+                'referer' => $request->header('referer'),
             ]);
         }
 

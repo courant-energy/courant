@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProfileResource\Pages;
-use App\Filament\Resources\ProfileResource\RelationManagers;
 use App\Models\Profile;
 use Filament\Forms;
 use Filament\Forms\Components\ViewField;
@@ -14,7 +13,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProfileResource extends Resource
 {
@@ -40,11 +38,11 @@ class ProfileResource extends Resource
                             ->options(function () {
                                 $appliances = Profile::getAppliancePresets();
                                 $options = ['custom' => 'Custom Profile'];
-                                
+
                                 foreach ($appliances as $appliance) {
-                                    $options[json_encode($appliance)] = $appliance['name'] . ' (' . $appliance['expected_power'] . 'W)';
+                                    $options[json_encode($appliance)] = $appliance['name'].' ('.$appliance['expected_power'].'W)';
                                 }
-                                
+
                                 return $options;
                             })
                             ->live()
@@ -78,7 +76,7 @@ class ProfileResource extends Resource
                                 ->required()
                                 ->integer()
                                 ->maxValue(10000)
-                                ->minValue(fn(Get $get) => (int) $get('expected_power'))
+                                ->minValue(fn (Get $get) => (int) $get('expected_power'))
                                 ->placeholder('e.g., 120')
                                 ->suffix('W')
                                 ->helperText('Maximum acceptable power threshold in watts')
@@ -86,7 +84,7 @@ class ProfileResource extends Resource
                             Forms\Components\TextInput::make('min_power_threshold')
                                 ->required()
                                 ->integer()
-                                ->maxValue(fn(Get $get) => (int) $get('expected_power'))
+                                ->maxValue(fn (Get $get) => (int) $get('expected_power'))
                                 ->minValue(0)
                                 ->default(0)
                                 ->placeholder('e.g., 80')
@@ -116,14 +114,14 @@ class ProfileResource extends Resource
                             Forms\Components\TimePicker::make('turn_on_time')
                                 ->label('Turn On Time')
                                 ->helperText('Time to automatically turn on the socket')
-                                ->visible(fn(Get $get) => $get('scheduling_enabled'))
-                                ->required(fn(Get $get) => $get('scheduling_enabled')),
+                                ->visible(fn (Get $get) => $get('scheduling_enabled'))
+                                ->required(fn (Get $get) => $get('scheduling_enabled')),
 
                             Forms\Components\TimePicker::make('turn_off_time')
                                 ->label('Turn Off Time')
                                 ->helperText('Time to automatically turn off the socket')
-                                ->visible(fn(Get $get) => $get('scheduling_enabled'))
-                                ->required(fn(Get $get) => $get('scheduling_enabled')),
+                                ->visible(fn (Get $get) => $get('scheduling_enabled'))
+                                ->required(fn (Get $get) => $get('scheduling_enabled')),
                         ])->columns(2),
 
                         Forms\Components\CheckboxList::make('schedule_days')
@@ -139,22 +137,22 @@ class ProfileResource extends Resource
                             ])
                             ->default(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])
                             ->helperText('Select which days the schedule should be active. Leave empty for all days.')
-                            ->visible(fn(Get $get) => $get('scheduling_enabled'))
+                            ->visible(fn (Get $get) => $get('scheduling_enabled'))
                             ->columns(3),
 
                         Forms\Components\Placeholder::make('schedule_preview')
                             ->label('Schedule Preview')
                             ->content(function (Get $get) {
-                                if (!$get('scheduling_enabled') || !$get('turn_on_time') || !$get('turn_off_time')) {
+                                if (! $get('scheduling_enabled') || ! $get('turn_on_time') || ! $get('turn_off_time')) {
                                     return 'Enable scheduling and set times to see preview';
                                 }
 
                                 $days = $get('schedule_days') ?: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
                                 $daysText = count($days) === 7 ? 'Every day' : implode(', ', array_map('ucfirst', $days));
-                                
+
                                 return "Socket will turn ON at {$get('turn_on_time')} and OFF at {$get('turn_off_time')} on {$daysText}";
                             })
-                            ->visible(fn(Get $get) => $get('scheduling_enabled')),
+                            ->visible(fn (Get $get) => $get('scheduling_enabled')),
                     ]),
 
                 Forms\Components\Section::make('Advanced Monitoring Settings')
@@ -238,26 +236,26 @@ class ProfileResource extends Resource
                         ->getStateUsing(function (Profile $record) {
                             return $record->is_active ? 'Active' : 'Inactive';
                         })
-                        ->color(fn($state) => $state === 'Active' ? 'success' : 'gray')
+                        ->color(fn ($state) => $state === 'Active' ? 'success' : 'gray')
                         ->label('Status'),
                     Tables\Columns\TextColumn::make('scheduling_status')
                         ->badge()
                         ->getStateUsing(function (Profile $record) {
-                            if (!$record->scheduling_enabled) {
+                            if (! $record->scheduling_enabled) {
                                 return 'No Schedule';
                             }
-                            
+
                             $shouldBeOn = $record->shouldBeOn();
                             $nextChange = $record->getNextScheduleChange();
-                            
+
                             if ($nextChange) {
                                 return $shouldBeOn ? 'Scheduled ON' : 'Scheduled OFF';
                             }
-                            
+
                             return 'Schedule Inactive';
                         })
                         ->color(function ($state) {
-                            return match($state) {
+                            return match ($state) {
                                 'Scheduled ON' => 'success',
                                 'Scheduled OFF' => 'warning',
                                 'Schedule Inactive' => 'gray',

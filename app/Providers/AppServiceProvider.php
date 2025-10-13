@@ -8,8 +8,8 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,11 +30,11 @@ class AppServiceProvider extends ServiceProvider
         // if ($this->app->runningInConsole()) {
         //     $this->app->booted(function () {
         //         $schedule = $this->app->make(Schedule::class);
-                
+
         //         // Run prediction analysis daily at 2 AM
         //         $schedule->command('app:run-prediction-analysis')->dailyAt('02:00')
         //             ->appendOutputTo(storage_path('logs/prediction-analysis.log'));
-                
+
         //         // You could also run it more frequently for testing
         //         // $schedule->command('app:run-prediction-analysis --time-window=6')->everyFourHours();
         //     });
@@ -49,7 +49,6 @@ class AppServiceProvider extends ServiceProvider
             'warning' => Color::Amber,
             'yellow' => Color::Yellow,
         ]);
-
 
         FilamentIcon::register([
             'panels::sidebar.expand-button' => 'heroicon-o-bars-3',

@@ -21,7 +21,7 @@ class ViewQuestion extends ViewRecord
                 [
                     Actions\Action::make('markAsResolved')
                         ->label('Resolve')
-                        ->visible(fn() => $this->record->status === 'pending')
+                        ->visible(fn () => $this->record->status === 'pending')
                         ->color('success')
                         ->icon('heroicon-o-check-circle')
                         ->action(function () {
@@ -34,7 +34,7 @@ class ViewQuestion extends ViewRecord
                         ->requiresConfirmation(),
                     Actions\Action::make('markAsRejected')
                         ->label('Reject')
-                        ->visible(fn() => $this->record->status === 'pending')
+                        ->visible(fn () => $this->record->status === 'pending')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->action(function () {
@@ -47,7 +47,7 @@ class ViewQuestion extends ViewRecord
                         ->requiresConfirmation(),
                     Actions\Action::make('reopen')
                         ->label('Reopen')
-                        ->visible(fn() => $this->record->status !== 'pending')
+                        ->visible(fn () => $this->record->status !== 'pending')
                         ->icon('heroicon-o-arrow-left-circle')
                         ->color('warning')
                         ->action(function () {
@@ -60,9 +60,9 @@ class ViewQuestion extends ViewRecord
                         ->requiresConfirmation(),
                 ]
             )
-            ->label('Actions')
-            ->button()
-            ->size(ActionSize::Small)
+                ->label('Actions')
+                ->button()
+                ->size(ActionSize::Small),
         ];
     }
 }

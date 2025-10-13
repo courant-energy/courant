@@ -34,6 +34,7 @@ class ProcessSocketSchedulesJob implements ShouldQueue
 
         if ($profiles->isEmpty()) {
             Log::info('No profiles with scheduling enabled found');
+
             return;
         }
 
@@ -43,24 +44,24 @@ class ProcessSocketSchedulesJob implements ShouldQueue
         foreach ($profiles as $profile) {
             try {
                 $result = $profile->applySchedule();
-                
+
                 if ($result['action'] !== 'none') {
                     $schedulesApplied++;
                     $totalUpdated += $result['updated'];
-                    
+
                     Log::info("Profile '{$profile->name}': {$result['action']} schedule applied", [
                         'sockets_updated' => $result['updated'],
                         'scheduled_time' => $result['scheduled_time'] ?? 'N/A',
                         'applied_at' => $result['applied_at'] ?? 'N/A',
-                        'reason' => $result['reason']
+                        'reason' => $result['reason'],
                     ]);
                 } else {
                     Log::debug("Profile '{$profile->name}': No schedule action needed", [
-                        'reason' => $result['reason']
+                        'reason' => $result['reason'],
                     ]);
                 }
             } catch (\Exception $e) {
-                Log::error("Error processing schedule for profile '{$profile->name}': " . $e->getMessage());
+                Log::error("Error processing schedule for profile '{$profile->name}': ".$e->getMessage());
             }
         }
 

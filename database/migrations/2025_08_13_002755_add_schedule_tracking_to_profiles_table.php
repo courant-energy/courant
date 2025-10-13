@@ -25,7 +25,7 @@ return new class extends Migration
         Schema::table('profiles', function (Blueprint $table) {
             $table->dropColumn([
                 'last_turn_on_applied',
-                'last_turn_off_applied'
+                'last_turn_off_applied',
             ]);
         });
     }

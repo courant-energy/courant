@@ -3,17 +3,14 @@
 namespace App\Services;
 
 use App\Models\Alert;
-use App\Models\Reading;
 use App\Models\Profile;
-use App\Models\IotDevice;
+use App\Models\Reading;
 use App\Models\Socket;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Notification;
-use Filament\Notifications\Notification as FilamentNotification;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Queue;
 
 class AnomalyService
 {
@@ -35,7 +32,7 @@ class AnomalyService
      * This will dispatch the job to the queue for asynchronous processing
      * NOTE: Refactored to use single LSTM real-time processing only
      *
-     * @param Reading $reading The reading to process
+     * @param  Reading  $reading  The reading to process
      * @return void
      */
     public function processReadingForAnomalyDetection(Reading $reading)
@@ -47,12 +44,13 @@ class AnomalyService
         // Get the profile associated with the reading
         $profile = $reading->profile_id ? Profile::find($reading->profile_id) : null;
 
-        if (!$profile) {
+        if (! $profile) {
             Log::warning('No profile found for reading', ['reading_id' => $reading->id]);
+
             return;
         }
 
-        if($profile->anomaly_detection_enabled == false) {
+        if ($profile->anomaly_detection_enabled == false) {
             // Log::info('Anomaly detection is disabled for this profile', ['profile_id' => $profile->id]);
             return;
         }
@@ -68,8 +66,8 @@ class AnomalyService
      * Process a reading with LSTM model for real-time anomaly detection
      * This is the primary real-time detector replacing dual dispatch
      *
-     * @param Reading $reading The reading to process
-     * @param Profile $profile The profile associated with the reading
+     * @param  Reading  $reading  The reading to process
+     * @param  Profile  $profile  The profile associated with the reading
      * @return void
      */
     protected function processRealTimeAnomaly(Reading $reading, Profile $profile)
@@ -84,21 +82,22 @@ class AnomalyService
                 'power_factor' => $reading->power_factor,
                 'timestamp' => $reading->created_at ? $reading->created_at->toIso8601String() : now()->toIso8601String(),
             ];
-            
+
             Log::info('Sending LSTM real-time prediction request', [
                 'data' => $data,
-                'reading_id' => $reading->id
+                'reading_id' => $reading->id,
             ]);
 
             // Make request to ML server for LSTM prediction only
-            $response = Http::timeout(30)->post($this->mlServerUrl . '/predict_lstm', $data);
+            $response = Http::timeout(30)->post($this->mlServerUrl.'/predict_lstm', $data);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Failed to get LSTM prediction', [
                     'status' => $response->status(),
                     'response' => $response->body(),
-                    'reading_id' => $reading->id
+                    'reading_id' => $reading->id,
                 ]);
+
                 return;
             }
 
@@ -106,28 +105,27 @@ class AnomalyService
 
             // Process the LSTM response and create alerts if needed
             $this->processLstmResponse($result, $reading, $profile);
-            
+
         } catch (\Exception $e) {
             Log::error('Error processing real-time LSTM prediction', [
                 'error' => $e->getMessage(),
-                'reading_id' => $reading->id
+                'reading_id' => $reading->id,
             ]);
         }
     }
 
-
     /**
      * Process the LSTM prediction response and create alerts if needed
      *
-     * @param array $response The response from the LSTM prediction endpoint
-     * @param Reading $reading The reading being analyzed
-     * @param Profile $profile The profile associated with the reading
+     * @param  array  $response  The response from the LSTM prediction endpoint
+     * @param  Reading  $reading  The reading being analyzed
+     * @param  Profile  $profile  The profile associated with the reading
      * @return void
      */
     protected function processLstmResponse($response, Reading $reading, Profile $profile)
     {
         Log::info('Processing LSTM response for real-time anomaly detection');
-        
+
         // Check if an anomaly is detected (anything other than "within_prediction")
         if ($response['overall_status'] !== 'within_prediction') {
 
@@ -140,14 +138,14 @@ class AnomalyService
 
             // Extract significant deviations from both old and new format for compatibility
             $significantDeviations = $response['interpretation']['significant_deviations_summary'] ?? [];
-            
+
             // Also extract from details section with relative error information
             $detailsWithErrors = $this->extractDeviationsWithRelativeErrors($response['details'] ?? []);
 
             Log::info('Significant deviations detected', [
                 'significant_deviations' => $significantDeviations,
                 'details_with_errors' => $detailsWithErrors,
-                'reading_id' => $reading->id
+                'reading_id' => $reading->id,
             ]);
 
             // Create enhanced, actionable alert message with business context
@@ -158,7 +156,7 @@ class AnomalyService
 
             // Create the alert in the database with enhanced details
             $alert = $this->createAlert(
-                'anomaly_lstm_' . $this->getAnomalyTypeFromLstm($response),
+                'anomaly_lstm_'.$this->getAnomalyTypeFromLstm($response),
                 $alertDetails['message'],
                 $severity,
                 $reading,
@@ -183,33 +181,33 @@ class AnomalyService
     /**
      * Extract deviations with relative error information from response details
      *
-     * @param array $details The details section from ML response
+     * @param  array  $details  The details section from ML response
      * @return array Deviations with relative error data
      */
     protected function extractDeviationsWithRelativeErrors($details)
     {
         $deviationsWithErrors = [];
-        
+
         foreach ($details as $field => $data) {
             if (isset($data['status']) && $data['status'] !== 'within_prediction') {
                 $deviationsWithErrors[$field] = [
                     'actual' => $data['actual'] ?? 0,
                     'predicted' => $data['predicted'] ?? 0,
                     'status' => $data['status'] ?? 'unknown',
-                    'relative_error_percent' => $data['relative_error_percent'] ?? 0
+                    'relative_error_percent' => $data['relative_error_percent'] ?? 0,
                 ];
             }
         }
-        
+
         return $deviationsWithErrors;
     }
 
     /**
      * Process the Isolation Forest prediction response and create alerts if needed
      *
-     * @param array $response The response from the Isolation Forest prediction endpoint
-     * @param Reading $reading The reading being analyzed
-     * @param Profile $profile The profile associated with the reading
+     * @param  array  $response  The response from the Isolation Forest prediction endpoint
+     * @param  Reading  $reading  The reading being analyzed
+     * @param  Profile  $profile  The profile associated with the reading
      * @return void
      */
     protected function processIsolationForestResponse($response, Reading $reading, Profile $profile)
@@ -235,7 +233,7 @@ class AnomalyService
             // Send Filament notification if profile has notifications enabled
             if ($profile->notify_on_anomaly) {
                 $this->sendFilamentNotification(
-                    "Anomaly Detected!",
+                    'Anomaly Detected!',
                     $alertMessage,
                     $alert,
                     $reading,
@@ -249,36 +247,36 @@ class AnomalyService
     /**
      * Create an enhanced, actionable alert message for LSTM-based anomalies
      *
-     * @param array $response The LSTM response
-     * @param array $significantDeviations The significant deviations from the response
-     * @param Reading $reading The reading being analyzed
-     * @param Profile $profile The profile associated with the reading
-     * @param array $detailsWithErrors Deviations with relative error information
+     * @param  array  $response  The LSTM response
+     * @param  array  $significantDeviations  The significant deviations from the response
+     * @param  Reading  $reading  The reading being analyzed
+     * @param  Profile  $profile  The profile associated with the reading
+     * @param  array  $detailsWithErrors  Deviations with relative error information
      * @return array Enhanced alert details with title, message, and metadata
      */
     protected function createEnhancedLstmAlertMessage($response, $significantDeviations, Reading $reading, Profile $profile, $detailsWithErrors = [])
     {
         Log::info('Creating enhanced LSTM alert message');
-        
+
         // Determine the primary anomaly type and equipment context
         $anomalyType = $this->getAnomalyTypeFromLstm($response);
         $equipmentName = $profile->name ?? 'Equipment';
         $socket = $reading->socket;
         $socketName = $socket ? "Socket #{$socket->assigned_id}" : 'Unknown Socket';
-        
+
         // Create actionable title
         $title = $this->createActionableTitle($anomalyType, $equipmentName);
-        
+
         // Build business-context message using relative error data when available
         $message = $this->buildBusinessContextMessage($anomalyType, $significantDeviations, $reading, $profile, $detailsWithErrors);
-        
+
         // Add suggested next steps
         $nextSteps = $this->getSuggestedNextSteps($anomalyType, $response['overall_status']);
-        $message .= "\n\nRecommendation: " . $nextSteps;
-        
+        $message .= "\n\nRecommendation: ".$nextSteps;
+
         // Extract threshold information from response if available
         $thresholds = $response['interpretation']['thresholds'] ?? [];
-        
+
         // Prepare comprehensive metadata for machine analysis
         $metadata = [
             'anomaly_type' => $anomalyType,
@@ -291,13 +289,13 @@ class AnomalyService
             'business_impact_level' => $this->assessBusinessImpact($anomalyType, $response['overall_status']),
             'detection_timestamp' => now()->toIso8601String(),
             'sensitivity_thresholds' => $thresholds, // New: threshold information
-            'ml_response_data' => $response
+            'ml_response_data' => $response,
         ];
-        
+
         return [
             'title' => $title,
             'message' => $message,
-            'metadata' => $metadata
+            'metadata' => $metadata,
         ];
     }
 
@@ -310,12 +308,12 @@ class AnomalyService
             'power_high' => "High Power Draw Alert: {$equipmentName}",
             'power_low' => "Low Power Alert: {$equipmentName}",
             'voltage_high' => "High Voltage Alert: {$equipmentName}",
-            'voltage_low' => "Low Voltage Alert: {$equipmentName}", 
+            'voltage_low' => "Low Voltage Alert: {$equipmentName}",
             'current_high' => "High Current Draw Alert: {$equipmentName}",
             'power_factor_low' => "Poor Power Factor Alert: {$equipmentName}",
-            'general' => "Equipment Anomaly Alert: {$equipmentName}"
+            'general' => "Equipment Anomaly Alert: {$equipmentName}",
         ];
-        
+
         return $titles[$anomalyType] ?? $titles['general'];
     }
 
@@ -324,41 +322,41 @@ class AnomalyService
      */
     protected function buildBusinessContextMessage($anomalyType, $significantDeviations, Reading $reading, Profile $profile, $detailsWithErrors = [])
     {
-        $message = "";
-        
+        $message = '';
+
         // Use relative error data if available, otherwise fall back to legacy format
-        $deviationsToProcess = !empty($detailsWithErrors) ? $detailsWithErrors : $significantDeviations;
-        
-        if (!empty($deviationsToProcess)) {
+        $deviationsToProcess = ! empty($detailsWithErrors) ? $detailsWithErrors : $significantDeviations;
+
+        if (! empty($deviationsToProcess)) {
             foreach ($deviationsToProcess as $field => $deviation) {
                 $fieldName = $this->getReadableName($field);
                 $actual = round($deviation['actual'], 2);
                 $predicted = round($deviation['predicted'], 2);
-                
+
                 // Use relative error percentage if available, otherwise calculate it
                 if (isset($deviation['relative_error_percent'])) {
                     $relativeErrorPercent = round($deviation['relative_error_percent'], 1);
                     $direction = $actual > $predicted ? 'higher' : 'lower';
-                    
+
                     $message .= "The {$fieldName} reading of {$actual} is {$relativeErrorPercent}% {$direction} than the predicted baseline of {$predicted}. ";
                 } else {
                     // Legacy format calculation
                     $percentChange = $predicted != 0 ? round((($actual - $predicted) / $predicted) * 100, 1) : 0;
                     $direction = $actual > $predicted ? 'higher' : 'lower';
-                    
+
                     $message .= "The {$fieldName} reading of {$actual} is {$percentChange}% {$direction} than the expected baseline of {$predicted}. ";
                 }
-                
+
                 // Add business context based on the field
                 $message .= $this->getFieldBusinessContext($field, $actual, $predicted, $direction);
             }
         } else {
-            $message = "Multiple equipment parameters are showing unusual patterns compared to learned baselines. ";
+            $message = 'Multiple equipment parameters are showing unusual patterns compared to learned baselines. ';
         }
-        
+
         // Add equipment-specific interpretation
         $message .= $this->getEquipmentSpecificInterpretation($anomalyType, $reading);
-        
+
         return $message;
     }
 
@@ -368,21 +366,21 @@ class AnomalyService
     protected function getFieldBusinessContext($field, $actual, $predicted, $direction)
     {
         $contexts = [
-            'power' => $direction === 'higher' ? 
-                "This increased power consumption may indicate equipment inefficiency or potential mechanical issues. " :
-                "This reduced power consumption may indicate equipment underperformance or operational changes. ",
+            'power' => $direction === 'higher' ?
+                'This increased power consumption may indicate equipment inefficiency or potential mechanical issues. ' :
+                'This reduced power consumption may indicate equipment underperformance or operational changes. ',
             'current' => $direction === 'higher' ?
-                "Elevated current draw could signal motor strain, bearing issues, or electrical problems. " :
-                "Reduced current may indicate equipment not operating at full capacity. ",
+                'Elevated current draw could signal motor strain, bearing issues, or electrical problems. ' :
+                'Reduced current may indicate equipment not operating at full capacity. ',
             'voltage' => $direction === 'higher' ?
-                "Higher voltage could cause equipment damage and should be investigated immediately. " :
-                "Low voltage can cause equipment malfunction and inefficient operation. ",
+                'Higher voltage could cause equipment damage and should be investigated immediately. ' :
+                'Low voltage can cause equipment malfunction and inefficient operation. ',
             'power_factor' => $direction === 'lower' ?
-                "Poor power factor indicates inefficient power usage and may increase energy costs. " :
-                "Improved power factor suggests better electrical efficiency. "
+                'Poor power factor indicates inefficient power usage and may increase energy costs. ' :
+                'Improved power factor suggests better electrical efficiency. ',
         ];
-        
-        return $contexts[$field] ?? "This deviation may affect equipment performance and should be monitored. ";
+
+        return $contexts[$field] ?? 'This deviation may affect equipment performance and should be monitored. ';
     }
 
     /**
@@ -392,16 +390,16 @@ class AnomalyService
     {
         switch ($anomalyType) {
             case 'power_high':
-                return "This may indicate increased mechanical load, wear, or electrical inefficiency.";
+                return 'This may indicate increased mechanical load, wear, or electrical inefficiency.';
             case 'current_high':
-                return "High current draw often signals mechanical binding, bearing wear, or electrical faults.";
+                return 'High current draw often signals mechanical binding, bearing wear, or electrical faults.';
             case 'voltage_high':
             case 'voltage_low':
-                return "Voltage irregularities can cause equipment damage and should be addressed promptly.";
+                return 'Voltage irregularities can cause equipment damage and should be addressed promptly.';
             case 'power_factor_low':
-                return "Poor power factor increases energy costs and may indicate reactive load issues.";
+                return 'Poor power factor increases energy costs and may indicate reactive load issues.';
             default:
-                return "Equipment performance has deviated from normal operating patterns.";
+                return 'Equipment performance has deviated from normal operating patterns.';
         }
     }
 
@@ -411,22 +409,22 @@ class AnomalyService
     protected function getSuggestedNextSteps($anomalyType, $overallStatus)
     {
         $urgency = in_array($overallStatus, ['significantly_above', 'significantly_below', 'multiple_significant_deviations']) ? 'immediate' : 'scheduled';
-        
+
         $steps = [
-            'power_high' => $urgency === 'immediate' ? 
-                "Immediately inspect equipment for mechanical binding or electrical issues. Consider reducing load if safe to do so." :
-                "Schedule equipment inspection to check for efficiency degradation or increased load conditions.",
+            'power_high' => $urgency === 'immediate' ?
+                'Immediately inspect equipment for mechanical binding or electrical issues. Consider reducing load if safe to do so.' :
+                'Schedule equipment inspection to check for efficiency degradation or increased load conditions.',
             'current_high' => $urgency === 'immediate' ?
-                "Immediately check for mechanical obstruction, bearing issues, or electrical faults. Consider shutting down if unsafe." :
-                "Schedule maintenance inspection focusing on bearings, alignment, and electrical connections.",
-            'voltage_high' => "Immediately check electrical supply and consider protective measures to prevent equipment damage.",
-            'voltage_low' => "Check electrical supply quality and consider voltage regulation measures.",
-            'power_factor_low' => "Schedule electrical system review to identify and correct reactive load issues."
+                'Immediately check for mechanical obstruction, bearing issues, or electrical faults. Consider shutting down if unsafe.' :
+                'Schedule maintenance inspection focusing on bearings, alignment, and electrical connections.',
+            'voltage_high' => 'Immediately check electrical supply and consider protective measures to prevent equipment damage.',
+            'voltage_low' => 'Check electrical supply quality and consider voltage regulation measures.',
+            'power_factor_low' => 'Schedule electrical system review to identify and correct reactive load issues.',
         ];
-        
-        return $steps[$anomalyType] ?? ($urgency === 'immediate' ? 
-            "Immediately inspect equipment operation and consider safety shutdown if conditions worsen." :
-            "Schedule equipment inspection to identify the cause of the operational deviation.");
+
+        return $steps[$anomalyType] ?? ($urgency === 'immediate' ?
+            'Immediately inspect equipment operation and consider safety shutdown if conditions worsen.' :
+            'Schedule equipment inspection to identify the cause of the operational deviation.');
     }
 
     /**
@@ -438,26 +436,28 @@ class AnomalyService
         if (isset($response['prediction_errors'])) {
             $totalError = 0;
             $count = 0;
-            
+
             foreach ($response['prediction_errors'] as $field => $errorData) {
                 if (isset($errorData['relative_error'])) {
                     $totalError += $errorData['relative_error'];
                     $count++;
                 }
             }
-            
+
             if ($count > 0) {
                 return max(0, 100 - ($totalError / $count * 100));
             }
         }
-        
+
         // Fall back to legacy calculation
         $deviations = $response['interpretation']['significant_deviations_summary'] ?? [];
-        if (empty($deviations)) return 100;
-        
+        if (empty($deviations)) {
+            return 100;
+        }
+
         $totalError = 0;
         $count = 0;
-        
+
         foreach ($deviations as $deviation) {
             $predicted = $deviation['predicted'];
             $actual = $deviation['actual'];
@@ -467,7 +467,7 @@ class AnomalyService
                 $count++;
             }
         }
-        
+
         return $count > 0 ? max(0, 100 - ($totalError / $count * 100)) : 100;
     }
 
@@ -478,7 +478,7 @@ class AnomalyService
     {
         $criticalTypes = ['voltage_high', 'current_high'];
         $significantStatuses = ['significantly_above', 'significantly_below', 'multiple_significant_deviations'];
-        
+
         if (in_array($anomalyType, $criticalTypes) && in_array($overallStatus, $significantStatuses)) {
             return 'critical';
         } elseif (in_array($anomalyType, $criticalTypes) || in_array($overallStatus, $significantStatuses)) {
@@ -491,26 +491,26 @@ class AnomalyService
     /**
      * Create an alert message for LSTM-based anomalies (legacy method, kept for compatibility)
      *
-     * @param array $response The LSTM response
-     * @param array $significantDeviations The significant deviations from the response
+     * @param  array  $response  The LSTM response
+     * @param  array  $significantDeviations  The significant deviations from the response
      * @return string The formatted alert message
      */
     protected function createLstmAlertMessage($response, $significantDeviations)
     {
         Log::info('Creating LSTM alert message');
-        $message = "Potential anomaly detected in sensor readings. ";
+        $message = 'Potential anomaly detected in sensor readings. ';
 
-        if (!empty($significantDeviations)) {
+        if (! empty($significantDeviations)) {
             foreach ($significantDeviations as $field => $deviation) {
                 $fieldName = $this->getReadableName($field);
                 $status = str_replace('_', ' ', $deviation['status']);
 
                 $message .= "{$fieldName} reading of {$deviation['actual']} is {$status} ";
-                $message .= "the predicted value of " . round($deviation['predicted'], 2) . ". ";
+                $message .= 'the predicted value of '.round($deviation['predicted'], 2).'. ';
             }
         } else {
             // If no significant deviations but still an anomaly, create a generic message
-            $message .= "Multiple parameters are outside their expected ranges. ";
+            $message .= 'Multiple parameters are outside their expected ranges. ';
         }
 
         // Add an interpretation based on the status_meaning
@@ -525,16 +525,16 @@ class AnomalyService
     /**
      * Create an alert message for Isolation Forest-based anomalies
      *
-     * @param array $response The Isolation Forest response
+     * @param  array  $response  The Isolation Forest response
      * @return string The formatted alert message
      */
     protected function createIsolationForestAlertMessage($response)
     {
-        $message = "Anomaly detected: " . ($response['explanation']['message'] ?? 'Unusual patterns in sensor readings. ');
+        $message = 'Anomaly detected: '.($response['explanation']['message'] ?? 'Unusual patterns in sensor readings. ');
 
         // Add feature values that might have contributed to the anomaly
         if (isset($response['explanation']['feature_values'])) {
-            $message .= "Unusual readings include: ";
+            $message .= 'Unusual readings include: ';
 
             foreach ($response['explanation']['feature_values'] as $field => $value) {
                 $fieldName = $this->getReadableName($field);
@@ -542,8 +542,8 @@ class AnomalyService
             }
 
             // Remove the trailing comma and space
-            $message = rtrim($message, ", ");
-            $message .= ".";
+            $message = rtrim($message, ', ');
+            $message .= '.';
         }
 
         // Add anomaly score information
@@ -558,12 +558,12 @@ class AnomalyService
     /**
      * Create an alert record in the database with enhanced metadata support
      *
-     * @param string $type The type of alert
-     * @param string $message The alert message
-     * @param string $severity The alert severity
-     * @param Reading $reading The reading associated with the alert
-     * @param Profile $profile The profile associated with the reading
-     * @param array $metadata Additional metadata for the alert (optional)
+     * @param  string  $type  The type of alert
+     * @param  string  $message  The alert message
+     * @param  string  $severity  The alert severity
+     * @param  Reading  $reading  The reading associated with the alert
+     * @param  Profile  $profile  The profile associated with the reading
+     * @param  array  $metadata  Additional metadata for the alert (optional)
      * @return Alert The created alert
      */
     protected function createAlert($type, $message, $severity, Reading $reading, Profile $profile, array $metadata = [])
@@ -586,7 +586,7 @@ class AnomalyService
                 'power' => $reading->power,
                 'frequency' => $reading->frequency,
                 'power_factor' => $reading->power_factor,
-                'detected_at' => now()->toIso8601String()
+                'detected_at' => now()->toIso8601String(),
             ], $metadata), // Merge additional metadata
             'resolved' => false,
         ];
@@ -602,12 +602,12 @@ class AnomalyService
     /**
      * Send a Filament notification for an anomaly
      *
-     * @param string $title The notification title
-     * @param string $body The notification body
-     * @param Alert $alert The alert record
-     * @param Reading $reading The reading associated with the alert
-     * @param Profile $profile The profile associated with the reading
-     * @param array $response The original ML response data
+     * @param  string  $title  The notification title
+     * @param  string  $body  The notification body
+     * @param  Alert  $alert  The alert record
+     * @param  Reading  $reading  The reading associated with the alert
+     * @param  Profile  $profile  The profile associated with the reading
+     * @param  array  $response  The original ML response data
      * @return void
      */
     protected function sendFilamentNotification($title, $body, Alert $alert, Reading $reading, Profile $profile, array $response)
@@ -615,13 +615,13 @@ class AnomalyService
         Log::info('Trying to send Filament notification', [
             'alert_id' => $alert->id,
             'profile_id' => $profile->id,
-            'reading_id' => $reading->id
+            'reading_id' => $reading->id,
         ]);
         try {
             // Get users to notify (profile owner)
             $user = $profile->user;
 
-            if (!$user) {
+            if (! $user) {
                 return;
             }
 
@@ -633,14 +633,14 @@ class AnomalyService
                 ->actions([
                     \Filament\Notifications\Actions\Action::make('view')
                         ->label('View Sockets')
-                        ->url(route('filament.app.resources.sockets.index', $alert->id))
+                        ->url(route('filament.app.resources.sockets.index', $alert->id)),
                 ])
                 ->icon('heroicon-o-exclamation-triangle')
                 ->sendToDatabase($user);
         } catch (\Exception $e) {
             Log::error('Failed to send Filament notification', [
                 'error' => $e->getMessage(),
-                'alert_id' => $alert->id
+                'alert_id' => $alert->id,
             ]);
         }
     }
@@ -648,7 +648,7 @@ class AnomalyService
     /**
      * Get a human-readable name for a reading field
      *
-     * @param string $field The field name
+     * @param  string  $field  The field name
      * @return string The human-readable name
      */
     protected function getReadableName($field)
@@ -658,7 +658,7 @@ class AnomalyService
             'current' => 'Current',
             'power' => 'Power Consumption',
             'frequency' => 'Frequency',
-            'power_factor' => 'Power Factor'
+            'power_factor' => 'Power Factor',
         ];
 
         return $readableNames[$field] ?? ucfirst($field);
@@ -667,7 +667,7 @@ class AnomalyService
     /**
      * Determine the severity of an LSTM-based anomaly from its status
      *
-     * @param string $status The overall status from the LSTM response
+     * @param  string  $status  The overall status from the LSTM response
      * @return string The alert severity (high, medium, or low)
      */
     protected function determineSeverityFromLstmStatus($status)
@@ -690,7 +690,7 @@ class AnomalyService
     /**
      * Determine the severity based on an anomaly score
      *
-     * @param float $score The anomaly score from Isolation Forest
+     * @param  float  $score  The anomaly score from Isolation Forest
      * @return string The alert severity (high, medium, or low)
      */
     protected function determineSeverityFromAnomalyScore($score)
@@ -709,7 +709,7 @@ class AnomalyService
     /**
      * Get the anomaly type from LSTM response
      *
-     * @param array $response The LSTM response
+     * @param  array  $response  The LSTM response
      * @return string The anomaly type
      */
     protected function getAnomalyTypeFromLstm($response)

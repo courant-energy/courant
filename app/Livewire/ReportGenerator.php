@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\Profile;
 use App\Services\ReportService;
-use App\Services\PdfReportService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
@@ -13,14 +12,23 @@ use Livewire\Component;
 class ReportGenerator extends Component
 {
     public string $reportType = 'energy_consumption';
+
     public string $timeRange = 'daily';
+
     public string $startDate;
+
     public string $endDate;
+
     public ?int $selectedProfileId = null;
+
     public float $costPerKwh = 11;
+
     public array $reportData = [];
+
     public bool $isLoading = false;
+
     public string $chartType = 'bar';
+
     public bool $showReport = false;
 
     protected $listeners = ['refreshReport'];
@@ -50,7 +58,7 @@ class ReportGenerator extends Component
     {
         $endDate = Carbon::parse($this->endDate);
         $adjusted = false;
-        
+
         switch ($this->timeRange) {
             case 'daily':
                 // No minimum requirement for daily, but ensure at least 1 day
@@ -69,19 +77,19 @@ class ReportGenerator extends Component
         }
 
         $currentStartDate = Carbon::parse($this->startDate);
-        
+
         // If current start date is after the minimum required, adjust it
         if ($currentStartDate->gt($minStartDate)) {
             $this->startDate = $minStartDate->format('Y-m-d');
             $adjusted = true;
         }
-        
+
         if ($adjusted) {
             $this->dispatch('dateRangeAdjusted', [
                 'timeRange' => $this->timeRange,
                 'newStartDate' => $this->startDate,
                 'endDate' => $this->endDate,
-                'reason' => 'time_range_changed'
+                'reason' => 'time_range_changed',
             ]);
         }
     }
@@ -90,16 +98,16 @@ class ReportGenerator extends Component
     {
         $startDate = Carbon::parse($this->startDate);
         $endDate = Carbon::parse($this->endDate);
-        
+
         // Ensure start date is not after end date
         if ($startDate->gt($endDate)) {
             $this->endDate = $startDate->format('Y-m-d');
             $endDate = $startDate;
         }
-        
+
         $daysDifference = $startDate->diffInDays($endDate) + 1; // +1 to include both start and end dates
         $adjusted = false;
-        
+
         switch ($this->timeRange) {
             case 'weekly':
                 if ($daysDifference < 7) {
@@ -116,12 +124,12 @@ class ReportGenerator extends Component
                 }
                 break;
         }
-        
+
         if ($adjusted) {
             $this->dispatch('dateRangeAdjusted', [
                 'timeRange' => $this->timeRange,
                 'newStartDate' => $this->startDate,
-                'endDate' => $this->endDate
+                'endDate' => $this->endDate,
             ]);
         }
     }
@@ -144,10 +152,10 @@ class ReportGenerator extends Component
     {
         $startDate = Carbon::parse($this->startDate);
         $endDate = Carbon::parse($this->endDate);
-        
+
         $daysDifference = $startDate->diffInDays($endDate) + 1;
         $minimumDays = $this->getMinimumDaysForTimeRange();
-        
+
         return $daysDifference >= $minimumDays;
     }
 
@@ -160,13 +168,14 @@ class ReportGenerator extends Component
         $this->validateAndAdjustDateRange();
 
         // Double-check the date range meets minimum requirements
-        if (!$this->isDateRangeValid()) {
+        if (! $this->isDateRangeValid()) {
             $this->isLoading = false;
             \Filament\Notifications\Notification::make()
                 ->title('Invalid Date Range')
                 ->body('Please select a valid date range that meets the minimum requirements for the selected time range.')
                 ->danger()
                 ->send();
+
             return;
         }
 
@@ -213,7 +222,7 @@ class ReportGenerator extends Component
 
         $this->isLoading = false;
         $this->showReport = true;
-        
+
         // Dispatch browser event to render chart
         $this->dispatch('reportGenerated', [
             'reportType' => $this->reportType,
@@ -232,10 +241,10 @@ class ReportGenerator extends Component
     {
         $reportService = app(ReportService::class);
         $csv = $reportService->exportToCsv($this->reportData, $this->reportType);
-        
+
         $timestamp = now()->format('Y-m-d_H-i');
         $filename = "report_{$this->reportType}_{$timestamp}.csv";
-        
+
         // Return a download response with the CSV content
         return response()->streamDownload(function () use ($csv) {
             echo $csv;
@@ -247,7 +256,7 @@ class ReportGenerator extends Component
     public function downloadPdf()
     {
         $user = Auth::user();
-        
+
         // Dispatch job to generate PDF in the background
         \App\Jobs\GeneratePdfReport::dispatch(
             $this->reportData,
@@ -259,7 +268,7 @@ class ReportGenerator extends Component
             $user->id,
             $user->company_name
         );
-        
+
         // Show immediate feedback to the user
         \Filament\Notifications\Notification::make()
             ->title('PDF Generation Started')
@@ -267,7 +276,7 @@ class ReportGenerator extends Component
             ->info()
             ->send();
     }
-    
+
     public function getProfiles()
     {
         return Profile::whereHas('sockets')
@@ -282,13 +291,14 @@ class ReportGenerator extends Component
                 ];
             });
     }
-    
+
     protected function getChartData()
     {
         switch ($this->reportType) {
             case 'energy_consumption':
                 $originalLabel = $this->reportData['datasets'][0]['label'];
-                $labelWithUnit = str_contains($originalLabel, 'kWh') ? $originalLabel : $originalLabel . ' (kWh)';
+                $labelWithUnit = str_contains($originalLabel, 'kWh') ? $originalLabel : $originalLabel.' (kWh)';
+
                 return [
                     'labels' => $this->reportData['labels'],
                     'datasets' => [
@@ -297,14 +307,15 @@ class ReportGenerator extends Component
                             'data' => $this->reportData['datasets'][0]['data'],
                             'backgroundColor' => 'rgba(59, 130, 246, 0.5)',
                             'borderColor' => 'rgb(59, 130, 246)',
-                            'borderWidth' => 1
-                        ]
-                    ]
+                            'borderWidth' => 1,
+                        ],
+                    ],
                 ];
-                
+
             case 'cost_analysis':
                 $originalLabel = $this->reportData['datasets'][0]['label'];
-                $labelWithUnit = str_contains($originalLabel, 'PHP') || str_contains($originalLabel, '₱') ? $originalLabel : $originalLabel . ' (PHP)';
+                $labelWithUnit = str_contains($originalLabel, 'PHP') || str_contains($originalLabel, '₱') ? $originalLabel : $originalLabel.' (PHP)';
+
                 return [
                     'labels' => $this->reportData['labels'],
                     'datasets' => [
@@ -313,11 +324,11 @@ class ReportGenerator extends Component
                             'data' => $this->reportData['datasets'][0]['data'],
                             'backgroundColor' => 'rgba(59, 130, 246, 0.5)',
                             'borderColor' => 'rgb(59, 130, 246)',
-                            'borderWidth' => 1
-                        ]
-                    ]
+                            'borderWidth' => 1,
+                        ],
+                    ],
                 ];
-                
+
             case 'anomaly':
                 if (isset($this->reportData['anomalies_by_date'])) {
                     return [
@@ -328,19 +339,20 @@ class ReportGenerator extends Component
                                 'data' => $this->reportData['anomalies_by_date']['data'],
                                 'backgroundColor' => 'rgba(239, 68, 68, 0.5)',
                                 'borderColor' => 'rgb(239, 68, 68)',
-                                'borderWidth' => 1
-                            ]
-                        ]
+                                'borderWidth' => 1,
+                            ],
+                        ],
                     ];
                 }
+
                 return [];
-                
+
             case 'equipment_usage':
                 if (isset($this->reportData['equipment_data'])) {
                     $profileNames = collect($this->reportData['equipment_data'])->pluck('profile_name')->toArray();
                     $uptimeData = collect($this->reportData['equipment_data'])->pluck('uptime_percentage')->toArray();
                     $downtimeData = collect($this->reportData['equipment_data'])->pluck('downtime_percentage')->toArray();
-                    
+
                     return [
                         'labels' => $profileNames,
                         'datasets' => [
@@ -349,28 +361,29 @@ class ReportGenerator extends Component
                                 'data' => $uptimeData,
                                 'backgroundColor' => 'rgba(16, 185, 129, 0.5)',
                                 'borderColor' => 'rgb(16, 185, 129)',
-                                'borderWidth' => 1
+                                'borderWidth' => 1,
                             ],
                             [
                                 'label' => 'Downtime',
                                 'data' => $downtimeData,
                                 'backgroundColor' => 'rgba(239, 68, 68, 0.5)',
                                 'borderColor' => 'rgb(239, 68, 68)',
-                                'borderWidth' => 1
-                            ]
-                        ]
+                                'borderWidth' => 1,
+                            ],
+                        ],
                     ];
                 }
+
                 return [];
         }
-        
+
         return [];
     }
 
     public function render()
     {
         return view('livewire.report-generator', [
-            'profiles' => $this->getProfiles()
+            'profiles' => $this->getProfiles(),
         ]);
     }
 }

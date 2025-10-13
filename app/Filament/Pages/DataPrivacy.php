@@ -2,13 +2,13 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use Filament\Actions\Action;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Placeholder;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +17,7 @@ use Illuminate\Validation\ValidationException;
 class DataPrivacy extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
+
     protected static ?string $navigationGroup = 'Data & Insights';
 
     protected static string $view = 'filament.pages.data-privacy';
@@ -27,7 +28,7 @@ class DataPrivacy extends Page
 
     public function deleteAccountAction(): Action
     {
-        return 
+        return
             Action::make('deleteAccount')
                 ->label('Delete My Account')
                 ->color('danger')
@@ -71,7 +72,7 @@ class DataPrivacy extends Page
 
                             TextInput::make('email_confirmation')
                                 ->label('Type your email address to confirm')
-                                ->helperText('Please type your email address exactly as shown: ' . Auth::user()->email)
+                                ->helperText('Please type your email address exactly as shown: '.Auth::user()->email)
                                 ->required()
                                 ->rules([
                                     function () {
@@ -106,7 +107,7 @@ class DataPrivacy extends Page
                                 ->rules([
                                     function () {
                                         return function (string $attribute, $value, \Closure $fail) {
-                                            if (!Hash::check($value, Auth::user()->password)) {
+                                            if (! Hash::check($value, Auth::user()->password)) {
                                                 $fail('The password is incorrect.');
                                             }
                                         };
@@ -120,14 +121,14 @@ class DataPrivacy extends Page
                     try {
                         // Get the current user
                         $user = Auth::user();
-                        
+
                         // Log the account deletion attempt
                         Log::warning('User account deletion initiated', [
                             'user_id' => $user->id,
                             'email' => $user->email,
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->userAgent(),
-                            'timestamp' => now()
+                            'timestamp' => now(),
                         ]);
 
                         // Perform the account deletion
@@ -155,7 +156,7 @@ class DataPrivacy extends Page
                         Log::error('Failed to delete user account', [
                             'user_id' => Auth::id(),
                             'error' => $e->getMessage(),
-                            'trace' => $e->getTraceAsString()
+                            'trace' => $e->getTraceAsString(),
                         ]);
 
                         Notification::make()

@@ -29,7 +29,7 @@ return new class extends Migration
                 'scheduling_enabled',
                 'turn_on_time',
                 'turn_off_time',
-                'schedule_days'
+                'schedule_days',
             ]);
         });
     }

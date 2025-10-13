@@ -6,7 +6,6 @@ use App\Models\IotDevice;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Collection;
@@ -30,27 +29,28 @@ class PowerReadings extends Page implements HasForms
     public Collection $sockets;
 
     public bool $hasSelectedDevice = false;
+
     public IotDevice $device;
-    
+
     // Filter management per socket
     public array $socketFilters = [];
-    
+
     public function getFilterOptions(): array
     {
         return [
             'hour' => 'Last hour',
-            'today' => 'Today', 
+            'today' => 'Today',
             'week' => 'Last week',
             'month' => 'Last month',
             'all' => 'All time',
         ];
     }
-    
+
     public function getSocketFilter($socketId): string
     {
         return $this->socketFilters[$socketId] ?? 'hour';
     }
-    
+
     public function setSocketFilter($socketId, $filter)
     {
         $this->socketFilters[$socketId] = $filter;
@@ -75,12 +75,13 @@ class PowerReadings extends Page implements HasForms
 
     public function mount(): void
     {
-        if (!auth()->user()->iotDevices()->exists()) {
+        if (! auth()->user()->iotDevices()->exists()) {
             Notification::make()
                 ->title('No devices found')
                 ->body('Please add a device to your account first in the IoT Devices section.')
                 ->danger()
                 ->send();
+
             return;
         }
 
@@ -101,13 +102,14 @@ class PowerReadings extends Page implements HasForms
             ->where('id', $this->data['device_id'])
             ->first();
 
-        if (!$this->device) {
+        if (! $this->device) {
             $this->hasSelectedDevice = false;
 
             Notification::make()
                 ->title('Device not found')
                 ->danger()
                 ->send();
+
             return;
         }
 
@@ -118,6 +120,7 @@ class PowerReadings extends Page implements HasForms
                 ->title('No data found')
                 ->danger()
                 ->send();
+
             return;
         }
 
@@ -132,13 +135,13 @@ class PowerReadings extends Page implements HasForms
      */
     public function hasSocketData($socket, $filter = null): bool
     {
-        if (!$socket || !$socket->profile_id) {
+        if (! $socket || ! $socket->profile_id) {
             return false;
         }
 
         $filter = $filter ?? $this->getSocketFilter($socket->id);
         $query = $socket->readings()->forProfile($socket->profile_id);
-        
+
         // Apply time filtering based on socket's filter
         switch ($filter) {
             case 'hour':

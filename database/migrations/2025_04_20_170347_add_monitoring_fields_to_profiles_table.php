@@ -35,7 +35,7 @@ return new class extends Migration
                 'voltage_threshold_high',
                 'voltage_threshold_low',
                 'current_threshold_high',
-                'power_factor_threshold'
+                'power_factor_threshold',
             ]);
         });
     }

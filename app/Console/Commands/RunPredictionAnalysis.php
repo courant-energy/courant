@@ -29,29 +29,29 @@ class RunPredictionAnalysis extends Command
     {
         $timeWindow = (int) $this->option('time-window');
         $this->info("Starting device failure prediction analysis (analyzing last {$timeWindow} hours of data)...");
-        
+
         try {
             $startTime = microtime(true);
             $predictionsCount = $predictionService->runPredictionForAllActiveSockets($timeWindow);
             $duration = round(microtime(true) - $startTime, 2);
-            
+
             $this->info("Prediction analysis completed: {$predictionsCount} potential issues detected.");
             $this->info("Analysis duration: {$duration} seconds");
-            
-            Log::info("Prediction analysis completed", [
+
+            Log::info('Prediction analysis completed', [
                 'predictions_count' => $predictionsCount,
                 'duration_seconds' => $duration,
-                'time_window_hours' => $timeWindow
+                'time_window_hours' => $timeWindow,
             ]);
-            
+
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $this->error("Error running prediction analysis: " . $e->getMessage());
-            Log::error("Prediction analysis failed", [
+            $this->error('Error running prediction analysis: '.$e->getMessage());
+            Log::error('Prediction analysis failed', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
-            
+
             return Command::FAILURE;
         }
     }

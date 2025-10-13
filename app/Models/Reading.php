@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Services\AnomalyService;
+use Illuminate\Database\Eloquent\Model;
 
 class Reading extends Model
 {
-    protected $fillable = ['socket_id', 'voltage', 'current', 'power', 'energy', 'frequency', 'power_factor','profile_id','reading_time'];
+    protected $fillable = ['socket_id', 'voltage', 'current', 'power', 'energy', 'frequency', 'power_factor', 'profile_id', 'reading_time'];
 
     protected $casts = [
         'reading_time' => 'datetime',
@@ -17,7 +17,6 @@ class Reading extends Model
     {
         return $this->socket->iotDevice();
     }
-
 
     public function socket()
     {
@@ -42,7 +41,7 @@ class Reading extends Model
     protected static function booted()
     {
         static::created(function ($reading) {
-           
+
             // get the device
             $device = $reading->socket->iotDevice;
             // update the last seen time
@@ -63,7 +62,7 @@ class Reading extends Model
                 } catch (\Exception $e) {
                     \Log::error('Failed to trigger anomaly detection', [
                         'reading_id' => $reading->id,
-                        'error' => $e->getMessage()
+                        'error' => $e->getMessage(),
                     ]);
                 }
             }

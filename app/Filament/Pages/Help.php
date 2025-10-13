@@ -19,10 +19,10 @@ class Help extends Page implements HasForms
     use InteractsWithForms;
 
     public ?array $data = [];
+
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
     protected static ?string $navigationGroup = 'Learning & Support';
-
 
     protected static string $view = 'filament.pages.help';
 
@@ -45,7 +45,7 @@ class Help extends Page implements HasForms
                             ->label('Subject Category')
                             ->options([
                                 // 'Billing Inquiry' => 'Billing Inquiry',
-                                'Technical Support' => 'Technical Support', 
+                                'Technical Support' => 'Technical Support',
                                 'Account Issue' => 'Account Issue',
                                 'Device Configuration' => 'Device Configuration',
                                 'Energy Monitoring' => 'Energy Monitoring',
@@ -69,9 +69,9 @@ class Help extends Page implements HasForms
                             ->maxLength(255)
                             ->required()
                             ->reactive()
-                            ->disabled(fn (callable $get) => !$get('subject_category') || ($get('subject_category') && $get('subject_category') !== 'Other'))
-                            ->helperText(fn (callable $get) => $get('subject_category') === 'Other' 
-                                ? 'Please enter your custom subject' 
+                            ->disabled(fn (callable $get) => ! $get('subject_category') || ($get('subject_category') && $get('subject_category') !== 'Other'))
+                            ->helperText(fn (callable $get) => $get('subject_category') === 'Other'
+                                ? 'Please enter your custom subject'
                                 : ($get('subject_category') ? 'Subject auto-filled from category selection' : 'Please select a category above first')
                             ),
                         RichEditor::make('body')
@@ -80,7 +80,7 @@ class Help extends Page implements HasForms
                             ->required(),
                         ViewField::make('legend')
                             ->view('filament.customs.legend'),
-                    ])
+                    ]),
 
             ])
             ->statePath('data');

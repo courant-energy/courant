@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\IotDevice;
 use App\Models\Profile;
 use App\Models\Socket;
 use App\Models\User;
-use App\Models\IotDevice;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Carbon\Carbon;
 
 class SocketSchedulingTest extends TestCase
 {
@@ -17,15 +17,15 @@ class SocketSchedulingTest extends TestCase
     public function test_profile_determines_correct_on_state_during_schedule()
     {
         $user = User::factory()->create();
-        
+
         // Create an IotDevice manually since no factory exists
         $device = IotDevice::create([
             'name' => 'Test Device',
             'device_id' => 'test-device-001',
             'api_key' => 'test-key',
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
-        
+
         $profile = Profile::create([
             'name' => 'Test Profile',
             'expected_power' => 100,
@@ -35,7 +35,7 @@ class SocketSchedulingTest extends TestCase
             'scheduling_enabled' => true,
             'turn_on_time' => '08:00',
             'turn_off_time' => '18:00',
-            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
         ]);
 
         // Test during on hours (10 AM)
@@ -54,15 +54,15 @@ class SocketSchedulingTest extends TestCase
     public function test_profile_applies_schedule_only_at_scheduled_times()
     {
         $user = User::factory()->create();
-        
+
         $device = IotDevice::create([
             'name' => 'Test Device',
             'device_uuid' => \Illuminate\Support\Str::uuid(),
             'password' => 'test-password',
             'user_id' => $user->id,
-            'is_active' => true
+            'is_active' => true,
         ]);
-        
+
         $profile = Profile::create([
             'name' => 'Test Profile',
             'expected_power' => 100,
@@ -72,7 +72,7 @@ class SocketSchedulingTest extends TestCase
             'scheduling_enabled' => true,
             'turn_on_time' => '08:00',
             'turn_off_time' => '18:00',
-            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
         ]);
 
         $socket = Socket::create([
@@ -80,7 +80,7 @@ class SocketSchedulingTest extends TestCase
             'iot_device_id' => $device->id,
             'profile_id' => $profile->id,
             'assigned_id' => 1,
-            'state' => false
+            'state' => false,
         ]);
 
         // Set time to just before schedule (should not apply)
@@ -111,15 +111,15 @@ class SocketSchedulingTest extends TestCase
     public function test_socket_scheduling_helper_methods()
     {
         $user = User::factory()->create();
-        
+
         $device = IotDevice::create([
             'name' => 'Test Device',
             'device_uuid' => \Illuminate\Support\Str::uuid(),
             'password' => 'test-password',
             'user_id' => $user->id,
-            'is_active' => true
+            'is_active' => true,
         ]);
-        
+
         $profile = Profile::create([
             'name' => 'Test Profile',
             'expected_power' => 100,
@@ -129,7 +129,7 @@ class SocketSchedulingTest extends TestCase
             'scheduling_enabled' => true,
             'turn_on_time' => '08:00',
             'turn_off_time' => '18:00',
-            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
         ]);
 
         $socket = Socket::create([
@@ -137,7 +137,7 @@ class SocketSchedulingTest extends TestCase
             'iot_device_id' => $device->id,
             'profile_id' => $profile->id,
             'assigned_id' => 1,
-            'state' => false
+            'state' => false,
         ]);
 
         Carbon::setTestNow(Carbon::parse('2025-01-06 10:00:00')); // Monday 10 AM
@@ -145,7 +145,7 @@ class SocketSchedulingTest extends TestCase
         $this->assertTrue($socket->isScheduled());
         $this->assertTrue($socket->getScheduledState()); // Should be on during work hours
         $this->assertFalse($socket->isInSync()); // Socket is off but schedule says it should be on
-        
+
         // Check if there's a pending schedule action
         $pendingAction = $socket->getPendingScheduleAction();
         $this->assertNull($pendingAction); // No action pending since it's not exactly at scheduled time
@@ -155,7 +155,7 @@ class SocketSchedulingTest extends TestCase
         $pendingAction = $socket->getPendingScheduleAction();
         $this->assertNotNull($pendingAction);
         $this->assertEquals('turn_on', $pendingAction['action']);
-        
+
         $nextChange = $socket->getNextScheduleChange();
         $this->assertNotNull($nextChange);
         $this->assertEquals('turn_off', $nextChange['action']);
@@ -164,7 +164,7 @@ class SocketSchedulingTest extends TestCase
     public function test_schedule_spanning_midnight()
     {
         $user = User::factory()->create();
-        
+
         $profile = Profile::create([
             'name' => 'Night Profile',
             'expected_power' => 100,
@@ -174,7 +174,7 @@ class SocketSchedulingTest extends TestCase
             'scheduling_enabled' => true,
             'turn_on_time' => '22:00',  // 10 PM
             'turn_off_time' => '06:00', // 6 AM (next day)
-            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
         ]);
 
         // Test at midnight (should be on)
@@ -193,7 +193,7 @@ class SocketSchedulingTest extends TestCase
     public function test_schedule_tolerance_window()
     {
         $user = User::factory()->create();
-        
+
         $profile = Profile::create([
             'name' => 'Test Profile',
             'expected_power' => 100,
@@ -203,7 +203,7 @@ class SocketSchedulingTest extends TestCase
             'scheduling_enabled' => true,
             'turn_on_time' => '08:00',
             'turn_off_time' => '18:00',
-            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
         ]);
 
         // Test at exactly scheduled time
@@ -226,15 +226,15 @@ class SocketSchedulingTest extends TestCase
     public function test_schedule_prevents_duplicate_application()
     {
         $user = User::factory()->create();
-        
+
         $device = IotDevice::create([
             'name' => 'Test Device',
             'device_uuid' => \Illuminate\Support\Str::uuid(),
             'password' => 'test-password',
             'user_id' => $user->id,
-            'is_active' => true
+            'is_active' => true,
         ]);
-        
+
         $profile = Profile::create([
             'name' => 'Test Profile',
             'expected_power' => 100,
@@ -244,7 +244,7 @@ class SocketSchedulingTest extends TestCase
             'scheduling_enabled' => true,
             'turn_on_time' => '08:00',
             'turn_off_time' => '18:00',
-            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+            'schedule_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
         ]);
 
         $socket = Socket::create([
@@ -252,17 +252,17 @@ class SocketSchedulingTest extends TestCase
             'iot_device_id' => $device->id,
             'profile_id' => $profile->id,
             'assigned_id' => 1,
-            'state' => false
+            'state' => false,
         ]);
 
         // Set time to scheduled time
         Carbon::setTestNow(Carbon::parse('2025-01-06 08:00:00')); // Monday 8:00 AM
-        
+
         // First application should work
         $result = $profile->applySchedule();
         $this->assertEquals('turn_on', $result['action']);
         $this->assertEquals(1, $result['updated']);
-        
+
         // Second application should not apply again
         $result = $profile->applySchedule();
         $this->assertEquals('no_schedule_due', $result['reason']);
@@ -272,17 +272,17 @@ class SocketSchedulingTest extends TestCase
     public function test_appliance_presets_can_be_loaded()
     {
         $presets = Profile::getAppliancePresets();
-        
+
         $this->assertIsArray($presets);
         $this->assertNotEmpty($presets);
-        
+
         // Check that each preset has required fields
         foreach ($presets as $preset) {
             $this->assertArrayHasKey('name', $preset);
             $this->assertArrayHasKey('expected_power', $preset);
             $this->assertArrayHasKey('max_power_threshold', $preset);
             $this->assertArrayHasKey('min_power_threshold', $preset);
-            
+
             // Validate power values are reasonable
             $this->assertIsInt($preset['expected_power']);
             $this->assertGreaterThan(0, $preset['expected_power']);
@@ -295,7 +295,7 @@ class SocketSchedulingTest extends TestCase
     {
         $presets = Profile::getAppliancePresets();
         $names = array_column($presets, 'name');
-        
+
         // Check for some common appliances
         $this->assertContains('Refrigerator', $names);
         $this->assertContains('Washing Machine', $names);

@@ -4,11 +4,10 @@ namespace App\Filament\Widgets;
 
 use App\Models\Question;
 use Filament\Tables;
+use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Filament\Forms;
-use Filament\Tables\Columns\Layout\Split;
 
 class SubmittedQueryTable extends BaseWidget
 {
@@ -17,7 +16,6 @@ class SubmittedQueryTable extends BaseWidget
     protected static ?string $heading = 'Submitted Questions';
 
     protected $listeners = ['refresh-submitted-queries' => '$refresh'];
-
 
     public function table(Table $table): Table
     {
@@ -67,9 +65,9 @@ class SubmittedQueryTable extends BaseWidget
                                 'rejected' => 'heroicon-o-x-circle',
                             };
                         }),
-                   
+
                 ])
-                ->from('md'),
+                    ->from('md'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
@@ -88,12 +86,12 @@ class SubmittedQueryTable extends BaseWidget
                             }),
                         \Filament\Infolists\Components\TextEntry::make('rejection_reason')
                             ->label('Rejection Reason')
-                            ->visible(fn($record) => $record->status === 'rejected' && !empty($record->rejection_reason))
+                            ->visible(fn ($record) => $record->status === 'rejected' && ! empty($record->rejection_reason))
                             ->color('danger')
                             ->icon('heroicon-o-x-circle'),
                         \Filament\Infolists\Components\TextEntry::make('created_at')
                             ->dateTime(),
-                    ])
+                    ]),
             ]);
     }
 }

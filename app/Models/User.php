@@ -12,11 +12,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
-class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -78,9 +78,9 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
         return true;
     }
 
-    public function  getFilamentAvatarUrl(): ?string
+    public function getFilamentAvatarUrl(): ?string
     {
-        return $this->profile ? Storage::disk(env('FILESYSTEM_DISK'))->url($this->profile) : 'https://ui-avatars.com/api/?name=' . urlencode($this->first_name . ' ' . $this->last_name) . '&color=FFFFFF&background=09090b';
+        return $this->profile ? Storage::disk(env('FILESYSTEM_DISK'))->url($this->profile) : 'https://ui-avatars.com/api/?name='.urlencode($this->first_name.' '.$this->last_name).'&color=FFFFFF&background=09090b';
     }
 
     public function iotDevices()
@@ -95,8 +95,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
                 ->orWhere('profile_id', '');
         })->exists();
     }
-
-
 
     public function questions()
     {
@@ -150,15 +148,15 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
                 $this->profiles()->each(function ($profile) {
                     // Delete all readings for this profile
                     DB::table('readings')->where('profile_id', $profile->id)->delete();
-                    
+
                     // Delete all alerts for devices owned by this user
-                    DB::table('alerts')->whereIn('socket_id', function ($query) use ($profile) {
+                    DB::table('alerts')->whereIn('socket_id', function ($query) {
                         $query->select('sockets.id')
                             ->from('sockets')
                             ->join('iot_devices', 'sockets.iot_device_id', '=', 'iot_devices.id')
                             ->where('iot_devices.user_id', $this->id);
                     })->delete();
-                    
+
                     $profile->delete();
                 });
 
@@ -166,10 +164,10 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
                 $this->iotDevices()->each(function ($device) {
                     // Delete all sockets for this device (and their readings via foreign key cascade)
                     $device->sockets()->delete();
-                    
+
                     // Delete any downtime events
                     DB::table('downtime_events')->where('iot_device_id', $device->id)->delete();
-                    
+
                     $device->delete();
                 });
 
@@ -181,14 +179,14 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
                 }
 
                 // Log the data wipe for audit purposes
-                Log::info("User data completely wiped", [
+                Log::info('User data completely wiped', [
                     'user_id' => $this->id,
                     'email' => $this->email,
-                    'wiped_at' => now()
+                    'wiped_at' => now(),
                 ]);
 
             } catch (\Exception $e) {
-                Log::error("Error during complete user data wipe for User ID {$this->id}: " . $e->getMessage());
+                Log::error("Error during complete user data wipe for User ID {$this->id}: ".$e->getMessage());
                 throw $e;
             }
         });
