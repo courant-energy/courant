@@ -7,7 +7,19 @@
     <loc>https://courant.energy/app/login</loc>
             </url>
     <url>
+    <loc>https://courant.energy/terms</loc>
+            </url>
+    <url>
+    <loc>https://courant.energy/privacy</loc>
+            </url>
+    <url>
     <loc>https://courant.energy/app/register</loc>
+            </url>
+    <url>
+    <loc>https://courant.energy/contact</loc>
+            </url>
+    <url>
+    <loc>https://courant.energy</loc>
             </url>
     <url>
     <loc>https://courant.energy/app/password-reset/request</loc>
