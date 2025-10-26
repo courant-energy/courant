@@ -74,11 +74,11 @@
             <div class="max-w-4xl mx-auto">
                 <div class="prose prose-lg max-w-none">
                     <div class="bg-gray-50 p-6 rounded-lg mb-8">
-                        <div class="flex items-center mb-4">
+                        <div class="flex items-center mb-4 mt-5">
                             <svg class="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-0">Document Information</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 m-0">Document Information</h3>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div>
@@ -102,7 +102,7 @@
 
                     <!-- Render the markdown content -->
                     <div class="whitepaper-content">
-                        {!! \Illuminate\Support\Str::markdown($markdownContent) !!}
+                        {!! $content !!}
                     </div>
                 </div>
             </div>
@@ -202,6 +202,9 @@
         
         .whitepaper-content img {
             @apply max-w-full h-auto mx-auto rounded-lg shadow-lg my-8;
+            display: block;
+            max-height: 600px;
+            object-fit: contain;
         }
         
         .whitepaper-content table {
