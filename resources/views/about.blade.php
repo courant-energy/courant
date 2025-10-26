@@ -104,20 +104,44 @@
                 <h2 class="mb-12 text-4xl font-bold text-center">Research Team</h2>
                 <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
                     <div class="p-6 bg-white rounded-lg shadow-sm">
-                        <h3 class="text-xl font-semibold text-gray-900">John Edmerson L. Pizarra</h3>
-                        <p class="mt-2 text-gray-600">Lead Researcher</p>
+                        <div class="flex items-center space-x-4">
+                            <img src="{{ asset('images/team/edmer.jpg') }}" alt="John Edmerson L. Pizarra" 
+                                 class="w-16 h-16 rounded-full object-cover border-2 border-gray-200">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900">John Edmerson L. Pizarra</h3>
+                                <p class="mt-1 text-gray-600">Lead Researcher</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="p-6 bg-white rounded-lg shadow-sm">
-                        <h3 class="text-xl font-semibold text-gray-900">Kevern Joebert C. Angeles</h3>
-                        <p class="mt-2 text-gray-600">Research Team Member</p>
+                        <div class="flex items-center space-x-4">
+                            <img src="{{ asset('images/team/kevern.jpg') }}" alt="Kevern Joebert C. Angeles" 
+                                 class="w-16 h-16 rounded-full object-cover border-2 border-gray-200">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900">Kevern Joebert C. Angeles</h3>
+                                <p class="mt-1 text-gray-600">Research Team Member</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="p-6 bg-white rounded-lg shadow-sm">
-                        <h3 class="text-xl font-semibold text-gray-900">Jian Ross G. Dela Rosa</h3>
-                        <p class="mt-2 text-gray-600">Research Team Member</p>
+                        <div class="flex items-center space-x-4">
+                            <img src="{{ asset('images/team/jian.jpg') }}" alt="Jian Ross G. Dela Rosa" 
+                                 class="w-16 h-16 rounded-full object-cover border-2 border-gray-200">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900">Jian Ross G. Dela Rosa</h3>
+                                <p class="mt-1 text-gray-600">Research Team Member</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="p-6 bg-white rounded-lg shadow-sm">
-                        <h3 class="text-xl font-semibold text-gray-900">Florence Gayle C. Magpoc</h3>
-                        <p class="mt-2 text-gray-600">Research Team Member</p>
+                        <div class="flex items-center space-x-4">
+                            <img src="{{ asset('images/team/florence.jpg') }}" alt="Florence Gayle C. Magpoc" 
+                                 class="w-16 h-16 rounded-full object-cover border-2 border-gray-200">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900">Florence Gayle C. Magpoc</h3>
+                                <p class="mt-1 text-gray-600">Research Team Member</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
