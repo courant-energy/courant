@@ -77,7 +77,7 @@
                             <a href="{{ route('filament.app.auth.register') }}"
                                 class="w-full px-8 py-3 font-medium text-center text-white transition bg-black rounded-sm md:w-auto hover:bg-gray-800">Get
                                 Started</a>
-                            <a href="#features"
+                            <a href="{{ route('about') }}"
                                 class="w-full px-8 py-3 font-medium text-center text-black transition border border-gray-200 rounded-sm md:w-auto hover:bg-gray-100">Learn
                                 More</a>
                         </div>
