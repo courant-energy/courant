@@ -20,7 +20,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased text-gray-900 bg-white">
+<body class="font-sans antialiased text-gray-900 bg-white overflow-x-hidden">
     <!-- Navigation -->
     <nav class="container px-6 py-4 mx-auto">
         <div class="flex items-center justify-between">
