@@ -1,17 +1,17 @@
-## **Courant: Revolutionizing Power Management for MSMEs with IoT Integration and Predictive Maintenance using Isolation Forest and LSTM Algorithms** 
+# **Courant: Revolutionizing Power Management for MSMEs with IoT Integration and Predictive Maintenance using Isolation Forest and LSTM Algorithms** 
 
 **John Edmerson L. Pizarra**  
 **Kevern Joebert C. Angeles**  
 **Jian Ross G. Dela Rosa**  
 **Florence Gayle C. Magpoc**
 
-## **ABSTRACT**
+# **ABSTRACT**
 
-## Courant: Revolutionizing Power Management for MSMEs with IoT Integration and Predictive Maintenance using Isolation Forest and LSTM Algorithms is a progressive web application that monitors power consumption and provides data-driven insights to MSME owners. Designed to improve efficiency, reduce costs, and prevent equipment damage, it features remote device management, real-time alerts, and AI-powered predictive maintenance. Courant operates with EDMER devices, IoT hardware where appliances are connected to measure consumption and detect anomalies. On the MSME side, users can register accounts, link devices, profile appliances, monitor energy use, receive maintenance insights, generate reports, and access system support. For super administrators, the platform provides account management, device whitelisting, energy-saving content, and configuration tools. Evaluated by 50 respondents spanning MSME owners and licensed IT, ECE, and EE experts under ISO 25010 standards, Courant achieved an overall mean rating of 4.52, validating its reliability, functionality, and effectiveness in addressing MSME energy management needs.
+Courant: Revolutionizing Power Management for MSMEs with IoT Integration and Predictive Maintenance using Isolation Forest and LSTM Algorithms is a progressive web application that monitors power consumption and provides data-driven insights to MSME owners. Designed to improve efficiency, reduce costs, and prevent equipment damage, it features remote device management, real-time alerts, and AI-powered predictive maintenance. Courant operates with EDMER devices, IoT hardware where appliances are connected to measure consumption and detect anomalies. On the MSME side, users can register accounts, link devices, profile appliances, monitor energy use, receive maintenance insights, generate reports, and access system support. For super administrators, the platform provides account management, device whitelisting, energy-saving content, and configuration tools. Evaluated by 50 respondents spanning MSME owners and licensed IT, ECE, and EE experts under ISO 25010 standards, Courant achieved an overall mean rating of 4.52, validating its reliability, functionality, and effectiveness in addressing MSME energy management needs.
 
-## **Introduction**
+# **Introduction**
 
-**Background of the Study**
+## **Background of the Study**
 
 Evolving technology altered industries and improved operational efficiency across multiple sectors. Smart systems, data analytics, and Internet of Things (IoT) technology had led to the creation of intelligent solutions that automated operations, optimized energy usage, and improved decision-making. Businesses increasingly rely on innovative technologies to monitor and control vital activities, ensuring long-term viability and efficiency. One of the key areas where technology had a significant impact was power management—the use of systems that tracked, regulated, and optimized the consumption of electrical power. The primary objective of power management systems (PMS) was to provide a stable and reliable electricity supply while minimizing costs and maximizing energy efficiency. Micro, Small, and Medium Enterprises (MSMEs), categorized by size, workforce, and assets, were particularly concerned with electricity consumption due to restricted budgets, limited electrical maintenance capabilities, and the impact on operational expenses.
 
@@ -23,66 +23,81 @@ Finally, ensuring the system's long-term usability and security presents a third
 
 The developed system aims to serve Micro, Small, and Medium Enterprises (MSMEs) by improving the management of their power consumption and ensuring accurate monitoring of energy usage. MSMEs may benefit from the implementation of the system since it provides real-time monitoring, predictive maintenance alerts, appliance profiling, and remote device control, helping them reduce costs and prevent equipment damage. The system also promotes sustainability by encouraging efficient energy usage and ensuring operational reliability. Furthermore, this study can be a framework that other organizations might use to improve their energy management procedures. It might also be a guide for researchers in the future who want to carry out similar research or create related initiatives. 
 
-**Objectives of the Study**  
+## **Objectives of the Study**
+
 Specifically, the study aims to: 
 
-      ●   	Design a management system that is capable of:
+- Design a management system that is capable of:
 
-a.  Allowing MSMEs to register and create an account for their business through the registration module;  
-b. Enabling MSMEs to link the IoT device to the web application through the device identification module;  
-c.   Letting MSMEs to generate profiles for their appliances through the appliance profiling module;  
-d. Providing MSMEs remote management of their appliances’ power status through the sockets module;  
-e.  Allowing MSMEs to monitor power consumption and power factor in real-time via line graph presentation through the monitoring module;  
-f.    Providing MSMEs with predictive maintenance which encompasses information on potential causes and recommendation for a probable electrical fault through AI-powered Insights module;  
-g.    Alerting MSMEs in real-time if possible electrical issues are detected through the notification module;  
-h.  Enabling MSMEs to generate reports about energy consumption, cost analysis and equipment usage through the report generation module;  
-i.  Allowing the MSMEs to send inquiries about the system functionalities and issues through the Help module;  
-j.   Allowing the super admin to post best practices and tips for power-efficiency and app usage through the Learnings module;  
-k.  Letting super admin to manage MSMEs’ accounts via the user management module;  
-l.   Allowing super admin to whitelist the unique identifier (UID) of the IoT device through the whitelisting module; and  
-m.  Enabling the super admin to configure the progressive web application through the app and site configuration module.
+  a. Allowing MSMEs to register and create an account for their business through the registration module;  
+  
+  b. Enabling MSMEs to link the IoT device to the web application through the device identification module;  
+  
+  c. Letting MSMEs to generate profiles for their appliances through the appliance profiling module;  
+  
+  d. Providing MSMEs remote management of their appliances' power status through the sockets module;  
+  
+  e. Allowing MSMEs to monitor power consumption and power factor in real-time via line graph presentation through the monitoring module;  
+  
+  f. Providing MSMEs with predictive maintenance which encompasses information on potential causes and recommendation for a probable 
+  electrical fault through the AI-powered Insights module;  
+  
+  g. Alerting MSMEs in real-time if possible electrical issues are detected through the notification module;  
+  
+  h. Enabling MSMEs to generate reports about energy consumption, cost analysis and equipment usage through the report generation module;  
+  
+  i. Allowing the MSMEs to send inquiries about the system functionalities and issues through the Help module;  
+  
+  j. Allowing the super admin to post best practices and tips for power-efficiency and app usage through the Learnings module;  
+  
+  k. Letting super admin to manage MSMEs' accounts via the user management module;  
+  
+  l. Allowing super admin to whitelist the unique identifier (UID) of the IoT device through the whitelisting module; and  
+  
+  m. Enabling the super admin to configure the progressive web application through the app and site configuration module.
+  
 
-●   	Create the system using software tools such as PHP, Python, Visual Studio Code, PlatformIO, MySQL, Laravel Herd, Windows OS, Web Browser, Flask, Laravel, FilamentPHP, TensorFlow, NumPy, SciKit Learn, MQTT Connection Protocol and integrated with hardware components like computer, smartphone, modem, breadboards, PZEM 004T 100A with CT, receptacles, NodeMCU (ESP8266), relay, and fuse.
+- Create the system using software tools such as PHP, Python, Visual Studio Code, PlatformIO, MySQL, Laravel Herd, Windows OS, Web Browser, Flask, Laravel, FilamentPHP, TensorFlow, NumPy, SciKit Learn, MQTT Connection Protocol and integrated with hardware components like computer, smartphone, modem, breadboards, PZEM 004T 100A with CT, receptacles, NodeMCU (ESP8266), relay, and fuse.
 
-●  Test and improve the developed system in terms of functionality, accuracy and reliability; and
+- Test and improve the developed system in terms of functionality, accuracy and reliability; and
 
-●   	Evaluate the performance of the developed system based on functional suitability, performance efficiency, compatibility, capability, reliability, security, maintainability, and portability.
+- Evaluate the performance of the developed system based on functional suitability, performance efficiency, compatibility, capability, reliability, security, maintainability, and portability.
 
-**Scope and Limitations of the Study** 
+## **Scope and Limitations of the Study** 
 
 The developed study presents a smart power management system with IoT integration and predictive maintenance, designed for MSMEs to improve energy efficiency through real-time monitoring, early anomaly detection, and data-driven decision-making. Its hardware component, the EDMER (Energy-Driven Monitoring and Evaluation Relay), tracks power consumption and power factor of connected devices, transmitting data to a progressive web application for visualization, predictive analytics, notifications, and reporting. The system is limited to specific modules, with their functions and constraints defined in this section.
 
-## The system begins with a Registration and Login Module, where MSME users can create an account or access existing ones, with verification for new accounts. Once registered, they proceed to the Device Identification Module to link their EDMER device by entering its UID and password, ensuring proper activation and security.
+The system begins with a Registration and Login Module, where MSME users can create an account or access existing ones, with verification for new accounts. Once registered, they proceed to the Device Identification Module to link their EDMER device by entering its UID and password, ensuring proper activation and security.
 
-## Through the Appliance Profiling Module, MSMEs can provide details of their appliances, including expected power and threshold settings for anomaly notifications. The Sockets Module then allows users to view connected appliances and remotely toggle socket power as needed.
+Through the Appliance Profiling Module, MSMEs can provide details of their appliances, including expected power and threshold settings for anomaly notifications. The Sockets Module then allows users to view connected appliances and remotely toggle socket power as needed.
 
-## The Monitoring Module displays real-time power consumption and power factor data, with graphs that update continuously and provide historical filtering by hour, day, week, or month. Complementing this, the Reports and Insights Module integrates AI-powered predictive maintenance to detect power wastage, anomalies, or potential equipment issues, and enables users to generate customizable reports in CSV or PDF format.
+The Monitoring Module displays real-time power consumption and power factor data, with graphs that update continuously and provide historical filtering by hour, day, week, or month. Complementing this, the Reports and Insights Module integrates AI-powered predictive maintenance to detect power wastage, anomalies, or potential equipment issues, and enables users to generate customizable reports in CSV or PDF format.
 
-## The Notification Module alerts MSMEs of detected irregularities in power readings or socket activity, helping them respond quickly to possible faults. To support users, the Learning and Support Page includes a Help module for inquiries to admins and a Learn module containing articles and guides.
+The Notification Module alerts MSMEs of detected irregularities in power readings or socket activity, helping them respond quickly to possible faults. To support users, the Learning and Support Page includes a Help module for inquiries to admins and a Learn module containing articles and guides.
 
-## For administrators, the Admin Page provides User Management, Whitelisting, and App and Site Configuration modules. These allow admins to oversee registered MSMEs, whitelist IoT devices for security, configure system settings, and manage content for support modules.
+For administrators, the Admin Page provides User Management, Whitelisting, and App and Site Configuration modules. These allow admins to oversee registered MSMEs, whitelist IoT devices for security, configure system settings, and manage content for support modules.
 
-## The system’s functions are limited to the detection of consumption and power factor, and remote power toggling for each socket, MSME notification of abnormal consumption levels, analytics, and report generation. This study did not cover features such as directly protecting devices from power surges or voltage fluctuations, operating without a Wi-Fi connection, actively managing—where the system automatically adjusts—the power consumption of connected devices, or autonomously responding to energy usage—aside from triggering a fuse to cut off power during a surge. MSMEs are still responsible for addressing power-related issues or taking action after being notified by the web application.
+The system’s functions are limited to the detection of consumption and power factor, and remote power toggling for each socket, MSME notification of abnormal consumption levels, analytics, and report generation. This study did not cover features such as directly protecting devices from power surges or voltage fluctuations, operating without a Wi-Fi connection, actively managing—where the system automatically adjusts—the power consumption of connected devices, or autonomously responding to energy usage—aside from triggering a fuse to cut off power during a surge. MSMEs are still responsible for addressing power-related issues or taking action after being notified by the web application.
 
-## The developed system includes a combination of hardware and software components. Visual Studio Code served as the primary code editor, with Laravel Herd for local development. Laravel is the major PHP framework, with FilamentPHP used throughout the system. MySQL Workbench handles database management, while TailwindCSS provides UI styling. For interactive features, Livewire and AlpineJS were used. PlatformIO was utilized to program the microcontrollers. The entire system was developed as a Progressive Web Application (PWA), a web application that is installable and cross-platform accessible through a typical internet browser or installed via the browser across multiple platforms.
+The developed system includes a combination of hardware and software components. Visual Studio Code served as the primary code editor, with Laravel Herd for local development. Laravel is the major PHP framework, with FilamentPHP used throughout the system. MySQL Workbench handles database management, while TailwindCSS provides UI styling. For interactive features, Livewire and AlpineJS were used. PlatformIO was utilized to program the microcontrollers. The entire system was developed as a Progressive Web Application (PWA), a web application that is installable and cross-platform accessible through a typical internet browser or installed via the browser across multiple platforms.
 
-## The hardware side of the system consists of essential devices and modules for execution. A development computer was used for coding and configuration, supported by a Wi-Fi internet connection for network communication. Breadboards were used for circuit prototyping, while a PZEM-004T 100A with CT sensor monitors electrical parameters. Receptacles securely connected electrical devices, while a NodeMCU (ESP8266) with an expansion board acted as the primary microcontroller for sensor data collection and Wi-Fi connectivity. A multi-channel relay module controls device switching, with an overcurrent fuse providing protection. For mobile app deployment and testing, a smartphone device, modem, and computer system were also required.
+The hardware side of the system consists of essential devices and modules for execution. A development computer was used for coding and configuration, supported by a Wi-Fi internet connection for network communication. Breadboards were used for circuit prototyping, while a PZEM-004T 100A with CT sensor monitors electrical parameters. Receptacles securely connected electrical devices, while a NodeMCU (ESP8266) with an expansion board acted as the primary microcontroller for sensor data collection and Wi-Fi connectivity. A multi-channel relay module controls device switching, with an overcurrent fuse providing protection. For mobile app deployment and testing, a smartphone device, modem, and computer system were also required.
 
-## The developed system was evaluated using ISO 25010:2011 main quality characteristics such as effectiveness, efficiency, satisfaction, Freedom from risk, context coverage of the system. The system was tested by forty (40) MSME owners, five (5) Engineering experts, and five (5) IT experts.
+The developed system was evaluated using ISO 25010:2011 main quality characteristics such as effectiveness, efficiency, satisfaction, Freedom from risk, context coverage of the system. The system was tested by forty (40) MSME owners, five (5) Engineering experts, and five (5) IT experts.
 
-**Methodology**
+## **Methodology**
 
-## The proponents adopted the Rapid Application Development (RAD) methodology for developing the IoT-based system. This model was selected because it promotes rapid prototyping, iterative testing, and continuous user feedback, which are crucial for systems involving both software and hardware components. RAD’s flexibility allows developers to make quick adjustments during the development process, ensuring smooth integration between the IoT device and the web application while minimizing errors and delays.
+The proponents adopted the Rapid Application Development (RAD) methodology for developing the IoT-based system. This model was selected because it promotes rapid prototyping, iterative testing, and continuous user feedback, which are crucial for systems involving both software and hardware components. RAD’s flexibility allows developers to make quick adjustments during the development process, ensuring smooth integration between the IoT device and the web application while minimizing errors and delays.
 
 ## **![][image1]**
 
-## ***Figure 1*****.** Rapid Application Development
+***Figure 1*****. Rapid Application Development**
 
-1. **Requirements Planning**
+1. ## **Requirements Planning**
 
 Kolosky (2024) states that the requirements planning phase lays the groundwork for the project by involving developers, stakeholders, and users in establishing the scope, objectives, and essential requirements. It focuses on rapidly obtaining precise information in order to develop a clear, collaborative project plan that meets corporate requirements and user expectations. The proponents conducted interviews with MSMEs, brainstormed, and collected detailed information regarding the planned study. Additionally, the proponents made plans for the project's full development. By the end of this phase, the proponents had completed the flow of the system, which was already established, and documentation had begun.
 
-2. **User Design**
+2. ## **User Design**
 
 Kolosky (2024) describes the user design phase as developing detailed system models and prototypes based on the needs identified during the planning phase. This method enables the early discovery and resolution of difficulties, ensuring that the design remains user-focused and in line with business objectives. The phase ends with a validated and well-defined blueprint for the next development stage. The proponents used the requirements provided to construct wireframes during the design phase, which served as a guide for the rest of the project. They also began the construction of EDMER that collected and transmitted power consumption data. Unit testing ensures that each module performs well in isolation. Integration testing verifies that components communicate properly. Additionally, the proponents created the entity-relationship diagram, data flow diagram, and user interface design for the developed study. The proponents started and plan to continue organizing the documentation during this phase.
 
@@ -94,7 +109,7 @@ As stated by Kolosky (2024), rapid construction focuses on developing the applic
 
 When the completed system is placed into production. Final changes, comprehensive testing, and this phase culminates with the system being fully operational and the start of maintenance and support activities to ensure sustained performance and user satisfaction (Kolosky, 2024). The proponents made final changes to resolve any outstanding issues or changes discovered during testing or user evaluations. Once the system is implemented, maintenance operations are carried out to monitor performance, handle unexpected difficulties, and apply appropriate updates, ensuring that the system remains accurate and reliable in real-world applications.![][image2]
 
-## ***Figure 2\.*** Context Diagram
+***Figure 2\.*** **Context Diagram**
 
 As in Figure 2, there are three entities interacting with the system: the Admin, the MSMEs, and the EDMER device/s.
 
@@ -111,7 +126,7 @@ The Courant system is designed to enhance power management for both MSMEs and ad
 
 The prototype is primarily designed to monitor power consumption and power factors, with its functionality restricted to detection, visualization, predictive analytics, report generation, and remote toggling of socket power. It does not extend to advanced functions such as direct protection of appliances from power surges or voltage fluctuations, operating in the absence of a Wi-Fi connection, or autonomously managing energy consumption of connected devices. The system only provides alerts and recommendations; thus, the responsibility for addressing detected electrical issues and implementing corrective measures remains with the MSMEs. Furthermore, the hardware setup relies on specific components—such as the NodeMCU microcontroller, PZEM-004T sensors, relay modules, and a stable internet connection—making the system dependent on both reliable connectivity and proper device configuration. While Courant enhances monitoring and predictive maintenance, it does not fully automate power management processes, thereby limiting its scope to decision support rather than autonomous intervention.
 
-## **Summary of Findings**
+# **Summary of Findings**
 
 Based on the analysis of data, the findings are as follows:
 
@@ -146,7 +161,7 @@ The following conclusions are gathered based on the evaluation:
    3\. Courant: Revolutionizing Power Management for MSMES with IoT Integration and Predictive Maintenance Using LSTM Algorithm was successfully tested and improved via test scripts and evaluation criteria, wherein the system fulfilled terms of functionality, accuracy, and reliability, passing all tests.  
    4\. The performance of Courant: Revolutionizing Power Management for MSMES with IoT Integration and Predictive Maintenance Using LSTM Algorithm was successfully evaluated using the ISO 25010, passing the criteria functional suitability, performance efficiency, compatibility, capability, reliability, security, maintainability, and portability, with an average mean of 4.52 with a descriptive interpretation of Excellent.
 
-## **Recommendations**
+   ## **Recommendations**
 
 Based on the foregoing conclusions, the following are recommended for the further improvement of the project:
 

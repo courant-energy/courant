@@ -25,6 +25,11 @@ Route::view('privacy', 'privacy')
 Route::view('contact', 'contact')
     ->name('contact');
 
+Route::get('whitepaper', function () {
+    $markdownContent = file_get_contents(base_path('IMRAD COURANT.md'));
+    return view('whitepaper', compact('markdownContent'));
+})->name('whitepaper');
+
 Route::get('login', function () {
     return redirect()->route('filament.app.auth.login');
 })->name('login');
