@@ -305,6 +305,8 @@ MQTT_PASSWORD=mqtt_password
 # AI Service
 AI_SERVICE_URL=http://localhost:5000
 AI_SERVICE_TIMEOUT=30
+GEMINI_API_KEY=
+GEMINI_MODEL_ID=gemini-2.0-flash
 
 # Mail Configuration (for notifications)
 MAIL_MAILER=smtp
@@ -316,6 +318,8 @@ MAIL_PASSWORD=your-email-password
 # Queue Configuration
 QUEUE_CONNECTION=database
 ```
+
+> ⚠️ Keep `GEMINI_API_KEY` only in environment/secrets management and never commit real key values to the repository, logs, or documentation.
 
 ### **MQTT Broker Setup**
 
