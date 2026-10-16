@@ -773,7 +773,8 @@ class GeminiService
             ];
 
             Log::debug('GeminiService::generateInsights making API request', [
-                'api_url' => $apiUrl,
+                'model_id' => $modelId,
+                'api_url_redacted' => $this->redactGeminiApiKeyInText($apiUrl, $apiKey),
                 'request_body_size' => strlen(json_encode($requestBody)),
                 'prompt_length' => strlen($promptText),
             ]);
@@ -795,7 +796,7 @@ class GeminiService
                 ]);
             } catch (\GuzzleHttp\Exception\RequestException $e) {
                 Log::error('GeminiService::generateInsights API request failed', [
-                    'error' => $e->getMessage(),
+                    'error' => $this->redactGeminiApiKeyInText($e->getMessage(), $apiKey),
                     'response_body' => $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : null,
                     'status_code' => $e->hasResponse() ? $e->getResponse()->getStatusCode() : null,
                 ]);
@@ -870,9 +871,11 @@ class GeminiService
 
             return ['error' => 'The API response was not in the expected JSON format.'];
         } catch (\Exception $e) {
+            $sanitizedError = $this->redactGeminiApiKeyInText($e->getMessage(), $apiKey ?? null);
+
             Log::error('GeminiService::generateInsights failed', [
                 'user_id' => $user ? $user->id : null,
-                'error' => $e->getMessage(),
+                'error' => $sanitizedError,
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
@@ -893,8 +896,19 @@ class GeminiService
 
             $isLoading = false;
 
-            return ['error' => 'Failed to generate insights: '.$e->getMessage()];
+            return ['error' => 'Failed to generate insights: '.$sanitizedError];
         }
+    }
+
+    private function redactGeminiApiKeyInText(string $text, ?string $apiKey = null): string
+    {
+        $redactedText = preg_replace('/([?&]key=)[^&\\s]+/i', '$1[REDACTED]', $text) ?? $text;
+
+        if (! empty($apiKey)) {
+            $redactedText = str_replace($apiKey, '[REDACTED]', $redactedText);
+        }
+
+        return $redactedText;
     }
 
     /**
